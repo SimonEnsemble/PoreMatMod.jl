@@ -9,8 +9,7 @@ using Printf
 include("ring_constructor.jl")
 include("alignment_operations.jl")
 
-## file paths for crystal files and fragment files
-# @eval PorousMaterials PATH_TO_CRYSTALS = pwd() 
+## file paths for fragment files
 fragment_location = joinpath(pwd(),"fragments")
 
 ## function that will make it easier to name files
@@ -29,12 +28,27 @@ function read_fragment_from_xyz(name::String)
     return Crystal(name, unit_cube(), atoms_f, charges_f)
 end
 
+# The side of the ring wish to functionalize
+# must be an Int (if substitution_position == "all" this parameter won't matter)
+function choose_side(randomize_side::Bool=true, set_side::Int=2)
+    # The side of the ring wish to functionalize
+    # must be an Int (if substitution_position == "all" this parameter won't matter)
+    if randomize_side
+        return which_side = rand((1, 2))
+    elseif !randomize_side
+        return which_side = set_side
+    else
+    error("which_side needs to be specified")
+    end
+end
+
+
 ## main function
-function functionalize_mof(xtal::Crystal, fragment_name::String, ipso_species::Symbol, r_species::Symbol,
+function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species::Symbol, r_species::Symbol,
 				bonding_rules::Array{BondingRule,1}; n::Int=6,
 				side_to_functionalize::Int=2, randomize_side::Bool=true, 
-				arene_substitution_type::String="para")
-	## create a directory to store the output files
+				arene_substitution_type::String="meta")
+	## check for/create a directory to store the output files
 	if ! isdir(remove_extension(crystal))
 		mkdir(remove_extension(crystal))
 	end
@@ -47,17 +61,8 @@ function functionalize_mof(xtal::Crystal, fragment_name::String, ipso_species::S
 	infer_bonds!(fragment, false, bonding_rules)
 
 	# define what type of arene substitution to perform
-	substitution_position = substitution_position
+	substitution_position = arene_substitution_type
 
-	# define which side of the aromatic ring to functionalize
-	if randomize_side
-		which_side = rand((1, 2))
-	elseif !randomize_side
-		which_side = side_to_functionalize
-	else
-		error("Which side of the ring to functionalize is not specified")
-	end
-	
 	####	
 	# create an array populated with AromaticRings from the Crystal
 	####
@@ -73,7 +78,10 @@ function functionalize_mof(xtal::Crystal, fragment_name::String, ipso_species::S
 	bonds_to_make = Array{Array{Int,1}, 1}(undef, 0)
 
 	for (ring_id, ring) in enumerate(rings)
-    		# align fragment with appropriate place on ring in MOF
+		# determine which side of the ring to functionalize 
+		which_side = choose_side(randomize_side, side_to_functionalize)
+    		
+		# align fragment with appropriate place on ring in MOF
     		aligned_frag = align_fragment(ring, crystal, fragment, 
 				substitution_position, which_side=which_side)
     		push!(aligned_fragments, aligned_frag)
@@ -137,7 +145,6 @@ function functionalize_mof(xtal::Crystal, fragment_name::String, ipso_species::S
 end
 
 # TODO: 
-# determine which functions to export
 # create tests
 
 ####
@@ -146,6 +153,7 @@ end
 export
 	# MOFfun.jl
 	remove_extension, read_fragment_from_xyz, functionalize_mof,
+	choose_side,
 	
 	# ring_constructor.jl
 	empty_ring, is_aromatic, find_aromatic_cycles,
