@@ -37,8 +37,6 @@ function choose_side(randomize_side::Bool=true, set_side::Int=2)
         return which_side = rand((1, 2))
     elseif !randomize_side
         return which_side = set_side
-    else
-    error("which_side needs to be specified")
     end
 end
 
