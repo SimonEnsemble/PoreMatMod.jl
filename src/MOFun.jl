@@ -10,7 +10,7 @@ include("ring_constructor.jl")
 include("alignment_operations.jl")
 
 ## file paths for fragment files
-fragment_location = joinpath(pwd(),"fragments")
+fragment_location = joinpath(pwd(), "mof_construction", "fragments")
 
 ## function that will make it easier to name files
 remove_extension(crystal::Crystal) = split(crystal.name, ".")[1]
@@ -47,8 +47,8 @@ function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species
 				side_to_functionalize::Int=2, randomize_side::Bool=true, 
 				arene_substitution_type::String="meta")
 	## check for/create a directory to store the output files
-	if ! isdir(remove_extension(crystal))
-		mkdir(remove_extension(crystal))
+	if ! isdir(joinpath("mof_construction", remove_extension(crystal)))
+		mkdir(joinpath("mof_construction", remove_extension(crystal)))
 	end
 	
 	####
@@ -123,18 +123,16 @@ function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species
 	# write output files
 	####
 	write_xyz(Cart(functionalized_mof.atoms, functionalized_mof.box), 
-		joinpath(remove_extension(crystal), 
-		remove_extension(crystal) * "_" * substitution_position * "_functonalized_" * fragment.name))
+		joinpath("mof_construction", remove_extension(crystal), 
+		remove_extension(crystal) * "_" * substitution_position * "_functionalized_" * fragment.name))
 	
 	write_bond_information(functionalized_mof, 
-		joinpath(remove_extension(crystal), 
-		remove_extension(crystal) * "_" * substitution_position * "_functonalized_" * 
+		joinpath("mof_construction", remove_extension(crystal), 
+		remove_extension(crystal) * "_" * substitution_position * "_functionalized_" * 
 		fragment.name * "_bonds.vtk"))  
 	
-	# to create the supercells, try saving the crystals as a .cif file and opening them in Open Babel
-	# there is suppoed to be an option there that allows you to replicate it in p1 symmetry
-	final_cif_name = joinpath(remove_extension(crystal), 
-	split(crystal.name, ".")[1] * "_" * substitution_position * "_functonalized_" * 
+	final_cif_name = joinpath("mof_construction", remove_extension(crystal), 
+	split(crystal.name, ".")[1] * "_" * substitution_position * "_functionalized_" * 
 	fragment.name * ".cif")
 
 	functionalized_mof = apply_symmetry_operations(functionalized_mof)
