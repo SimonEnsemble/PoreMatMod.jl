@@ -10,7 +10,7 @@ include("ring_constructor.jl")
 include("alignment_operations.jl")
 
 ## file paths for fragment files
-fragment_location = joinpath(pwd(), "mof_construction", "fragments")
+fragment_location = joinpath(pwd(), "fragments")
 
 ## function that will make it easier to name files
 remove_extension(crystal::Crystal) = split(crystal.name, ".")[1]
@@ -47,8 +47,8 @@ function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species
 				side_to_functionalize::Int=2, randomize_side::Bool=true, 
 				arene_substitution_type::String="meta")
 	## check for/create a directory to store the output files
-	if ! isdir(joinpath("mof_construction", remove_extension(crystal)))
-		mkdir(joinpath("mof_construction", remove_extension(crystal)))
+	if ! isdir(joinpath(remove_extension(crystal)))
+		mkdir(joinpath(remove_extension(crystal)))
 	end
 	
 	####
@@ -123,19 +123,20 @@ function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species
 	# write output files
 	####
 	write_xyz(Cart(functionalized_mof.atoms, functionalized_mof.box), 
-		joinpath("mof_construction", remove_extension(crystal), 
+		joinpath(remove_extension(crystal), 
 		remove_extension(crystal) * "_" * substitution_position * "_functionalized_" * fragment.name))
 	
 	write_bond_information(functionalized_mof, 
-		joinpath("mof_construction", remove_extension(crystal), 
+		joinpath(remove_extension(crystal), 
 		remove_extension(crystal) * "_" * substitution_position * "_functionalized_" * 
 		fragment.name * "_bonds.vtk"))  
 	
-	final_cif_name = joinpath("mof_construction", remove_extension(crystal), 
+	final_cif_name = joinpath(remove_extension(crystal), 
 	split(crystal.name, ".")[1] * "_" * substitution_position * "_functionalized_" * 
 	fragment.name * ".cif")
 
 	functionalized_mof = apply_symmetry_operations(functionalized_mof)
+	functionalized_mof.atoms.coords.xf .= mod.(functionalized_mof.atoms.coords.xf, 1.0) 
 
 	write_cif(functionalized_mof, final_cif_name)
 end
