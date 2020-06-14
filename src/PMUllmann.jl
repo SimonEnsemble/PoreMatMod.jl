@@ -13,11 +13,6 @@
     # validate on sufficient unique candidates?
     # ullmann tests
     # API → MOFun.jl
-    # add path_to_moieties to PorousMaterials
-    # moiety() tests:
-        # generate vtk
-        # generate manual graph representation
-        # verify that the two are identical
     # metagraphs
 """
 ## #
