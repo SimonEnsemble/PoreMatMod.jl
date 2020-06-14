@@ -3,6 +3,14 @@
 # Adrian Henle, 2020
 # Demonstrates the function of MOFun's Ullmann bijection finder
 
+## TODO
+"""
+    # Refactor ullmann_bijections() call as xyz_find()
+    # Implement xyz_find() API in MOFun.jl
+    # Implement xyz_find_replace()
+"""
+## #
+
 function ullmann_demo()
     # Build parent Crystal
     Co2m_dobdc = Crystal("KOSKIO_clean.cif")
@@ -21,8 +29,5 @@ function ullmann_demo()
 end
 
 if (abspath(PROGRAM_FILE) == @__FILE__) || ((@isdefined Atom) && typeof(Atom) == Module)
-
     ullmann_demo()
-
-    exit(0)
 end
