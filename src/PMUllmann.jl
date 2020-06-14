@@ -1,6 +1,9 @@
 # PMUllmann.jl
 # Adrian Henle, 2020
 
+"""
+    Ullmann algorithm code for PorousMaterials.jl
+"""
 
 ## TODO
 """
@@ -19,10 +22,6 @@
 """
 ## #
 
-
-"""
-    Ullmann algorithm code for PorousMaterials.jl
-"""
 module PMUllmann
 
 
