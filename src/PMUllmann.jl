@@ -7,7 +7,6 @@
 
 ## TODO
 """
-    # fix ullmann_bijections()
     # fix ullmann_DFS()
     # sort M° on node degree in ullmann_bijections()
     # validate on sufficient unique candidates?
@@ -223,7 +222,6 @@ module PMUllmann
         Returns all correspondence matrix bijections of subgraph to a subset of graph.
     """
     function ullmann_bijections(subgraph::Graph, graph::Graph)
-## TODO refactor to take Crystal objects (will need to extract graphs)
 
         # Get initial candidate correspondence matrix and adjacency matrices
         M° = correspondence_matrix(subgraph, graph)
