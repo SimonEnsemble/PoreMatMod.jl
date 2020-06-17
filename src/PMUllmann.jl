@@ -10,52 +10,41 @@
     # fix ullmann_DFS()
     # sort M° on node degree in ullmann_bijections()
     # validate on sufficient unique candidates?
+    # other accelerations/boosts?
     # ullmann tests
     # API → MOFun.jl
-    # metagraphs
+    # metadata dicts
 """
 ## #
 
 module PMUllmann
 
 
-    using LightGraphs
+    using LightGraphs, DataFrames
 
 
     export ullmann_bijections
 
 
     """
-        Make the module flexible for updating to MetaGraphs
+        Make the module more flexible for updating to other graph types.
     """
-## TODO metagraphs.
     abstract type Graph <: SimpleGraph end
 
 
     """
-        Returns a tuple of diagonal matrices (𝒜s, 𝒜g), the adjacency matrices
-        for input subgraph and graph, respectively.
-    """
-    function adjacency_matrices(subgraph::Graph, graph::Graph)::Array{Bool, 2}
-        return (LinAlg.adjacency_matrix(subgraph), LinAlg.adjacency_matrix(graph))
-    end
-
-
-    """
         Generates the initial matrix based on node degrees.
+        M will be a matrix indicating if the jth node of graph has
+        sufficient degree to correspond with the ith node of subgraph.
     """
-    function correspondence_matrix(subgraph::Graph, graph::Graph)::Array{Bool, 2}
-
-        M = zeros(nv(subgraph), nv(graph))
-        Ds = degree(subgraph)
-        Dg = degree(graph)
-
+    function correspondence_matrix(subgraph::Graph, 𝒫s::DataFrame,
+                                   graph::Graph, 𝒫g::DataFrame)::Array{Bool, 2}
+        M = zeros(Bool, nv(subgraph), nv(graph))
         for i ∈ 1:nv(subgraph)
             for j ∈ 1:nv(graph)
-                M[i, j] = (Dg[j] - Ds[i] ≥ 0)
+                M[i, j] = 𝒫g.degree[j] ≥ 𝒫s.degree[i] && 𝒫g.species[j] == 𝒫s.species[i]
             end
         end
-
         return M
     end
 
@@ -63,15 +52,13 @@ module PMUllmann
     """
         Generates a new matrix from M0 by supposing x corresponds to y
     """
-    function suppose_correspondence(    M0::Array{Bool, 2}},
-                                        subgraph_node::Int,
-                                        graph_node::Int )::Array{Bool, 2}
-
-        M = M0
-        M[subgraph_node, :] = 0
-        M[:, graph_node] = 0
-        M[subgraph_node, graph_node] = 1
-
+    function suppose_correspondence(M0::Array{Bool, 2}},
+                                    subgraph_node::Int,
+                                    graph_node::Int)::Array{Bool, 2}
+        M = M0 # deepcopy()?
+        M[subgraph_node, :] .= false
+        M[:, graph_node] .= false
+        M[subgraph_node, graph_node] = true
         return M
     end
 
@@ -81,10 +68,8 @@ module PMUllmann
         Argument `graph` must be a symbol, either :graph or :subgraph,
         to indicate to which graph the node belongs.
     """
-    function candidate_list(    M::Array{Bool, 2},
-                                node_index::Int,
-                                graph::Symbol )::Array{Bool, 2}
-
+    function candidate_list(M::Array{Bool,2},node_index::Int,graph::Symbol)::Array{Bool,2}
+        # Wrong! Need to ONLY return the indexes of 1's, not the 1's and 0's
         if graph == :subgraph
             return M[node_index, :]
         elseif graph == :graph
@@ -137,15 +122,7 @@ module PMUllmann
         Returns list of neighbors of input node from its graph's adjacency matrix.
     """
     function neighbors(w::Int, A::Array{Bool, 2})::Array{Int}
-
-        N = []
-        for v ∈ 1:size(A, 1)
-            if A[v] == 1
-                append!(N, A[v])
-            end
-        end
-
-        return N
+        return [v for v ∈ 1:size(A, 1) if A[v, w]]
     end
 
 
@@ -156,8 +133,9 @@ module PMUllmann
                                             Ag::Array{Bool, 2},
                                             M0::Array{Bool, 2} )::Array{Bool, 2}
 
-        M = M0
+        M = M0 # don't need copying here! Make this a modify!() function
 
+        # Wrong!  The core proposition is not implemented right.
         for y ∈ size(M0, 1)
             for x ∈ candidate_list(M, y, :graph)
                 for z ∈ neighbors(y, As)
@@ -168,7 +146,7 @@ module PMUllmann
             end
         end
 
-        if M ≠ M0
+        if M ≠ M0 # Expensive!! Change to Bool flag at line 159
             M = refine_correspondence_matrix(As, Ag, M)
         end
 
@@ -179,10 +157,8 @@ module PMUllmann
     """
         Performs depth-first search for Ullmann's algorithm.
     """
-    function ullmann_DFS(   M0::Array{Bool, 2},
-                            AS::Array{Bool, 2},
-                            AG::Array{Bool, 2} )::Array{Array{Bool, 2}}
-
+    function ullmann_DFS(M0::Array{Bool, 2}, AS::Array{Bool, 2},
+                         AG::Array{Bool, 2})::Array{Array{Bool, 2}}
         ℳ = []
         x1 = -1
         y1 = -1
@@ -203,10 +179,10 @@ module PMUllmann
             end
         end
 
-        if ¬(validate_correspondence_matrix(M0))
+        if !(validate_correspondence_matrix(M0))
             return []
         else
-            M′ = suppose_correspondence(M0, x1, y1)
+            M′ = suppose_correspondence(M0, y1, x1)
             M′ = refine_correspondence_matrix(As, Ag, M′)
 
             if is_solution(M′)
@@ -221,14 +197,21 @@ module PMUllmann
     """
         Returns all correspondence matrix bijections of subgraph to a subset of graph.
     """
-    function ullmann_bijections(subgraph::Graph, graph::Graph)
-
+    function ullmann_bijections(subgraph::Graph,
+                                subgraph_species::Array{Symbol},
+                                graph::Graph,
+                                graph_species::Array{Symbol})::Array{Array{Bool,2}}
+        # Build metadata dictionaries
+        𝒫s = DataFrame(index = 1:nv(subgraph), species = subgraph_species, degree = degree(subgraph))
+        𝒫g = DataFrame(index = 1:nv(graph), species = graph_species, degree = degree(graph))
         # Get initial candidate correspondence matrix and adjacency matrices
-        M° = correspondence_matrix(subgraph, graph)
-        (𝒜s, 𝒜g) = adjacency_matrices(subgraph, graph)
-## TODO node degree sorting
-
-        # Return set of subgraph isomorphic bijections via depth-first search
-        return ullmann_DFS(M°, 𝒜s, 𝒜g)
+        M° = correspondence_matrix(subgraph, 𝒫s, graph, 𝒫g)
+        𝒜s = LinAlg.adjacency_matrix(subgraph)
+        𝒜g = LinAlg.adjacency_matrix(graph)
+## TODO node degree sorting descending on S
+        # Perform depth-first search
+        ℳ = ullmann_DFS(M°, 𝒜s, 𝒜g)
+        # Return solutions
+        return ℳ
     end
 end
