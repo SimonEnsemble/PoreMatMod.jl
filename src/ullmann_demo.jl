@@ -11,6 +11,10 @@
 """
 ## #
 
+#using MOFun
+include("MOFun.jl")
+
+
 function ullmann_demo()
     # Build parent Crystal
     Co2m_dobdc = Crystal("KOSKIO_clean.cif")
@@ -20,14 +24,14 @@ function ullmann_demo()
     m_dobdc = moiety("data/fragments/m-dobdc.xyz")
 
     # Search for search Moiety in parent Crystal
-    matches = ullmann_bijections(m_dobdc, Co2m_dobdc)
-## TODO refactor as xyz_find
+    matches = subgraph_isomorphisms(m_dobdc, Co2m_dobdc)
 
     # Replace with new Moiety
     f2_m_dobdc = moiety("data/fragments/F2-m-dobdc.xyz")
-## TODO implement xyz_find_replace
+## TODO implement subgraph_find_replace
 end
 
 if (abspath(PROGRAM_FILE) == @__FILE__) || ((@isdefined Atom) && typeof(Atom) == Module)
-    ullmann_demo()
+    using Profile
+    @profile ullmann_demo()
 end
