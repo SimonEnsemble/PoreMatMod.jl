@@ -8,8 +8,6 @@ using Printf
 ## other necessary files containing function definitions and tests
 include("ring_constructor.jl")
 include("alignment_operations.jl")
-include("moiety.jl")
-include("PMUllmann.jl")
 
 ## file paths for fragment files
 fragment_location = joinpath(pwd(), "fragments")
@@ -144,30 +142,7 @@ function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species
 end
 
 
-## PMUllmann API
 
-"""
-	Returns all bijections that map the bonding network from search_moiety onto
-	parent_structure via Ullmann's algorithm
-"""
-function subgraph_isomorphisms(search_moiety::Crystal,
-							   parent_structure::Crystal)::Array{Array{Bool, 2}}
-	return ullmann_bijections(search_moiety.bonds, search_moiety.species,
-							  parent_structure.bonds, parent_structure.species)
-end
-
-
-"""
-	Returns a Crystal wherein all instances of search_moiety from parent_structure
-	are replaced by replace_moiety.  Uses Ullmann's algorithm for matching.
-"""
-function subgraph_find_replace(search_moiety::Crystal,
-							   replace_moiety::Crystal,
-							   parent_structure::Crystal)::Array{Array{Bool, 2}}
-## TODO implement
-	matches = subgraph_isomorphisms(search_moiety, parent_structure)
-	return nothing
-end
 
 
 # TODO:
@@ -188,11 +163,5 @@ export
 
 	# alignment_operations.jl
 	crystal_aro_triplet_ids, fragment_aro_triplet_ids, fragment_aro_R_id,
-	center_of_aro_triplet, triplet_locality, align_fragment,
-
-	# moiety.jl
-	moiety,
-
-	# PMUllmann.jl API
-	subgraph_isomorphisms, subgraph_find_replace
+	center_of_aro_triplet, triplet_locality, align_fragment
 end
