@@ -19,9 +19,17 @@ remove_extension(crystal::Crystal) = split(crystal.name, ".")[1]
 Create a Crystal from a .xyz file with box=unit_cube() 
 and charges = Charges(0, Float64[], Frac(Array{Float64}(undef,3,0))).
 """
-function read_fragment_from_xyz(name::String)
+function read_fragment_from_xyz(name::String; label_functional_group::Bool=false)
     filename = joinpath(fragment_location, name * ".xyz")
     atoms_c = read_xyz(filename)
+    # label functional group atoms that are not in the parent MOF
+    if label_functional_group
+	for s = 1:atoms_c.n
+	    if ! (atoms_c.species[s] in [:C_aro, :C_aro_R])
+               atoms_c.species[s] = Symbol(String(atoms_c.species[s]) * "_fg")
+            end
+        end
+    end
     # contains: number of atoms, atom type (symbol), and position in fraction coords
     atoms_f = Frac(atoms_c, unit_cube()) 
     charges_f = Charges{Frac}(0) # create an empty charge struct
@@ -42,10 +50,12 @@ end
 
 
 ## main function
-function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species::Symbol, r_species::Symbol,
+function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species::Symbol, 
+				r_species::Symbol,
 				bonding_rules::Array{BondingRule,1}; n::Int=6,
 				side_to_functionalize::Int=2, randomize_side::Bool=true, 
-				arene_substitution_type::String="meta")
+				arene_substitution_type::String="meta", 
+				label_functional_group::Bool=false)
 	## check for/create a directory to store the output files
 	if ! isdir(joinpath(remove_extension(crystal)))
 		mkdir(joinpath(remove_extension(crystal)))
@@ -55,7 +65,7 @@ function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species
 	# initialize parameters
 	####
 	# difine the fragment to be used for the functionalization
-	fragment = read_fragment_from_xyz(fragment_name)
+	fragment = read_fragment_from_xyz(fragment_name, label_functional_group=label_functional_group)
 	infer_bonds!(fragment, false, bonding_rules)
 
 	# define what type of arene substitution to perform
