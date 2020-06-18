@@ -26,7 +26,7 @@ function read_fragment_from_xyz(name::String; label_functional_group::Bool=false
     if label_functional_group
 	for s = 1:atoms_c.n
 	    if ! (atoms_c.species[s] in [:C_aro, :C_aro_R])
-               atoms_c.species[s] = Symbol(String(atoms_c.species[s]) * "_fg")
+               atoms_c.species[s] = Symbol(String(atoms_c.species[s]) * "fg")
             end
         end
     end
