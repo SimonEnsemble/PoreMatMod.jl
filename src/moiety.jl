@@ -20,7 +20,7 @@ using PorousMaterials
 function moiety(name::String)
 
     box = unit_cube()
-    fx = Frac(read_xyz("moieties/$(name).xyz"), box)
+    fx = Frac(read_xyz("$(name).xyz"), box)
     moiety = Crystal(name, box, fx, Charges{Frac}(0))
     infer_bonds!(moiety, false)
 

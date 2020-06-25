@@ -5,14 +5,13 @@
 
 ## TODO
 """
-    # Refactor ullmann_bijections() call as xyz_find()
-    # Implement xyz_find() API in MOFun.jl
-    # Implement xyz_find_replace()
+    # Implement find_replace()
 """
 ## #
 
-#using MOFun
-include("MOFun.jl")
+using PorousMaterials
+include("ullmann.jl")
+include("moiety.jl")
 
 
 function ullmann_demo()
@@ -21,17 +20,18 @@ function ullmann_demo()
     infer_bonds!(Co2m_dobdc, true)
 
     # Build search Moiety
-    m_dobdc = moiety("data/fragments/m-dobdc.xyz")
+    m_dobdc = moiety("data/fragments/m-dobdc")
 
     # Search for search Moiety in parent Crystal
-    matches = subgraph_isomorphisms(m_dobdc, Co2m_dobdc)
+    matches = Ullmann.subgraph_isomorphisms(m_dobdc, Co2m_dobdc)
 
     # Replace with new Moiety
-    f2_m_dobdc = moiety("data/fragments/F2-m-dobdc.xyz")
+    f2_m_dobdc = moiety("data/fragments/F2-m-dobdc")
 ## TODO implement subgraph_find_replace
 end
 
-if (abspath(PROGRAM_FILE) == @__FILE__) || ((@isdefined Atom) && typeof(Atom) == Module)
-    using Profile
-    @profile ullmann_demo()
-end
+ullmann_demo()
+
+"""if (abspath(PROGRAM_FILE) == @__FILE__) || ((@isdefined Atom) && typeof(Atom) == Module)
+    ullmann_demo()
+end"""

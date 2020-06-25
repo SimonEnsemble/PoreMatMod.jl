@@ -20,16 +20,7 @@
 module Ullmann
 
 
-    using LightGraphs, DataFrames
-
-
-    export ullmann_bijections
-
-
-    """
-        Make the module more flexible for updating to other graph types.
-    """
-    abstract type Graph <: SimpleGraph end
+    using PorousMaterials, LightGraphs, DataFrames, LightGraphs.LinAlg
 
 
     """
@@ -37,8 +28,8 @@ module Ullmann
         M will be a matrix indicating if the jth node of graph has
         sufficient degree to correspond with the ith node of subgraph.
     """
-    function correspondence_matrix(subgraph::Graph, 𝒫s::DataFrame,
-                                   graph::Graph, 𝒫g::DataFrame)::Array{Bool, 2}
+    function correspondence_matrix(subgraph::SimpleGraph, 𝒫s::DataFrame,
+                                   graph::SimpleGraph, 𝒫g::DataFrame)::Array{Bool, 2}
         M = zeros(Bool, nv(subgraph), nv(graph))
         for i ∈ 1:nv(subgraph)
             for j ∈ 1:nv(graph)
@@ -52,7 +43,7 @@ module Ullmann
     """
         Generates a new matrix from M0 by supposing x corresponds to y
     """
-    function suppose_correspondence(M0::Array{Bool, 2}},
+    function suppose_correspondence(M0::Array{Bool, 2},
                                     subgraph_node::Int,
                                     graph_node::Int)::Array{Bool, 2}
         M = M0 # deepcopy()?
@@ -100,7 +91,7 @@ module Ullmann
     """
         Determines if M is a 1-to-1 mapping solution
     """
-    function is_solution(M::Array{Bool, 2}})::Bool
+    function is_solution(M::Array{Bool, 2})::Bool
 
         for i ∈ 1:size(M, 1)
             if sum(candidate_list(M, i, :subgraph)) ≠ 1
@@ -197,17 +188,17 @@ module Ullmann
     """
         Returns all correspondence matrix bijections of subgraph to a subset of graph.
     """
-    function ullmann_bijections(subgraph::Graph,
+    function ullmann_bijections(subgraph::SimpleGraph,
                                 subgraph_species::Array{Symbol},
-                                graph::Graph,
+                                graph::SimpleGraph,
                                 graph_species::Array{Symbol})::Array{Array{Bool,2}}
         # Build metadata dictionaries
         𝒫s = DataFrame(index = 1:nv(subgraph), species = subgraph_species, degree = degree(subgraph))
         𝒫g = DataFrame(index = 1:nv(graph), species = graph_species, degree = degree(graph))
         # Get initial candidate correspondence matrix and adjacency matrices
         M° = correspondence_matrix(subgraph, 𝒫s, graph, 𝒫g)
-        𝒜s = LinAlg.adjacency_matrix(subgraph)
-        𝒜g = LinAlg.adjacency_matrix(graph)
+        𝒜s = Array{Bool}(LinAlg.adjacency_matrix(subgraph))
+        𝒜g = Array{Bool}(LinAlg.adjacency_matrix(graph))
 ## TODO node degree sorting descending on S
         # Perform depth-first search
         ℳ = ullmann_DFS(M°, 𝒜s, 𝒜g)
@@ -237,7 +228,10 @@ module Ullmann
     """
     function subgraph_isomorphisms(search_moiety::Crystal,
     							   parent_structure::Crystal)::Array{Array{Bool, 2}}
-    	return ullmann_bijections(search_moiety.bonds, search_moiety.species,
-    							  parent_structure.bonds, parent_structure.species)
+    	return ullmann_bijections(search_moiety.bonds, search_moiety.atoms.species,
+    							  parent_structure.bonds, parent_structure.atoms.species)
     end
+
+export subgraph_isomorphisms
+
 end
