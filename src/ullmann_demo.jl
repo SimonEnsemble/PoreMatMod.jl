@@ -9,29 +9,33 @@
 """
 ## #
 
-using PorousMaterials
+using PorousMaterials, Logging
 include("ullmann.jl")
 include("moiety.jl")
+global_logger(Logging.SimpleLogger(stdout, Logging.Debug))
 
 
 function ullmann_demo()
-    # Build parent Crystal
+	@debug "Loading crystal and building bonds graph."
     Co2m_dobdc = Crystal("KOSKIO_clean.cif")
     infer_bonds!(Co2m_dobdc, true)
+	@debug "Crystal: $(Co2m_dobdc)"
 
-    # Build search Moiety
+	@debug "Loading search moiety."
     m_dobdc = moiety("data/fragments/m-dobdc")
+	@debug "Moiety: $(m_dobdc)"
 
-    # Search for search Moiety in parent Crystal
+    @debug "Finding subgraph isomorphisms."
     matches = Ullmann.subgraph_isomorphisms(m_dobdc, Co2m_dobdc)
+	@debug "Results: $(matches)"
 
     # Replace with new Moiety
     f2_m_dobdc = moiety("data/fragments/F2-m-dobdc")
 ## TODO implement subgraph_find_replace
 end
 
-ullmann_demo()
-
-"""if (abspath(PROGRAM_FILE) == @__FILE__) || ((@isdefined Atom) && typeof(Atom) == Module)
-    ullmann_demo()
-end"""
+if(joinpath(pwd(),PROGRAM_FILE)==@__FILE__)||((@isdefined Atom)&&typeof(Atom)==Module)
+	@debug "MAIN START"
+	ullmann_demo()
+	@debug "MAIN END"
+end
