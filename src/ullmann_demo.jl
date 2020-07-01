@@ -22,7 +22,7 @@ function ullmann_demo()
 	@debug "Crystal: $(Co2m_dobdc)"
 
 	@debug "Loading search moiety."
-    m_dobdc = moiety("data/fragments/m-dobdc")
+    m_dobdc = moiety("data/moieties/m-dobdc")
 	@debug "Moiety: $(m_dobdc)"
 
     @debug "Finding subgraph isomorphisms."
@@ -30,7 +30,7 @@ function ullmann_demo()
 	@debug "Results: $(matches)"
 
     # Replace with new Moiety
-    f2_m_dobdc = moiety("data/fragments/F2-m-dobdc")
+    f2_m_dobdc = moiety("data/moieties/F2-m-dobdc")
 ## TODO implement subgraph_find_replace
 end
 
