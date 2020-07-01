@@ -59,6 +59,7 @@ module Ullmann
         Argument `graph` must be a symbol, either :graph or :subgraph,
         to indicate to which graph the node belongs.
     """
+    function candidate_list(M::Array{Bool,2},node_index::Int,graph::Symbol)::Array{Int}
         @debug "Getting candidate list for node $(node_index) of $(graph)"
         if graph == :subgraph
             logicals = M[node_index, :]
@@ -128,7 +129,7 @@ module Ullmann
         for y ∈ size(M, 1)
             for x ∈ candidate_list(M, y, :graph)
                 for z ∈ neighbors(y, As)
-                    if candidate_list(M, z, :subgraph)
+                    if length(candidate_list(M, z, :subgraph)) ≠ 0
                         M[y, x] = 0
                         @debug "M altered at [$(y), $(x)]."
                         M_altered = true
@@ -152,11 +153,11 @@ module Ullmann
                     for j ∈ 1:size(M, 2)
                         if M[i, j]
                             M′ = suppose_correspondence(M, i, j)
-                            refine_M!(M′)
+                            refine_M!(AS, AG, M′)
                             if is_solution(M′)
                                 append!(ℳ, M′)
                             elseif validate_M(M′)
-                                append!(ℳ, ullmann_DFS(M′))
+                                append!(ℳ, ullmann_DFS(M′, AS, AG))
                             else
                                 return ℳ
                             end

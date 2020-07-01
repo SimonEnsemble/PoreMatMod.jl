@@ -18,6 +18,7 @@ global_logger(Logging.ConsoleLogger(stdout, Logging.Debug))
 function ullmann_demo()
 	@debug "Loading crystal and building bonds graph."
     Co2m_dobdc = Crystal("KOSKIO_clean.cif")
+	strip_numbers_from_atom_labels!(Co2m_dobdc)
     infer_bonds!(Co2m_dobdc, true)
 	@debug "Crystal: $(Co2m_dobdc)"
 
