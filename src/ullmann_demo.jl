@@ -12,7 +12,7 @@
 using PorousMaterials, Logging
 include("ullmann.jl")
 include("moiety.jl")
-global_logger(Logging.SimpleLogger(stdout, Logging.Debug))
+global_logger(Logging.ConsoleLogger(stdout, Logging.Debug))
 
 
 function ullmann_demo()
@@ -35,6 +35,7 @@ function ullmann_demo()
 end
 
 if(joinpath(pwd(),PROGRAM_FILE)==@__FILE__)||((@isdefined Atom)&&typeof(Atom)==Module)
+	println()
 	@debug "MAIN START"
 	ullmann_demo()
 	@debug "MAIN END"

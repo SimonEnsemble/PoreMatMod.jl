@@ -17,7 +17,7 @@
 module Ullmann
 
     using PorousMaterials, LightGraphs, DataFrames, LightGraphs.LinAlg, Logging
-    global_logger(Logging.SimpleLogger(stdout, Logging.Debug))
+    global_logger(Logging.ConsoleLogger(stdout, Logging.Debug))
 
     @doc raw"""
         Generates the initial matrix based on node degrees.
@@ -30,6 +30,7 @@ module Ullmann
         M = zeros(Bool, nv(subgraph), nv(graph))
         for i ∈ 1:nv(subgraph)
             for j ∈ 1:nv(graph)
+                @debug "($i,$j) $(𝒫g.degree[j]) ≥ $(𝒫s.degree[i]) && $(𝒫g.species[j]) == $(𝒫s.species[i]) : $(𝒫g.degree[j] ≥ 𝒫s.degree[i] && 𝒫g.species[j] == 𝒫s.species[i]))"
                 M[i, j] = 𝒫g.degree[j] ≥ 𝒫s.degree[i] && 𝒫g.species[j] == 𝒫s.species[i]
             end
         end
@@ -58,7 +59,6 @@ module Ullmann
         Argument `graph` must be a symbol, either :graph or :subgraph,
         to indicate to which graph the node belongs.
     """
-    function candidate_list(M::Array{Bool,2},node_index::Int,graph::Symbol)::Array{Bool}
         @debug "Getting candidate list for node $(node_index) of $(graph)"
         if graph == :subgraph
             logicals = M[node_index, :]
@@ -69,7 +69,9 @@ module Ullmann
         end
         @debug "Logicals: $(logicals)"
         for (index, logical) ∈ enumerate(logicals)
-            @debug "($(index), $(logical))"
+            if logical
+                @debug "$index, $logical"
+            end
         end
         return [index for (index, logical) ∈ enumerate(logicals) if logical]
     end
