@@ -30,7 +30,7 @@ module Ullmann
         M = zeros(Bool, nv(subgraph), nv(graph))
         for i ∈ 1:nv(subgraph)
             for j ∈ 1:nv(graph)
-                @debug "($i,$j) $(𝒫g.degree[j]) ≥ $(𝒫s.degree[i]) && $(𝒫g.species[j]) == $(𝒫s.species[i]) : $(𝒫g.degree[j] ≥ 𝒫s.degree[i] && 𝒫g.species[j] == 𝒫s.species[i]))" _group=:correspondence_matrix
+                @debug "($i,$j) $(𝒫g.degree[j]) ≥ $(𝒫s.degree[i]) && $(𝒫g.species[j]) == $(𝒫s.species[i]) : $(𝒫g.degree[j] ≥ 𝒫s.degree[i] && 𝒫g.species[j] == 𝒫s.species[i]))"
                 M[i, j] = 𝒫g.degree[j] ≥ 𝒫s.degree[i] && 𝒫g.species[j] == 𝒫s.species[i]
             end
         end
