@@ -2,10 +2,10 @@
 # Adrian Henle, Cory Simon 2020
 
 using PorousMaterials
+PATH_TO_MOIETIES = joinpath(pwd(), "data/moieties")
 
 ## TODO
 """
-    # add path_to_moieties to PorousMaterials
     # moiety() tests:
         # generate vtk
         # generate manual graph representation
@@ -20,7 +20,7 @@ using PorousMaterials
 function moiety(name::String)
 
     box = unit_cube()
-    fx = Frac(read_xyz("$(name).xyz"), box)
+    fx = Frac(read_xyz(joinpath(PATH_TO_MOIETIES, "$(name).xyz")), box)
     moiety = Crystal(name, box, fx, Charges{Frac}(0))
     infer_bonds!(moiety, false)
 
