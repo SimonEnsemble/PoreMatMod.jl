@@ -7,17 +7,17 @@
 ## TODO
 """
     # sort M° on node degree in ullmann_bijections()
-    # validate on sufficient unique candidates?
-    # other accelerations/boosts?
     # ullmann tests
     # API → MOFun.jl
+    # validate on sufficient unique candidates?
+    # other accelerations/boosts?
 """
 ## #
 
 module Ullmann
 
-    using PorousMaterials, LightGraphs, DataFrames, LightGraphs.LinAlg, Logging
-    global_logger(Logging.ConsoleLogger(stdout, Logging.Debug))
+    using PorousMaterials, LightGraphs, DataFrames, LightGraphs.LinAlg
+
 
     @doc raw"""
         Generates the initial matrix based on node degrees.
@@ -69,11 +69,6 @@ module Ullmann
             @error "Must provide either :graph or :subgraph."
         end
         @debug "Logicals: $(logicals)"
-        for (index, logical) ∈ enumerate(logicals)
-            if logical
-                @debug "$index, $logical"
-            end
-        end
         return [index for (index, logical) ∈ enumerate(logicals) if logical]
     end
 
@@ -144,13 +139,13 @@ module Ullmann
     @doc raw"""
         Performs depth-first search for Ullmann's algorithm.
     """
-    function ullmann_DFS(M::Array{Bool, 2}, AS::Array{Bool, 2},
-                         AG::Array{Bool, 2})::Union{Array{Array{Bool, 2}}, Nothing}
+    function ullmann_DFS(M::Array{Bool, 2}, AS::Array{Bool, 2}, AG::Array{Bool, 2},
+                       i°::Int=1, j°::Int=1)::Union{Array{Array{Bool, 2}}, Nothing}
         ℳ = []
         if validate_M(M)
-            for i ∈ 1:size(M, 1)
+            for i ∈ i°:size(M, 1)
                 if length(candidate_list(M, i, :graph)) > 1
-                    for j ∈ 1:size(M, 2)
+                    for j ∈ j°:size(M, 2)
                         if M[i, j]
                             M′ = suppose_correspondence(M, i, j)
                             refine_M!(AS, AG, M′)
@@ -191,17 +186,27 @@ module Ullmann
         return ℳ
     end
 
-    ## PMUllmann API
+
+## PMUllmann API
 
 
+    @doc raw"""
+        Returns all bijections that map the bonding network from search_moiety onto
+        parent_structure via Ullmann's algorithm
+    """
+    function subgraph_isomorphisms(search_moiety::Crystal,
+                                   parent_structure::Crystal)::Union{Array{Array{Bool, 2}}, Nothing}
+        @debug "Running Ullmann's algorithm to obtain bijections of $(search_moiety.name) into $(parent_structure.name)"
+        return ullmann_bijections(search_moiety.bonds, search_moiety.atoms.species,
+                                  parent_structure.bonds, parent_structure.atoms.species)
+    end
 
 
     @doc raw"""
     	Returns a Crystal wherein all instances of search_moiety from parent_structure
     	are replaced by replace_moiety.  Uses Ullmann's algorithm for matching.
     """
-    function subgraph_find_replace(search_moiety::Crystal,
-    							   replace_moiety::Crystal,
+    function subgraph_find_replace(search_moiety::Crystal, replace_moiety::Crystal,
     							   parent_structure::Crystal)::Array{Array{Bool, 2}}
 ## TODO implement
     	matches = subgraph_isomorphisms(search_moiety, parent_structure)
@@ -209,17 +214,6 @@ module Ullmann
     end
 
 
-    @doc raw"""
-    	Returns all bijections that map the bonding network from search_moiety onto
-    	parent_structure via Ullmann's algorithm
-    """
-    function subgraph_isomorphisms(search_moiety::Crystal,
-    							   parent_structure::Crystal)::Union{Array{Array{Bool, 2}}, Nothing}
-        @debug "Running Ullmann's algorithm to obtain bijections of $(search_moiety.name) into $(parent_structure.name)"
-        return ullmann_bijections(search_moiety.bonds, search_moiety.atoms.species,
-    							  parent_structure.bonds, parent_structure.atoms.species)
-    end
-
-export subgraph_isomorphisms
+    export subgraph_isomorphisms, subgraph_find_replace
 
 end
