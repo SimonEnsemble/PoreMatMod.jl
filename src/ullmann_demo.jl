@@ -3,11 +3,6 @@
 # Adrian Henle, 2020
 # Demonstrates the function of MOFun's Ullmann bijection finder
 
-## TODO
-"""
-    # Implement find_replace()
-"""
-## #
 
 using PorousMaterials, Logging
 include("ullmann.jl")
@@ -34,6 +29,7 @@ function ullmann_demo()
     f2_m_dobdc = moiety("data/moieties/F2-m-dobdc")
 ## TODO implement subgraph_find_replace
 end
+
 
 if(joinpath(pwd(),PROGRAM_FILE)==@__FILE__)||((@isdefined Atom)&&typeof(Atom)==Module)
 	println()
