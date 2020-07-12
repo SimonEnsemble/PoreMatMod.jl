@@ -20,6 +20,8 @@ module Ullmann
 
 
     @doc raw"""
+    function correspondence_matrix(subgraph::SimpleGraph, 𝒫s::DataFrame,
+                                   graph::SimpleGraph, 𝒫g::DataFrame)::Array{Bool, 2}
         Generates the initial matrix based on node degrees.
         M will be a matrix indicating if the jth node of graph has
         sufficient degree to correspond with the ith node of subgraph.
@@ -40,6 +42,9 @@ module Ullmann
 
 
     @doc raw"""
+        function suppose_correspondence(M0::Array{Bool, 2},
+                                    subgraph_node::Int,
+                                    graph_node::Int)::Array{Bool, 2}
         Generates a new matrix from M0 by supposing x corresponds to y
     """
     function suppose_correspondence(M0::Array{Bool, 2},
@@ -55,6 +60,7 @@ module Ullmann
 
 
     @doc raw"""
+        function candidate_list(M::Array{Bool,2},node_index::Int,graph::Symbol)::Array{Int}
         Gives the list of candidates for mapping the node according to M
         Argument `graph` must be a symbol, either :graph or :subgraph,
         to indicate to which graph the node belongs.
@@ -74,6 +80,7 @@ module Ullmann
 
 
     @doc raw"""
+        function validate_M(M::Array{Bool, 2})::Bool
         Determines if M has no empty candidate lists for subgraph nodes.
     """
     function validate_M(M::Array{Bool, 2})::Bool
@@ -88,6 +95,7 @@ module Ullmann
 
 
     @doc raw"""
+        function is_solution(M::Array{Bool, 2})::Bool
         Determines if M is a 1-to-1 mapping solution
     """
     function is_solution(M::Array{Bool, 2})::Bool
@@ -107,6 +115,7 @@ module Ullmann
 
 
     @doc raw"""
+        function neighbors(w::Int, A::Array{Bool, 2})::Array{Int}
         Returns list of neighbors of input node from its graph's adjacency matrix.
     """
     function neighbors(w::Int, A::Array{Bool, 2})::Array{Int}
@@ -116,6 +125,7 @@ module Ullmann
 
 
     @doc raw"""
+        function refine_M!(As::Array{Bool, 2}, Ag::Array{Bool, 2}, M::Array{Bool, 2})
         Performs Ullman algorithm refinement until M is stable
     """
     function refine_M!(As::Array{Bool, 2}, Ag::Array{Bool, 2}, M::Array{Bool, 2})
@@ -137,6 +147,8 @@ module Ullmann
 
 
     @doc raw"""
+        function ullmann_DFS(M::Array{Bool, 2}, AS::Array{Bool, 2}, AG::Array{Bool, 2},
+                       i°::Int=1, j°::Int=1)::Union{Array{Array{Bool, 2}}, Nothing}
         Performs depth-first search for Ullmann's algorithm.
     """
     function ullmann_DFS(M::Array{Bool, 2}, AS::Array{Bool, 2}, AG::Array{Bool, 2},
@@ -166,6 +178,10 @@ module Ullmann
 
 
     @doc raw"""
+        function ullmann_bijections(subgraph::SimpleGraph,
+                                subgraph_species::Array{Symbol},
+                                graph::SimpleGraph,
+                                graph_species::Array{Symbol})::Union{Array{Array{Bool,2}}, Nothing}
         Returns all correspondence matrix bijections of subgraph to a subset of graph.
     """
     function ullmann_bijections(subgraph::SimpleGraph,
@@ -191,6 +207,8 @@ module Ullmann
 
 
     @doc raw"""
+        function subgraph_isomorphisms(search_moiety::Crystal,
+                                   parent_structure::Crystal)::Union{Array{Array{Bool, 2}}, Nothing}
         Returns all bijections that map the bonding network from search_moiety onto
         parent_structure via Ullmann's algorithm
     """
@@ -203,6 +221,8 @@ module Ullmann
 
 
     @doc raw"""
+        function subgraph_find_replace(search_moiety::Crystal, replace_moiety::Crystal,
+    							   parent_structure::Crystal)::Array{Array{Bool, 2}}
     	Returns a Crystal wherein all instances of search_moiety from parent_structure
     	are replaced by replace_moiety.  Uses Ullmann's algorithm for matching.
     """
