@@ -102,14 +102,17 @@ module Ullmann
         @debug "Testing for solution: $(M)"
         for i ∈ 1:size(M, 1)
             if length(candidate_list(M, i, :subgraph)) ≠ 1
+                @debug "Not a solution."
                 return false
             end
         end
         for i ∈ 1:size(M, 2)
             if length(candidate_list(M, i, :graph)) > 1
+                @debug "Not a solution."
                 return false
             end
         end
+        @debug "Found a solution: $(M)"
         return true
     end
 
@@ -134,7 +137,7 @@ module Ullmann
         for y ∈ size(M, 1)
             for x ∈ candidate_list(M, y, :graph)
                 for z ∈ neighbors(y, As)
-                    if length(candidate_list(M, z, :subgraph)) ≠ 0
+                    if length(intersect(candidate_list(M, z, :subgraph), neighbors(x, Ag))) == 0
                         M[y, x] = 0
                         @debug "M altered at [$(y), $(x)]."
                         M_altered = true
@@ -152,8 +155,8 @@ module Ullmann
         Performs depth-first search for Ullmann's algorithm.
     """
     function ullmann_DFS(M::Array{Bool, 2}, AS::Array{Bool, 2}, AG::Array{Bool, 2},
-                       i°::Int=1, j°::Int=1)::Union{Array{Array{Bool, 2}}, Nothing}
-        ℳ = []
+                       i°::Int=1, j°::Int=1)::Dict{Int, Array{Bool, 2}}
+        ℳ = Dict{Int, Array{Bool, 2}}()
         if validate_M(M)
             for i ∈ i°:size(M, 1)
                 if length(candidate_list(M, i, :graph)) > 1
@@ -162,18 +165,22 @@ module Ullmann
                             M′ = suppose_correspondence(M, i, j)
                             refine_M!(AS, AG, M′)
                             if is_solution(M′)
-                                append!(ℳ, M′)
+                                @debug "Appending solution to ℳ: $(M′)"
+                                ℳ[length(ℳ)+1] = copy(M′)
+                                @debug "Solutions:" ℳ
                             elseif validate_M(M′)
-                                append!(ℳ, ullmann_DFS(M′, AS, AG))
+                                @debug "Continuing search..."
+                                ℳ[length(ℳ)+1] = ullmann_DFS(M′, AS, AG)
                             else
+                                @debug "Reached leaf node."
                                 return ℳ
                             end
                         end
                     end
                 end
             end
-            return ℳ
         end
+        return ℳ
     end
 
 
@@ -187,7 +194,7 @@ module Ullmann
     function ullmann_bijections(subgraph::SimpleGraph,
                                 subgraph_species::Array{Symbol},
                                 graph::SimpleGraph,
-                                graph_species::Array{Symbol})::Union{Array{Array{Bool,2}}, Nothing}
+                                graph_species::Array{Symbol})::Dict{Int, Array{Bool, 2}}
         @debug "Building metadata dictionaries."
         𝒫s = DataFrame(index = 1:nv(subgraph), species = subgraph_species, degree = degree(subgraph))
         𝒫g = DataFrame(index = 1:nv(graph), species = graph_species, degree = degree(graph))
@@ -208,12 +215,12 @@ module Ullmann
 
     @doc raw"""
         function subgraph_isomorphisms(search_moiety::Crystal,
-                                   parent_structure::Crystal)::Union{Array{Array{Bool, 2}}, Nothing}
-        Returns all bijections that map the bonding network from search_moiety onto
-        parent_structure via Ullmann's algorithm
+            parent_structure::Crystal)::Union{Array{Array{Bool, 2}}, Nothing}
+        Returns all bijections that map the bonding network from search_moiety
+        onto parent_structure via Ullmann's algorithm.
     """
     function subgraph_isomorphisms(search_moiety::Crystal,
-                                   parent_structure::Crystal)::Union{Array{Array{Bool, 2}}, Nothing}
+                                   parent_structure::Crystal)::Dict{Int, Array{Bool, 2}}
         @debug "Running Ullmann's algorithm to obtain bijections of $(search_moiety.name) into $(parent_structure.name)"
         return ullmann_bijections(search_moiety.bonds, search_moiety.atoms.species,
                                   parent_structure.bonds, parent_structure.atoms.species)
