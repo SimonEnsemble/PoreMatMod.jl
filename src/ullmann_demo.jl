@@ -12,21 +12,20 @@ global_logger(Logging.ConsoleLogger(stdout, Logging.Debug))
 
 function ullmann_demo()
 	@debug "Loading crystal and building bonds graph."
-    Co2m_dobdc = Crystal("KOSKIO_clean.cif")
-	strip_numbers_from_atom_labels!(Co2m_dobdc)
-    infer_bonds!(Co2m_dobdc, true)
-	@debug "Crystal: $(Co2m_dobdc)"
+    xtal = moiety("DCM")
+	strip_numbers_from_atom_labels!(xtal)
+    #infer_bonds!(xtal, true)
+	@debug "Crystal: $(xtal)"
 
 	@debug "Loading search moiety."
-    m_dobdc = moiety("data/moieties/m-dobdc")
-	@debug "Moiety: $(m_dobdc)"
+    moty = moiety("methylene")
+	@debug "Moiety: $(moty)"
 
     @debug "Finding subgraph isomorphisms."
-    matches = Ullmann.subgraph_isomorphisms(m_dobdc, Co2m_dobdc)
+    matches = Ullmann.subgraph_isomorphisms(moty, xtal)
 	@debug "Results: $(matches)"
 
     # Replace with new Moiety
-    f2_m_dobdc = moiety("data/moieties/F2-m-dobdc")
 ## TODO implement subgraph_find_replace
 end
 
