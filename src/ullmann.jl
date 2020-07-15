@@ -55,6 +55,7 @@ module Ullmann
         M[subgraph_node, :] .= false
         M[:, graph_node] .= false
         M[subgraph_node, graph_node] = true
+
         return M
     end
 
@@ -78,6 +79,7 @@ module Ullmann
         return [index for (index, logical) ∈ enumerate(logicals) if logical]
     end
 
+## TODO break candidate_list into two functions (one for rapid return in validate_M)
 
     @doc raw"""
         function validate_M(M::Array{Bool, 2})::Bool
@@ -126,6 +128,7 @@ module Ullmann
         return [v for v ∈ 1:size(A, 1) if A[v, w]]
     end
 
+## TODO edit for consistency: nodes as x, y
 
     @doc raw"""
         function refine_M!(As::Array{Bool, 2}, Ag::Array{Bool, 2}, M::Array{Bool, 2})
@@ -134,8 +137,8 @@ module Ullmann
     function refine_M!(As::Array{Bool, 2}, Ag::Array{Bool, 2}, M::Array{Bool, 2})
         @debug "Refining M: $(M)"
         M_altered = false
-        for y ∈ size(M, 1)
-            for x ∈ candidate_list(M, y, :graph)
+        for y ∈ size(M, 1) # Nodes in subgraph
+            for x ∈ candidate_list(M, y, :subgraph)
                 for z ∈ neighbors(y, As)
                     if length(intersect(candidate_list(M, z, :subgraph), neighbors(x, Ag))) == 0
                         M[y, x] = 0
@@ -158,9 +161,11 @@ module Ullmann
                        i°::Int=1, j°::Int=1)::Dict{Int, Array{Bool, 2}}
         ℳ = Dict{Int, Array{Bool, 2}}()
         if validate_M(M)
-            for i ∈ i°:size(M, 1)
-                if length(candidate_list(M, i, :graph)) > 1
-                    for j ∈ j°:size(M, 2)
+            for i ∈ i°:size(M, 1) # Looping over subgraph nodes
+                @debug "i: $i"
+                if length(candidate_list(M, i, :graph)) > 1 # Only deal with columns on this row if it is not already solved
+                    for j ∈ j°:size(M, 2) # Looping over graph nodes
+                        @debug "j: $j"
                         if M[i, j]
                             M′ = suppose_correspondence(M, i, j)
                             refine_M!(AS, AG, M′)
@@ -170,10 +175,9 @@ module Ullmann
                                 @debug "Solutions:" ℳ
                             elseif validate_M(M′)
                                 @debug "Continuing search..."
-                                ℳ[length(ℳ)+1] = ullmann_DFS(M′, AS, AG)
+                                ℳ[length(ℳ)+1] = ullmann_DFS(M′, AS, AG, i, j)
                             else
                                 @debug "Reached leaf node."
-                                return ℳ
                             end
                         end
                     end
