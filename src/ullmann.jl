@@ -1,19 +1,9 @@
-# PMUllmann.jl
+# ullmann.jl
 # Adrian Henle, 2020
 
-"""
+@doc raw"""
     Ullmann algorithm code for PorousMaterials.jl
 """
-## TODO
-"""
-    # sort M° on node degree in ullmann_bijections()
-    # ullmann tests
-    # API → MOFun.jl
-    # validate on sufficient unique candidates?
-    # other accelerations/boosts?
-"""
-## #
-
 module Ullmann
 
     using PorousMaterials, LightGraphs, DataFrames, LightGraphs.LinAlg
@@ -32,7 +22,7 @@ module Ullmann
         M = zeros(Bool, nv(subgraph), nv(graph))
         for i ∈ 1:nv(subgraph)
             for j ∈ 1:nv(graph)
-                @debug "($i,$j) $(𝒫g.degree[j]) ≥ $(𝒫s.degree[i]) && $(𝒫g.species[j]) == $(𝒫s.species[i]) : $(𝒫g.degree[j] ≥ 𝒫s.degree[i] && 𝒫g.species[j] == 𝒫s.species[i]))"
+@debug "($i,$j) $(𝒫g.degree[j]) ≥ $(𝒫s.degree[i]) && $(𝒫g.species[j]) == $(𝒫s.species[i]) : $(𝒫g.degree[j] ≥ 𝒫s.degree[i] && 𝒫g.species[j] == 𝒫s.species[i]))"
                 M[i, j] = 𝒫g.degree[j] ≥ 𝒫s.degree[i] && 𝒫g.species[j] == 𝒫s.species[i]
             end
         end
@@ -79,7 +69,6 @@ module Ullmann
         return [index for (index, logical) ∈ enumerate(logicals) if logical]
     end
 
-## TODO break candidate_list into two functions (one for rapid return in validate_M)
 
     @doc raw"""
         function validate_M(M::Array{Bool, 2})::Bool
@@ -109,7 +98,7 @@ module Ullmann
             end
         end
         for i ∈ 1:size(M, 2)
-            if length(candidate_list(M, i, :graph)) > 1
+            if length(candidate_list(M, i, :graph)) > 1 # reachable?
                 @debug "Not a solution."
                 return false
             end
@@ -128,7 +117,6 @@ module Ullmann
         return [v for v ∈ 1:size(A, 1) if A[v, w]]
     end
 
-## TODO edit for consistency: nodes as x, y
 
     @doc raw"""
         function refine_M!(As::Array{Bool, 2}, Ag::Array{Bool, 2}, M::Array{Bool, 2})
@@ -206,7 +194,6 @@ module Ullmann
         M° = correspondence_matrix(subgraph, 𝒫s, graph, 𝒫g)
         𝒜s = Array{Bool}(LinAlg.adjacency_matrix(subgraph))
         𝒜g = Array{Bool}(LinAlg.adjacency_matrix(graph))
-## TODO node degree sorting descending on S
         # Perform depth-first search
         ℳ = ullmann_DFS(M°, 𝒜s, 𝒜g)
         # Return solutions
@@ -214,7 +201,7 @@ module Ullmann
     end
 
 
-## PMUllmann API
+## API
 
 
     @doc raw"""
@@ -239,7 +226,6 @@ module Ullmann
     """
     function subgraph_find_replace(search_moiety::Crystal, replace_moiety::Crystal,
     							   parent_structure::Crystal)::Array{Array{Bool, 2}}
-## TODO implement
     	matches = subgraph_isomorphisms(search_moiety, parent_structure)
     	return nothing
     end
