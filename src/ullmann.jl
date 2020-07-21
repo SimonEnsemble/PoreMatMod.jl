@@ -147,6 +147,7 @@ module Ullmann
             for i ∈ i°:size(M, 1) # Looping over subgraph nodes (starting from lowest uncertain index)
                 @debug "i: $i"
                 if length(candidate_list(M, i)) > 1 # Only work on this subgraph node if it has multiple possible correspondences
+## TODO refactor (new) candidate_list for rapid return here
                     for j ∈ 1:size(M, 2) # Looping over graph nodes
                         @debug "j: $j"
                         if M[i, j] # Skip over non-possible correspondences
@@ -162,8 +163,10 @@ module Ullmann
                                 # merge() can overwrite solutions!
 ## TODO refactor to Array{Array{Bool}}
                                 dfs_rec_lvl -= 1
+## TODO don't need to track explicitly (depth = i)
                             else
                                 # Reached a state where M′ is not a solution and does not lead to one.
+                                # Continue checking other values of j
                                 @debug "Reached dead end."
                             end
                         end
