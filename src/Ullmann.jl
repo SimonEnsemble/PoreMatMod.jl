@@ -105,7 +105,9 @@ end
 
 # soln:
 #    soln[α ∈ subgraph] = β ∈ graph where α corresponds to β
-function depth_first_search(α::Int, subgraph::SimpleGraph, graph::SimpleGraph, M::Array{Bool, 2}, soln::Array{Int, 1}, β_mapped::Array{Bool, 1}, solns::Array{Array{Int, 1}, 1})
+function depth_first_search(α::Int, subgraph::SimpleGraph, graph::SimpleGraph, 
+                            M::Array{Bool, 2}, soln::Array{Int, 1}, 
+                            β_mapped::Array{Bool, 1}, solns::Array{Array{Int, 1}, 1})
     # if reached here from previous solution, exit.
     if α > size(M, 1)
         return nothing
