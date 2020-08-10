@@ -5,12 +5,15 @@ using PorousMaterials
 using LightGraphs
 using LinearAlgebra
 using Printf
+using DataFrames
+using Ullmann
 ## other necessary files containing function definitions and tests
 include("ring_constructor.jl")
 include("alignment_operations.jl")
 
 ## file paths for fragment files
 fragment_location = joinpath(pwd(), "fragments")
+PATH_TO_MOIETIES = joinpath(pwd(), "data/moieties")
 
 ## function that will make it easier to name files
 remove_extension(crystal::Crystal) = split(crystal.name, ".")[1]
@@ -142,7 +145,50 @@ function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species
 end
 
 
+@doc raw"""
+Generates a moiety (Crystal) from an .xyz file found in path_to_moieties
+"""
+function moiety(name::String)
+	# generate Crystal from moiety XYZ coords
+    box = unit_cube()
+    fx = Frac(read_xyz(joinpath(PATH_TO_MOIETIES, "$(name).xyz")), box)
+	moiety = Crystal(name, box, fx, Charges{Frac}(0))
+	infer_bonds!(moiety, false)
 
+	# sort by node degree
+	df = DataFrame([[1:nv(moiety.bonds)...], degree(moiety.bonds)], [:index, :degree])
+	sort!(df, :degree, rev=true)
+	# handle find-replace input tagging
+	species = moiety.atoms.species[df.index]
+	R_group = []
+	for (i, x) in enumerate(species)
+		if x == :H_
+			species[i] = :H
+			push!(R_group, i)
+		elseif x == :C_
+			species[i] = :C
+			push!(R_group, i)
+		end
+	end
+	# rebuild Atoms
+	atoms = Atoms(species, moiety.atoms.coords[df.index])
+
+	# rebuild moiety with ordered atoms
+	moiety = Crystal(moiety.name, moiety.box, atoms, moiety.charges)
+    infer_bonds!(moiety, false)
+    return moiety
+end
+
+
+@doc raw"""
+Wraps find_subgraph_isomorphisms for convenient substructure searching
+"""
+function substructure_search(find_moiety::Crystal, parent_structure::Crystal)
+	return Ullmann.find_subgraph_isomorphisms(find_moiety.bonds,
+											  find_moiety.atoms.species,
+											  parent_structure.bonds,
+											  parent_structure.atoms.species)
+end
 
 
 # TODO:
@@ -154,7 +200,7 @@ end
 export
 	# MOFfun.jl
 	remove_extension, read_fragment_from_xyz, functionalize_mof,
-	choose_side,
+	choose_side, moiety, substructure_search
 
 	# ring_constructor.jl
 	empty_ring, is_aromatic, find_aromatic_cycles,
