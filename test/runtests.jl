@@ -13,7 +13,6 @@ end
 
 testfiles = [#"alignment_operations.jl",
              #"ring_constructor",
-             #"moiety.jl", # TODO ?
              "Ullmann.jl",
              "MOFun.jl"
              ]
