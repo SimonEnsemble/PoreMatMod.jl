@@ -146,13 +146,15 @@ end
 
 
 @doc raw"""
-Generates a moiety (Crystal) from an .xyz file found in path_to_moieties
+Generates a moiety (Crystal) from an .xyz file found in path_to_moieties and
+an alignment mask for replacement operations.
 """
 function moiety(name::String)
 	# generate Crystal from moiety XYZ coords
     box = unit_cube()
-    fx = Frac(read_xyz(joinpath(PATH_TO_MOIETIES, "$(name).xyz")), box)
-	moiety = Crystal(name, box, fx, Charges{Frac}(0))
+    fx = Frac(read_xyz(joinpath(pwd(), "data/moieties/$name.xyz")), box)
+    charges = Charges{Frac}(0)
+	moiety = Crystal(name, box, fx, charges)
 	infer_bonds!(moiety, false)
 
 	# sort by node degree
@@ -168,15 +170,28 @@ function moiety(name::String)
 		elseif x == :C_
 			species[i] = :C
 			push!(R_group, i)
+		elseif x == :O_
+			species[i] = :O
+			push!(R_group, i)
+		elseif x == :N_
+			species[i] = :N
+			push!(R_group, i)
 		end
 	end
 	# rebuild Atoms
 	atoms = Atoms(species, moiety.atoms.coords[df.index])
 
-	# rebuild moiety with ordered atoms
-	moiety = Crystal(moiety.name, moiety.box, atoms, moiety.charges)
-    infer_bonds!(moiety, false)
-    return moiety
+	# build moiety with ordered atoms
+	search_moiety = Crystal(name, box, atoms, charges)
+    infer_bonds!(search_moiety, false)
+
+	# subtract R-group from search moiety to generate alignment mask
+    idx = [x for x ∈ 1:nv(search_moiety.bonds) if !in(x, R_group)]
+	atoms = Atoms(species[idx], search_moiety.atoms.coords[idx])
+    alignment_mask = Crystal(name, box, atoms, charges)
+	infer_bonds!(alignment_mask, false)
+
+    return search_moiety, alignment_mask
 end
 
 
