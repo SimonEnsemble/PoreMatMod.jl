@@ -15,12 +15,20 @@ function compatibility_matrix(subgraph::SimpleGraph, subgraph_species::Array{Sym
     @debug "Finding M₀..."
     # allocate M. rows correspond to subgraph nodes, columns to graph nodes.
     M₀ = zeros(Bool, nv(subgraph), nv(graph))
+
+    # Get adjacency matrices and 4th/8th degree path matrices
+    adjmat_S = adjacency_matrix(subgraph)
+    adjmat_G = adjacency_matrix(graph)
+    deg_S = adjmat_S^2
+    deg_G = adjmat_G^2
+    path4_S = deg_S^2
+    path4_G = deg_G^2
+    path8_S = path4_S^2
+    path8_G = path4_G^2
     for α ∈ 1:nv(subgraph) # Loop over rows (subgraph nodes)
         for β ∈ 1:nv(graph) # Loop over columns (graph nodes)
-            # Record Bool for each (i,j): true if atom species match and graph node degree is sufficient.
-            if (degree(graph, β) ≥ degree(subgraph, α)) && (subgraph_species[α] == graph_species[β])
-                M₀[α, β] = true # cannot rule out correspondence, so, true, for all we know at this point, these could correspond.
-            end
+            # Record Bool for each (i,j): true if atom species match, graph node degree is sufficient, and 4 and 8 length self-paths are sufficient.
+            M₀[α, β] = subgraph_species[α] == graph_species[β] && deg_G[β, β] ≥ deg_S[α, α] && path4_G[β, β] ≥ path4_S[α, α] && path8_G[β, β] ≥ path8_S[α, α]
         end
     end
     return M₀
@@ -105,8 +113,8 @@ end
 
 # soln:
 #    soln[α ∈ subgraph] = β ∈ graph where α corresponds to β
-function depth_first_search(α::Int, subgraph::SimpleGraph, graph::SimpleGraph, 
-                            M::Array{Bool, 2}, soln::Array{Int, 1}, 
+function depth_first_search(α::Int, subgraph::SimpleGraph, graph::SimpleGraph,
+                            M::Array{Bool, 2}, soln::Array{Int, 1},
                             β_mapped::Array{Bool, 1}, solns::Array{Array{Int, 1}, 1})
     # if reached here from previous solution, exit.
     if α > size(M, 1)
@@ -120,15 +128,15 @@ function depth_first_search(α::Int, subgraph::SimpleGraph, graph::SimpleGraph,
         if β_mapped[β]
             continue
         end
-        
+
         # make a copy so we can restore later.
         M′ = deepcopy(M)
-        
+
         # explore scenario where α ∈ subgraph corresponds to β ∈ graph
         assign_correspondence!(M′, α, β)
         soln[α] = β
         β_mapped[β] = true
-        
+
         # prune tree
         prune!(M′, subgraph, graph)
 
@@ -140,7 +148,7 @@ function depth_first_search(α::Int, subgraph::SimpleGraph, graph::SimpleGraph,
             end
             # don't return b/c we need to look at other candidates
         end
-        
+
         if M′[α, β] && possibly_contains_isomorphism(M′)
             # we've assigned α, go deeper in the depth first search
             depth_first_search(α + 1, subgraph, graph, M′, soln, β_mapped, solns)
@@ -154,6 +162,7 @@ end
 
 function find_subgraph_isomorphisms(subgraph::SimpleGraph, subgraph_species::Array{Symbol, 1},
                                     graph::SimpleGraph,    graph_species::Array{Symbol, 1})
+    @assert is_connected(subgraph)    
     # store list of solutions here
     solns = Array{Array{Int, 1}, 1}()
     # encodes an isomorhism. maps α ∈ subgraph --> β ∈ graph
