@@ -1,4 +1,3 @@
-using Revise
 using Logging
 global_logger(ConsoleLogger(stdout, Logging.Info))
 using PorousMaterials, LightGraphs, MOFun, Ullmann, Test, LinearAlgebra, Printf
