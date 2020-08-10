@@ -188,7 +188,7 @@ function moiety(name::String)
 	# subtract R-group from search moiety to generate alignment mask
     idx = [x for x ∈ 1:nv(search_moiety.bonds) if !in(x, R_group)]
 	atoms = Atoms(species[idx], search_moiety.atoms.coords[idx])
-    alignment_mask = Crystal(name, box, atoms, charges)
+    alignment_mask = Crystal("mask_" * name, box, atoms, charges)
 	infer_bonds!(alignment_mask, false)
 
     return search_moiety, alignment_mask
