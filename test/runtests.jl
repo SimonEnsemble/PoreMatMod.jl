@@ -10,9 +10,9 @@ function runtest(testfile::String)
     end
 end
 
-testfiles = [#"alignment_operations.jl",
-             #"ring_constructor",
-             "Ullmann.jl",
+testfiles = [#"alignment_operations.jl"
+             #"ring_constructor"
+             "Ullmann.jl"
              "MOFun.jl"
              ]
 
