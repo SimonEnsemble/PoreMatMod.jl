@@ -154,9 +154,9 @@ function filter_R_group!(xtal::Crystal)::Array{Int}
 	for (idx, label) in enumerate(xtal.atoms.species) # loop over crystal atoms to find tags
 		# if String representation of label Symbol ends in _, atom is in R
 		tokens = split("$label", '_')
-		if length(tokens) != 1 && tokens[2] == "" # other _ in symbol may be problematic.
+		if length(tokens) > 1 && tokens[2] == "" # other _ in symbol may be problematic.
 			push!(R, idx)
-			xtal.atoms.species[idx] = tokens[1]
+			xtal.atoms.species[idx] = Symbol(tokens[1])
 		end
 	end
 	@debug "Returning" R
@@ -168,7 +168,6 @@ end
 Tags atoms of specified indices with a trailing _ using df.index order
 """
 function tag_R_group!(xtal::Crystal, arr::Array{Int}, df::DataFrame)
-	@debug "Tagging R group"
     # for each index in arr, find its row in df and change that label in xtal
     for r in arr # loop over R array
         i = getindex(df.index, r) # Map R label to new node order
@@ -211,10 +210,11 @@ end
 Wraps find_subgraph_isomorphisms for convenient substructure searching
 """
 function substructure_search(find_moiety::Crystal, parent_structure::Crystal)
-	return Ullmann.find_subgraph_isomorphisms(find_moiety.bonds,
+	configurations = Ullmann.find_subgraph_isomorphisms(find_moiety.bonds,
 											  find_moiety.atoms.species,
 											  parent_structure.bonds,
 											  parent_structure.atoms.species)
+	return configurations
 end
 
 
