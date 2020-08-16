@@ -179,8 +179,7 @@ end
 
 
 @doc raw"""
-Generates a moiety (Crystal) from an .xyz file found in path_to_moieties and
-an alignment mask for replacement operations.
+Generates a moiety (Crystal) from an .xyz file found in PATH_TO_MOIETIES
 """
 function moiety(name::String)::Crystal
 	@debug "Getting moiety: $name"
