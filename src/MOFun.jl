@@ -145,53 +145,66 @@ function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species
 end
 
 
+"""
+Removes trailing underscores from the atoms of the input Crystal and returns their indices
+"""
+function filter_R_group!(xtal::Crystal)::Array{Int}
+	@debug "Filtering R group"
+	R = []
+	for (idx, label) in enumerate(xtal.atoms.species) # loop over crystal atoms to find tags
+		# if String representation of label Symbol ends in _, atom is in R
+		tokens = split("$label", '_')
+		if length(tokens) != 1 && tokens[2] == "" # other _ in symbol may be problematic.
+			push!(R, idx)
+			xtal.atoms.species[idx] = tokens[1]
+		end
+	end
+	@debug "Returning" R
+	return R
+end
+
+
+"""
+Tags atoms of specified indices with a trailing _ using df.index order
+"""
+function tag_R_group!(xtal::Crystal, arr::Array{Int}, df::DataFrame)
+	@debug "Tagging R group"
+    # for each index in arr, find its row in df and change that label in xtal
+    for r in arr # loop over R array
+        i = getindex(df.index, r) # Map R label to new node order
+        label = xtal.atoms.species[i] # Get label to edit
+        xtal.atoms.species[i] = Symbol("$(label)_") # tag atom
+    end
+end
+
+
 @doc raw"""
 Generates a moiety (Crystal) from an .xyz file found in path_to_moieties and
 an alignment mask for replacement operations.
 """
-function moiety(name::String)
+function moiety(name::String)::Crystal
+	@debug "Getting moiety: $name"
 	# generate Crystal from moiety XYZ coords
     box = unit_cube()
-    fx = Frac(read_xyz(joinpath(pwd(), "data/moieties/$name.xyz")), box)
+    fx = Frac(read_xyz(joinpath(pwd(), "$PATH_TO_MOIETIES/$name.xyz")), box)
     charges = Charges{Frac}(0)
 	moiety = Crystal(name, box, fx, charges)
-	infer_bonds!(moiety, false)
+	R_group = filter_R_group!(moiety) # collect R indices and un-tag atoms for bonding
 
-	# sort by node degree
+	# sort by node degree (only needed for search moiety, but hurts nothing)
+	infer_bonds!(moiety, false)
 	df = DataFrame([[1:nv(moiety.bonds)...], degree(moiety.bonds)], [:index, :degree])
 	sort!(df, :degree, rev=true)
-	# handle find-replace input tagging
-	species = moiety.atoms.species[df.index]
-	R_group = []
-	for (i, x) in enumerate(species)
-		if x == :H_
-			species[i] = :H
-			push!(R_group, i)
-		elseif x == :C_
-			species[i] = :C
-			push!(R_group, i)
-		elseif x == :O_
-			species[i] = :O
-			push!(R_group, i)
-		elseif x == :N_
-			species[i] = :N
-			push!(R_group, i)
-		end
-	end
+
 	# rebuild Atoms
-	atoms = Atoms(species, moiety.atoms.coords[df.index])
+	atoms = Atoms(moiety.atoms.species[df.index], moiety.atoms.coords[df.index]) # atoms are sorted by degree and un-tagged
 
 	# build moiety with ordered atoms
-	search_moiety = Crystal(name, box, atoms, charges)
-    infer_bonds!(search_moiety, false)
+	moiety = Crystal(name, box, atoms, charges)
+    infer_bonds!(moiety, false)
+	tag_R_group!(moiety, R_group, df) # replace tags
 
-	# subtract R-group from search moiety to generate alignment mask
-    idx = [x for x ∈ 1:nv(search_moiety.bonds) if !in(x, R_group)]
-	atoms = Atoms(species[idx], search_moiety.atoms.coords[idx])
-    alignment_mask = Crystal("mask_" * name, box, atoms, charges)
-	infer_bonds!(alignment_mask, false)
-
-    return search_moiety, alignment_mask
+	return moiety # nodes are sorted by bond order, and R group is tagged w/ _
 end
 
 
