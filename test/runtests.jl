@@ -1,6 +1,7 @@
-using Logging
+using Revise, Logging, Test
 global_logger(ConsoleLogger(stdout, Logging.Info))
-using PorousMaterials, LightGraphs, MOFun, Ullmann, Test, LinearAlgebra, Printf
+using LightGraphs, LinearAlgebra, Printf
+using PorousMaterials, MOFun, Ullmann, Moiety
 function runtest(testfile::String)
     @info "Testing $(testfile)"
     try
@@ -11,7 +12,8 @@ function runtest(testfile::String)
 end
 
 testfiles = [#"alignment_operations.jl"
-             #"ring_constructor"
+             #"ring_constructor.jl"
+             "Moiety.jl"
              "Ullmann.jl"
              "MOFun.jl"
              ]

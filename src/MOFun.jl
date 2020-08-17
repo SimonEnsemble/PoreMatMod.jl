@@ -6,14 +6,13 @@ using LightGraphs
 using LinearAlgebra
 using Printf
 using DataFrames
-using Ullmann
+using Moiety, Ullmann
 ## other necessary files containing function definitions and tests
 include("ring_constructor.jl")
 include("alignment_operations.jl")
 
 ## file paths for fragment files
 fragment_location = joinpath(pwd(), "fragments")
-PATH_TO_MOIETIES = joinpath(pwd(), "data/moieties")
 
 ## function that will make it easier to name files
 remove_extension(crystal::Crystal) = split(crystal.name, ".")[1]
@@ -145,67 +144,6 @@ function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species
 end
 
 
-"""
-Removes trailing underscores from the atoms of the input Crystal and returns their indices
-"""
-function filter_R_group!(xtal::Crystal)::Array{Int}
-	@debug "Filtering R group"
-	R = []
-	for (idx, label) in enumerate(xtal.atoms.species) # loop over crystal atoms to find tags
-		# if String representation of label Symbol ends in _, atom is in R
-		tokens = split("$label", '_')
-		if length(tokens) > 1 && tokens[2] == "" # other _ in symbol may be problematic.
-			push!(R, idx)
-			xtal.atoms.species[idx] = Symbol(tokens[1])
-		end
-	end
-	@debug "Returning" R
-	return R
-end
-
-
-"""
-Tags atoms of specified indices with a trailing _ using df.index order
-"""
-function tag_R_group!(xtal::Crystal, arr::Array{Int}, df::DataFrame)
-    # for each index in arr, find its row in df and change that label in xtal
-    for r in arr # loop over R array
-        i = getindex(df.index, r) # Map R label to new node order
-        label = xtal.atoms.species[i] # Get label to edit
-        xtal.atoms.species[i] = Symbol("$(label)_") # tag atom
-    end
-end
-
-
-@doc raw"""
-Generates a moiety (Crystal) from an .xyz file found in PATH_TO_MOIETIES
-"""
-function moiety(name::String)::Crystal
-	@debug "Getting moiety: $name"
-	# generate Crystal from moiety XYZ coords
-    box = unit_cube()
-    fx = Frac(read_xyz(joinpath(pwd(), "$PATH_TO_MOIETIES/$name.xyz")), box)
-    charges = Charges{Frac}(0)
-	moiety = Crystal(name, box, fx, charges)
-	R_group = filter_R_group!(moiety) # collect R indices and un-tag atoms for bonding
-
-	# sort by node degree (only needed for search moiety, but hurts nothing)
-	infer_bonds!(moiety, false)
-	df = DataFrame([[1:nv(moiety.bonds)...], degree(moiety.bonds)], [:index, :degree])
-	sort!(df, :degree, rev=true)
-
-	# rebuild Atoms
-	atoms = Atoms(moiety.atoms.species[df.index], moiety.atoms.coords[df.index]) # atoms are sorted by degree and un-tagged
-
-	# build moiety with ordered atoms
-	moiety = Crystal(name, box, atoms, charges)
-    infer_bonds!(moiety, false)
-	tag_R_group!(moiety, R_group, df) # replace tags
-
-	return moiety # nodes are sorted by bond order, and R group is tagged w/ _
-end
-
-
 @doc raw"""
 Wraps find_subgraph_isomorphisms for convenient substructure searching
 """
@@ -218,16 +156,11 @@ function substructure_search(find_moiety::Crystal, parent_structure::Crystal)
 end
 
 
-# TODO:
-# create tests
 
-####
-# make these functions acessable to the user
-####
 export
 	# MOFfun.jl
 	remove_extension, read_fragment_from_xyz, functionalize_mof,
-	choose_side, moiety, substructure_search
+	choose_side, substructure_search
 
 	# ring_constructor.jl
 	empty_ring, is_aromatic, find_aromatic_cycles,
@@ -236,5 +169,8 @@ export
 
 	# alignment_operations.jl
 	crystal_aro_triplet_ids, fragment_aro_triplet_ids, fragment_aro_R_id,
-	center_of_aro_triplet, triplet_locality, align_fragment
+	center_of_aro_triplet, triplet_locality, align_fragment,
+
+	# moiety.jl
+	moiety
 end
