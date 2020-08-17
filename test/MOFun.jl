@@ -13,7 +13,7 @@ timil125 = Crystal("Ti-MIL-125.cif")
 strip_numbers_from_atom_labels!(timil125)
 infer_bonds!(timil125, true)
 moty = moiety("p-phenylene")
-moty_w_R_grp = moiety("2-R-p-phenylene")
+moty_w_R_grp = moiety("2-%-p-phenylene")
 
 @testset "MOFun Tests" begin
     @test length(moty ∈ irmof1) == 24

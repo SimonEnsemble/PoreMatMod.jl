@@ -14,7 +14,7 @@ function filter_R_group!(xtal::Crystal)::Array{Int}
 	R = []
 	for (idx, label) in enumerate(xtal.atoms.species) # loop over crystal atoms to find tags
 		# if String representation of label Symbol ends in _, atom is in R
-		tokens = split("$label", '_')
+		tokens = split("$label", '%')
 		if length(tokens) > 1 && tokens[2] == "" # other _ in symbol may be problematic.
 			push!(R, idx)
 			xtal.atoms.species[idx] = Symbol(tokens[1])
@@ -33,7 +33,7 @@ function tag_R_group!(xtal::Crystal, arr::Array{Int}, df::DataFrame)
     for r in arr # loop over R array
         i = getindex(df.index, r) # Map R label to new node order
         label = xtal.atoms.species[i] # Get label to edit
-        xtal.atoms.species[i] = Symbol("$(label)_") # tag atom
+        xtal.atoms.species[i] = Symbol("$(label)%") # tag atom
     end
 end
 
