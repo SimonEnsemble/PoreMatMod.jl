@@ -175,7 +175,6 @@ end
 
 import Base.∈
 (∈)(S::Crystal, G::Crystal) = substructure_search(S, G)
-(∈)(A::Array{Crystal}, G::Crystal) = Dict(["$(S.name) in $(G.name)" => substructure_search(S, G) for S ∈ A])
 
 
 export
