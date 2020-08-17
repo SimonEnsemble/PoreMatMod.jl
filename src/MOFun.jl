@@ -173,6 +173,10 @@ function substructure_search(find_moiety::Crystal, parent_structure::Crystal)
 end
 
 
+import Base.∈
+(∈)(S::Crystal, G::Crystal) = substructure_search(S, G)
+(∈)(A::Array{Crystal}, G::Crystal) = Dict(["$(S.name) in $(G.name)" => substructure_search(S, G) for S ∈ A])
+
 
 export
 	# MOFfun.jl
