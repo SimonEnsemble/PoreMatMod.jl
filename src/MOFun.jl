@@ -148,11 +148,28 @@ end
 Wraps find_subgraph_isomorphisms for convenient substructure searching
 """
 function substructure_search(find_moiety::Crystal, parent_structure::Crystal)
-	configurations = Ullmann.find_subgraph_isomorphisms(find_moiety.bonds,
-											  find_moiety.atoms.species,
+	# Make a copy w/o R tags for searching
+	moty = deepcopy(find_moiety)
+	filter_R_group!(moty)
+	# Get array of configuration arrays
+	configurations = Ullmann.find_subgraph_isomorphisms(moty.bonds,
+											  moty.atoms.species,
 											  parent_structure.bonds,
 											  parent_structure.atoms.species)
-	return configurations
+	# Group configurations by location
+	# keys are sets of nodes describing a location
+	# values are collections of configuration arrays
+	results = Dict{Array, Array{Array{Int}}}()
+	for configuration in configurations
+		sorted_config = sort(configuration)
+		if sorted_config ∈ keys(results)
+			push!(results[sorted_config], configuration)
+		else
+			merge!(results, Dict([sorted_config => [configuration]]))
+		end
+	end
+
+	return [result for result in values(results)]
 end
 
 
