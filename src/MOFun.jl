@@ -174,7 +174,7 @@ end
 
 
 import Base.∈
-(∈)(S::Crystal, G::Crystal) = substructure_search(S, G)
+(∈)(s::Crystal, g::Crystal) = substructure_search(s, g)
 
 
 export

@@ -48,20 +48,21 @@ function moiety(name::String)::Crystal
     fx = Frac(read_xyz(joinpath(pwd(), "$PATH_TO_MOIETIES/$name.xyz")), box)
     charges = Charges{Frac}(0)
 	moiety = Crystal(name, box, fx, charges)
-	R_group = filter_R_group!(moiety) # collect R indices and un-tag atoms for bonding
+	R_group_indices = filter_R_group!(moiety) # collect R indices and un-tag atoms for bonding
 
 	# sort by node degree (only needed for search moiety, but hurts nothing)
 	infer_bonds!(moiety, false)
 	df = DataFrame([[1:nv(moiety.bonds)...], degree(moiety.bonds)], [:index, :degree])
 	sort!(df, :degree, rev=true)
+	## TODO change this to sortperm() for conciseness
 
 	# ordered atoms w/o R group
-	not_R = [i for i in 1:length(df.index) if ! (i in R_group)]
+	not_R = [i for i in 1:length(df.index) if ! (i in R_group_indices)]
 	order_wo_R = df.index[not_R]
 	# append R-group to the end
-	order = vcat(order_wo_R, R_group)
+	order = vcat(order_wo_R, R_group_indices)
 	@debug order moiety.atoms.species[order], moiety.atoms.coords[order]
-	R_group = [length(order):-1:(length(order) - length(R_group) + 1)...]
+	R_group = [length(order):-1:(length(order) - length(R_group_indices) + 1)...]
 
 	# rebuild Atoms
 	atoms = Atoms(moiety.atoms.species[order], moiety.atoms.coords[order]) # atoms are sorted by degree and un-tagged
@@ -69,8 +70,8 @@ function moiety(name::String)::Crystal
 	# build moiety with ordered atoms
 	moiety = Crystal(name, box, atoms, charges)
     infer_bonds!(moiety, false)
-	if length(R_group) ≠ 0
-		tag_R_group!(moiety, R_group, df) # replace tags
+	if length(R_group_indices) ≠ 0
+		tag_R_group!(moiety, R_group_indices, df) # replace tags
 	end
 
 	return moiety # nodes are sorted by bond order, and R group is tagged w/ _
