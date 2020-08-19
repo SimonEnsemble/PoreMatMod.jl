@@ -2,6 +2,7 @@ module Moiety
 export moiety, filter_R_group!, PATH_TO_MOIETIES
 
 PATH_TO_MOIETIES = joinpath(pwd(), "data/moieties")
+R_GROUP_TAG = '!'
 
 using PorousMaterials, DataFrames, LightGraphs
 
@@ -11,11 +12,13 @@ Removes trailing underscores from the atoms of the input Crystal and returns the
 """
 function filter_R_group!(xtal::Crystal)::Array{Int}
 	@debug "Filtering R group"
+	@debug "Filtering R group" R_GROUP_TAG
 	R = []
 	for (idx, label) in enumerate(xtal.atoms.species) # loop over crystal atoms to find tags
 		# if String representation of label Symbol ends in _, atom is in R
 		tokens = split("$label", '%')
 		if length(tokens) > 1 && tokens[2] == "" # other _ in symbol may be problematic.
+		tokens = split("$label", R_GROUP_TAG)
 			push!(R, idx)
 			xtal.atoms.species[idx] = Symbol(tokens[1])
 		end

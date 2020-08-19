@@ -16,6 +16,7 @@ moty = moiety("p-phenylene")
 moty_w_R_grp = moiety("2-%-p-phenylene")
 
 @testset "MOFun Tests" begin
+    moty_w_R_grp = moiety("find-replace/2-!-p-phenylene")
     @test length(moty ∈ irmof1) == 24
     @test length(moty ∈ timil125) == 12
     @test length(moty_w_R_grp ∈ timil125) == 12
