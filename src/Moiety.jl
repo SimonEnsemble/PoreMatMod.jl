@@ -4,7 +4,7 @@ export moiety, filter_R_group, PATH_TO_MOIETIES
 PATH_TO_MOIETIES = joinpath(pwd(), "data/moieties")
 R_GROUP_TAG = '!'
 
-using PorousMaterials, DataFrames, LightGraphs
+using PorousMaterials, LightGraphs
 
 
 """
@@ -53,21 +53,21 @@ Generates a moiety (Crystal) from an .xyz file found in PATH_TO_MOIETIES
 function moiety(name::String)::Crystal
 	@debug "Getting moiety: $name"
 	# generate Crystal from moiety XYZ coords
-    box = unit_cube()
-    fx = Frac(read_xyz(joinpath(pwd(), "$PATH_TO_MOIETIES/$name.xyz")), box)
-    charges = Charges{Frac}(0)
+	box = unit_cube()
+	fx = Frac(read_xyz(joinpath(pwd(), "$PATH_TO_MOIETIES/$name.xyz")), box)
+	charges = Charges{Frac}(0)
 	moiety = Crystal(name, box, fx, charges)
+	@debug moiety.atoms.species
 	# ID R group
 	R_group_indices = filter_R_group(moiety)
 	# sort by node degree
-	bondingrules = new_bonding_rules()
+	bondingrules = Moiety.new_bonding_rules()
 	infer_bonds!(moiety, false, bondingrules)
 	@debug "Bonding check:" bondingrules moiety.bonds
-	df = DataFrame([[1:nv(moiety.bonds)...], degree(moiety.bonds)], [:index, :degree])
-	sort!(df, :degree, rev=true)
+	order = sortperm(degree(moiety.bonds), rev=true)
 	# ordered atoms
-	not_R = [i for i in 1:length(df.index) if ! (i in R_group_indices)]
-	order_wo_R = df.index[not_R]
+	#not_R = [i for i in 1:length(df.index) if ! (i in R_group_indices)]
+	order_wo_R = length(R_group_indices) > 0 ? order[1:end .!= R_group_indices] : order
 	# append R-group to the end
 	order = vcat(order_wo_R, R_group_indices)
 	# rebuild Atoms
