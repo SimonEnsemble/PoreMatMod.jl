@@ -162,19 +162,21 @@ function substructure_search(find_moiety::Crystal, parent_structure::Crystal)
 	results = Dict{Array, Array{Array{Int}}}()
 	for configuration in configurations
 		sorted_config = sort(configuration)
-		if sorted_config ∈ keys(results)
-			push!(results[sorted_config], configuration)
-		else
-			merge!(results, Dict([sorted_config => [configuration]]))
-		end
+		merge!(results, Dict([sorted_config => [configuration]]))
 	end
 
 	return [result for result in values(results)]
 end
 
 
+# extension of infix `in` operator for expressive searching
 import Base.∈
 (∈)(s::Crystal, g::Crystal) = substructure_search(s, g)
+# this allows all of the following:
+#	s ∈ g					→	find the moiety in the crystal
+#	[s1, s2] .∈ [g]			→	find each moiety in a crystal
+#	s .∈ [g1, g2]			→	find the moiety in each crystal
+#	[s1, s2] .∈ [g1, g2]	→	find each moiety in each crystal
 
 
 export
