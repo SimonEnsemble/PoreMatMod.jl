@@ -1,5 +1,5 @@
 module Moiety
-export moiety, filter_R_group!, PATH_TO_MOIETIES
+export moiety, filter_R_group, PATH_TO_MOIETIES
 
 PATH_TO_MOIETIES = joinpath(pwd(), "data/moieties")
 R_GROUP_TAG = '!'
@@ -8,19 +8,38 @@ using PorousMaterials, DataFrames, LightGraphs
 
 
 """
-Removes trailing underscores from the atoms of the input Crystal and returns their indices
+Returns bonding rules including R-group-tagged atom copies
 """
-function filter_R_group!(xtal::Crystal)::Array{Int}
-	@debug "Filtering R group"
+function new_bonding_rules()::Array{BondingRule}
+	bondingrules = PorousMaterials.default_bondingrules()
+	push!(bondingrules, BondingRule(:C, :*, 0.4, 1.9))
+	newrules = []
+	# this loop is stupidly structured because the non-stupid version would hang, inexplicably, forever
+	for i in 1:length(bondingrules)
+	    if bondingrules[i].species_i != :*
+	        push!(newrules, BondingRule(Symbol("$(bondingrules[i].species_i)!"), bondingrules[i].species_j, bondingrules[i].min_dist, bondingrules[i].max_dist))
+	        push!(newrules, BondingRule(Symbol("$(bondingrules[i].species_j)!"), bondingrules[i].species_i, bondingrules[i].min_dist, bondingrules[i].max_dist))
+	        push!(newrules, BondingRule(Symbol("$(bondingrules[i].species_i)!"), Symbol("$(bondingrules[i].species_j)!"), bondingrules[i].min_dist, bondingrules[i].max_dist))
+	    end
+	end
+	return unique(vcat(bondingrules, newrules))
+end
+
+
+"""
+Returns R group indices
+"""
+function filter_R_group(xtal::Crystal; remove = false)::Array{Int}
 	@debug "Filtering R group" R_GROUP_TAG
 	R = []
 	for (idx, label) in enumerate(xtal.atoms.species) # loop over crystal atoms to find tags
-		# if String representation of label Symbol ends in _, atom is in R
-		tokens = split("$label", '%')
-		if length(tokens) > 1 && tokens[2] == "" # other _ in symbol may be problematic.
+		# if String representation of label Symbol ends in !, atom is in R
 		tokens = split("$label", R_GROUP_TAG)
+		if length(tokens) == 2 && tokens[2] == "" # other ! in symbol not tolerated.
 			push!(R, idx)
-			xtal.atoms.species[idx] = Symbol(tokens[1])
+			if remove
+				xtal.atoms.species[idx] = Symbol(tokens[1])
+			end
 		end
 	end
 	@debug "Returning" R
