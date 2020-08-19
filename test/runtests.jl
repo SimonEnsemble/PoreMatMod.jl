@@ -1,6 +1,6 @@
 using Revise, Logging, Test
 global_logger(ConsoleLogger(stdout, Logging.Info))
-using LightGraphs, LinearAlgebra, Printf
+#using LightGraphs, LinearAlgebra
 using PorousMaterials, MOFun, Ullmann, Moiety
 function runtest(testfile::String)
     @info "Testing $(testfile)"
@@ -9,6 +9,7 @@ function runtest(testfile::String)
     catch exception
         @error "Exception in $(testfile)" exception
     end
+    println("")
 end
 
 testfiles = [#"alignment_operations.jl"
@@ -18,4 +19,5 @@ testfiles = [#"alignment_operations.jl"
              "MOFun.jl"
              ]
 
+@info "\n\n\t\tMOFun Tests\n\n "
 [runtest(testfile) for testfile in testfiles]
