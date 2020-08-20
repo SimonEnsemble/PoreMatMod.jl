@@ -66,7 +66,6 @@ function moiety(name::String)::Crystal
 	@debug "Bonding check:" bondingrules moiety.bonds
 	order = sortperm(degree(moiety.bonds), rev=true)
 	# ordered atoms
-	#not_R = [i for i in 1:length(df.index) if ! (i in R_group_indices)]
 	order_wo_R = length(R_group_indices) > 0 ? order[1:end .!= R_group_indices] : order
 	# append R-group to the end
 	order = vcat(order_wo_R, R_group_indices)

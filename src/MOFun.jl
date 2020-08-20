@@ -162,7 +162,11 @@ function substructure_search(find_moiety::Crystal, parent_structure::Crystal)
 	results = Dict{Array, Array{Array{Int}}}()
 	for configuration in configurations
 		sorted_config = sort(configuration)
-		merge!(results, Dict([sorted_config => [configuration]]))
+		if sorted_config ∈ keys(results)
+			push!(results[sorted_config], configuration)
+		else
+			merge!(results, Dict([sorted_config => [configuration]]))
+		end
 	end
 
 	return [result for result in values(results)]
