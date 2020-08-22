@@ -144,6 +144,34 @@ function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species
 end
 
 
+# for encoding the location and orientation indices within a group of search results
+struct Configuration
+    location::Int
+    orientation::Int
+end
+import Base.convert
+convert(Configuration, (i,j)) = Configuration(i,j)
+
+
+# for describing the search query ("find x in y")
+struct SubstructureQuery
+    substructure::String
+    parent_structure::String
+    # Should these be Crystals?
+    # Pro: easier to do analysis later
+    # Con: memory bloat
+end
+convert(SubstructureQuery, (a,b)::Tuple{Crystal, Crystal}) = SubstructureQuery(a.name,b.name)
+
+
+# for storing search results in a user-friendly way
+struct SubstructureSearchResult
+    query::SubstructureQuery
+    configuration::Configuration
+    isomorphism::Array{Int}
+end
+
+
 @doc raw"""
 Wraps find_subgraph_isomorphisms for convenient substructure searching
 """
@@ -168,8 +196,19 @@ function substructure_search(find_moiety::Crystal, parent_structure::Crystal)
 			merge!(results, Dict([sorted_config => [configuration]]))
 		end
 	end
-
-	return [result for result in values(results)]
+	# unpack dict
+	results = [result for result in values(results)]
+	# repack as array of structs. refactor as list comp?
+	result_struct_array = Array{SubstructureSearchResult}([])
+    for (location, isomorphisms) ∈ enumerate(results)
+        @debug "Location $location"
+        for (orientation, isomorphism) ∈ enumerate(results[location])
+            push!(result_struct_array, SubstructureSearchResult(
+				(find_moiety, parent_structure),
+				(location,orientation),isomorphism))
+        end
+    end
+    return result_struct_array
 end
 
 

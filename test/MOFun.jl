@@ -12,8 +12,14 @@ using PorousMaterials, MOFun, Moiety
     infer_bonds!(timil125, true)
     moty = moiety("p-phenylene")
     moty_w_R_grp = moiety("find-replace/2-!-p-phenylene")
-    @test length(moty ∈ irmof1) == 24
-    @test length(moty ∈ timil125) == 12
-    @test length(moty_w_R_grp ∈ timil125) == 12
+    results1 = moty ∈ irmof1
+    @test length(results1) == 96
+    @test length([result for result in results1 if result.configuration.location == 1]) == 4
+    results2 = moty ∈ timil125
+    @test length(results2) == 48
+    @test length([result for result in results2 if result.configuration.location == 1]) == 4
+    results3 = moty_w_R_grp ∈ timil125
+    @test length(results3) == 48
+    @test length([result for result in results3 if result.configuration.location == 1]) == 4
 end
 end
