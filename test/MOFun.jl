@@ -1,7 +1,7 @@
 module MOFun_Test
 
 using Test
-using PorousMaterials, MOFun, Moiety
+using PorousMaterials, MOFun
 
 @testset "MOFun Tests" begin
     irmof1 = Crystal("IRMOF-1.cif")

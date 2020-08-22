@@ -1,6 +1,7 @@
 module Moiety_Test
 
-using Test, Moiety
+using Test, PorousMaterials, LightGraphs
+include("../src/moiety.jl")
 
 @testset "Moiety Tests" begin
     @test moiety("find-replace/2-!-p-phenylene") ≠ nothing
