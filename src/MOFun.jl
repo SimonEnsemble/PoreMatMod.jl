@@ -6,7 +6,8 @@ using LightGraphs
 using LinearAlgebra
 using Printf
 using DataFrames
-using Moiety, Ullmann
+using Ullmann
+include("moiety.jl")
 ## other necessary files containing function definitions and tests
 include("ring_constructor.jl")
 include("alignment_operations.jl")
@@ -225,7 +226,7 @@ import Base.∈
 export
 	# MOFfun.jl
 	remove_extension, read_fragment_from_xyz, functionalize_mof,
-	choose_side, substructure_search
+	choose_side, substructure_search,
 
 	# ring_constructor.jl
 	empty_ring, is_aromatic, find_aromatic_cycles,

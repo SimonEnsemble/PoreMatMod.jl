@@ -1,10 +1,5 @@
-module Moiety
-export moiety, filter_R_group, PATH_TO_MOIETIES
-
 PATH_TO_MOIETIES = joinpath(pwd(), "data/moieties")
 R_GROUP_TAG = '!'
-
-using PorousMaterials, LightGraphs
 
 
 """
@@ -61,7 +56,7 @@ function moiety(name::String)::Crystal
 	# ID R group
 	R_group_indices = filter_R_group(moiety)
 	# sort by node degree
-	bondingrules = Moiety.new_bonding_rules()
+	bondingrules = new_bonding_rules()
 	infer_bonds!(moiety, false, bondingrules)
 	@debug "Bonding check:" bondingrules moiety.bonds
 	order = sortperm(degree(moiety.bonds), rev=true)
@@ -76,5 +71,3 @@ function moiety(name::String)::Crystal
 	infer_bonds!(moiety, false, bondingrules)
 	return moiety
 end
-
-end # module
