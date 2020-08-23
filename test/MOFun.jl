@@ -13,13 +13,16 @@ using PorousMaterials, MOFun
     p_phenylene = moiety("p-phenylene")
     p_phenylene_w_R_grp = moiety("find-replace/2-!-p-phenylene")
     search1 = p_phenylene ∈ irmof1
-    @test length(search1.results) == 96
-    @test length([result for result in search1.results if result.configuration.location == 1]) == 4
+    @test search1.num_isomorphisms == 96
+    @test search1.num_locations == 24
+    @test search1.num_orientations[1] == 4
     search2 = p_phenylene ∈ timil125
-    @test length(search2.results) == 48
-    @test length([result for result in search2.results if result.configuration.location == 1]) == 4
+    @test search2.num_isomorphisms == 48
+    @test search2.num_locations == 12
+    @test search2.num_orientations[1] == 4
     search3 = p_phenylene_w_R_grp ∈ timil125
-    @test length(search3.results) == 48
-    @test length([result for result in search3.results if result.configuration.location == 1]) == 4
+    @test search3.num_isomorphisms == 48
+    @test search3.num_locations == 12
+    @test search3.num_orientations[1] == 4
 end
 end
