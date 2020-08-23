@@ -22,7 +22,7 @@ remove_extension(crystal::Crystal) = split(crystal.name, ".")[1]
 Create a Crystal from a .xyz file with box=unit_cube()
 and charges = Charges(0, Float64[], Frac(Array{Float64}(undef,3,0))).
 """
-function read_fragment_from_xyz(name::String)
+function read_fragment_from_xyz(name; fragment_location=fragment_location)
     filename = joinpath(fragment_location, name * ".xyz")
     atoms_c = read_xyz(filename)
     # contains: number of atoms, atom type (symbol), and position in fraction coords
@@ -173,10 +173,20 @@ struct SubstructureSearchResult
 end
 
 
+# stores a set of search results and basic meta data
+struct SubstructureSearchResults
+    results::Array{SubstructureSearchResult}
+    num_isomorphisms::Int
+    num_locations::Int
+    num_orientations::Array{Int}
+end
+
+
 @doc raw"""
 Wraps find_subgraph_isomorphisms for convenient substructure searching
 """
-function substructure_search(find_moiety::Crystal, parent_structure::Crystal)
+function substructure_search(find_moiety::Crystal,
+	parent_structure::Crystal)::SubstructureSearchResults
 	# Make a copy w/o R tags for searching
 	moty = deepcopy(find_moiety)
 	R_group_indices = filter_R_group(moty, remove=true)
@@ -198,6 +208,8 @@ function substructure_search(find_moiety::Crystal, parent_structure::Crystal)
 		end
 	end
 	# unpack dict
+	location_sets = keys(results)
+	num_orientations = [length(results[location_set]) for location_set in location_sets]
 	results = [result for result in values(results)]
 	# repack as array of structs. refactor as list comp?
 	result_struct_array = Array{SubstructureSearchResult}([])
@@ -209,7 +221,7 @@ function substructure_search(find_moiety::Crystal, parent_structure::Crystal)
 				(location,orientation),isomorphism))
         end
     end
-    return result_struct_array
+    return SubstructureSearchResults(result_struct_array,length(result_struct_array),length(location_sets),num_orientations)
 end
 
 
@@ -226,7 +238,8 @@ import Base.∈
 export
 	# MOFfun.jl
 	remove_extension, read_fragment_from_xyz, functionalize_mof,
-	choose_side, substructure_search,
+	choose_side, substructure_search, SubstructureSearchResult,
+	SubstructureQuery, SubstructureSearchResults, Configuration,
 
 	# ring_constructor.jl
 	empty_ring, is_aromatic, find_aromatic_cycles,

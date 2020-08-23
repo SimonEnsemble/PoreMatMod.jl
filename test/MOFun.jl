@@ -1,6 +1,6 @@
 module MOFun_Test
 
-using Test
+using Test, Revise
 using PorousMaterials, MOFun
 
 @testset "MOFun Tests" begin
@@ -12,14 +12,14 @@ using PorousMaterials, MOFun
     infer_bonds!(timil125, true)
     p_phenylene = moiety("p-phenylene")
     p_phenylene_w_R_grp = moiety("find-replace/2-!-p-phenylene")
-    results1 = p_phenylene ∈ irmof1
-    @test length(results1) == 96
-    @test length([result for result in results1 if result.configuration.location == 1]) == 4
-    results2 = p_phenylene ∈ timil125
-    @test length(results2) == 48
-    @test length([result for result in results2 if result.configuration.location == 1]) == 4
-    results3 = p_phenylene_w_R_grp ∈ timil125
-    @test length(results3) == 48
-    @test length([result for result in results3 if result.configuration.location == 1]) == 4
+    search1 = p_phenylene ∈ irmof1
+    @test length(search1.results) == 96
+    @test length([result for result in search1.results if result.configuration.location == 1]) == 4
+    search2 = p_phenylene ∈ timil125
+    @test length(search2.results) == 48
+    @test length([result for result in search2.results if result.configuration.location == 1]) == 4
+    search3 = p_phenylene_w_R_grp ∈ timil125
+    @test length(search3.results) == 48
+    @test length([result for result in search3.results if result.configuration.location == 1]) == 4
 end
 end
