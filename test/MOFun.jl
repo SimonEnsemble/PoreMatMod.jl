@@ -25,4 +25,5 @@ using PorousMaterials, MOFun
     @test search3.num_locations == 12
     @test search3.num_orientations[1] == 4
 end
-end
+
+end # module
