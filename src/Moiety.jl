@@ -37,7 +37,6 @@ function filter_R_group(xtal::Crystal; remove = false)::Array{Int}
 			end
 		end
 	end
-	@debug "Returning" R
 	return R
 end
 
@@ -52,22 +51,27 @@ function moiety(name::String)::Crystal
 	fx = Frac(read_xyz(joinpath(pwd(), "$PATH_TO_MOIETIES/$name.xyz")), box)
 	charges = Charges{Frac}(0)
 	moiety = Crystal(name, box, fx, charges)
-	@debug moiety.atoms.species
+	@debug 1 moiety.atoms.species
 	# ID R group
 	R_group_indices = filter_R_group(moiety)
+	@debug 2 R_group_indices
 	# sort by node degree
 	bondingrules = new_bonding_rules()
 	infer_bonds!(moiety, false, bondingrules)
-	@debug "Bonding check:" bondingrules moiety.bonds
 	order = sortperm(degree(moiety.bonds), rev=true)
+	@debug 3 order
 	# ordered atoms
-	order_wo_R = length(R_group_indices) > 0 ? order[1:end .!= R_group_indices] : order
+	order_wo_R = length(R_group_indices) > 0 ? order[1:end .!= R_group_indices] : order # BUG this is wrong. it is removing the element at an index instead of a value from an array
+	@debug 4 order_wo_R
 	# append R-group to the end
 	order = vcat(order_wo_R, R_group_indices)
+	@debug 5 order
 	# rebuild Atoms
 	atoms = Atoms(moiety.atoms.species[order], moiety.atoms.coords[order])
+	@debug 6 atoms
 	# nodes are sorted by bond order, and R group is moved to end & tagged w/ !
 	moiety = Crystal(name, box, atoms, charges)
+	@debug 7 moiety
 	infer_bonds!(moiety, false, bondingrules)
 	return moiety
 end
