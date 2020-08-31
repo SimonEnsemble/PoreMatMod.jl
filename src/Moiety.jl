@@ -24,7 +24,7 @@ end
 """
 Returns R group indices
 """
-function filter_R_group(xtal::Crystal; remove = false)::Array{Int}
+function r_group_indices(xtal::Crystal)::Array{Int}
 	@debug "Filtering R group" R_GROUP_TAG
 	R = []
 	for (idx, label) in enumerate(xtal.atoms.species) # loop over crystal atoms to find tags
@@ -32,12 +32,49 @@ function filter_R_group(xtal::Crystal; remove = false)::Array{Int}
 		tokens = split("$label", R_GROUP_TAG)
 		if length(tokens) == 2 && tokens[2] == "" # other ! in symbol not tolerated.
 			push!(R, idx)
-			if remove
-				xtal.atoms.species[idx] = Symbol(tokens[1])
-			end
 		end
 	end
 	return R
+end
+
+
+"""
+Un-tags R group atoms (removes '! suffix')
+"""
+function untag_r_group!(xtal::Crystal)
+	@debug "Un-tagging R group in $(xtal.name)" R_GROUP_TAG
+	r = r_group_indices(xtal) # get indices of R group
+	for i ∈ r
+		xtal.atoms.species[i] = Symbol(split("$(xtal.atoms.species[i])", R_GROUP_TAG)[1])
+	end
+end
+
+
+
+"""
+Returns a copy of a crystal w/ R group atoms deleted
+"""
+function subtract_r_group(xtal::Crystal)::Crystal
+	not_r = [i for i in 1:length(xtal.atoms.species) if !(i ∈ r_group_indices(xtal))]
+	coords = xtal.atoms.coords[not_r]
+	species = xtal.atoms.species[not_r]
+	return Crystal("no_r_$(xtal.name)", xtal.box, Atoms(species, coords), xtal.charges)
+end
+
+
+"""
+Removes a (single) subfolder prefix in a string naming an input file
+"""
+function remove_path_prefix(name::String)::String
+    s = split(name, '/')
+    @debug "split" s[2]
+    n = length(s)
+    @debug n
+    if n > 1
+        return s[2]
+    else
+        return name
+    end
 end
 
 
@@ -51,27 +88,20 @@ function moiety(name::String)::Crystal
 	fx = Frac(read_xyz(joinpath(pwd(), "$PATH_TO_MOIETIES/$name.xyz")), box)
 	charges = Charges{Frac}(0)
 	moiety = Crystal(name, box, fx, charges)
-	@debug 1 moiety.atoms.species
 	# ID R group
-	R_group_indices = filter_R_group(moiety)
-	@debug 2 R_group_indices
+	R_group_indices = r_group_indices(moiety)
 	# sort by node degree
 	bondingrules = new_bonding_rules()
 	infer_bonds!(moiety, false, bondingrules)
 	order = sortperm(degree(moiety.bonds), rev=true)
-	@debug 3 order
 	# ordered atoms
-	order_wo_R = length(R_group_indices) > 0 ? order[1:end .!= R_group_indices] : order # BUG this is wrong. it is removing the element at an index instead of a value from an array
-	@debug 4 order_wo_R
+	order_wo_R = length(R_group_indices) > 0 ? order[[i for i in 1:length(order) if !(order[i] ∈ R_group_indices)]] : order
 	# append R-group to the end
 	order = vcat(order_wo_R, R_group_indices)
-	@debug 5 order
 	# rebuild Atoms
 	atoms = Atoms(moiety.atoms.species[order], moiety.atoms.coords[order])
-	@debug 6 atoms
 	# nodes are sorted by bond order, and R group is moved to end & tagged w/ !
 	moiety = Crystal(name, box, atoms, charges)
-	@debug 7 moiety
 	infer_bonds!(moiety, false, bondingrules)
 	return moiety
 end

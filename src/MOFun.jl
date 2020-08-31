@@ -189,7 +189,7 @@ function substructure_search(find_moiety::Crystal,
 	parent_structure::Crystal)::SubstructureSearchResults
 	# Make a copy w/o R tags for searching
 	moty = deepcopy(find_moiety)
-	R_group_indices = filter_R_group(moty, remove=true)
+	untag_r_group!(moty)
 	# Get array of configuration arrays
 	configurations = Ullmann.find_subgraph_isomorphisms(moty.bonds,
 											  moty.atoms.species,
@@ -221,7 +221,8 @@ function substructure_search(find_moiety::Crystal,
 				(location,orientation),isomorphism))
         end
     end
-    return SubstructureSearchResults(result_struct_array,length(result_struct_array),length(location_sets),num_orientations)
+    return SubstructureSearchResults(result_struct_array,
+		length(result_struct_array),length(location_sets),num_orientations)
 end
 
 
@@ -235,11 +236,139 @@ import Base.∈
 #	[s1, s2] .∈ [g1, g2]	→	find each moiety in each crystal
 
 
+function adjust_for_pb!(atoms_array::Array{Atoms{Frac}})
+   for atoms in atoms_array
+        atoms2 = deepcopy(atoms)
+        for i in 1:length(atoms.species)
+            dxf = atoms.coords.xf[:, i] .- atoms.coords.xf[:, 1] # rebuild the image (fixing first node @ origin)
+            nearest_image!(dxf)
+            atoms2.coords.xf[:, i] = dxf
+        end
+        atoms= atoms2
+    end
+end
+
+
+
+geometric_center(coords) = sum(coords, dims=2)[:] / 3
+
+
+function orthogonal_procrustes(A, B)
+    F = svd(A * B')
+    return F.V * F.U'
+end
+
+
+
+function perform_ops(s_moty, r_moty, xtal, s2p_isomorphism, r_moty_subset_coords, s_mask_coords)
+    rot_s2p = orthogonal_procrustes(s_moty.box.f_to_c*s_moty.atoms.coords.xf,
+        xtal.box.f_to_c*xtal.atoms.coords.xf[:,s2p_isomorphism])
+    rot_r2m = orthogonal_procrustes(r_moty.box.f_to_c*r_moty_subset_coords,
+        s_moty.box.f_to_c*s_mask_coords)
+    return rot_s2p, rot_r2m
+end
+
+
+
+function shift_to_origin!(coord_arrays::Array{Array{Float64,2}})
+    for array in coord_arrays
+        array .-= geometric_center(array)
+    end
+end
+
+
+
+function xform_r_moty(r_moty, rot_r2m, rot_s2p, xtal_subset_center, xtal)
+    xformd_r_moty_coords = rot_r2m * r_moty.box.f_to_c * r_moty.atoms.coords.xf
+    xformd_r_moty_atoms = Atoms{Cart}(length(r_moty.atoms.species),
+        r_moty.atoms.species,
+        Cart(rot_s2p * xformd_r_moty_coords .+ xtal.box.f_to_c * xtal_subset_center))
+    return Frac(xformd_r_moty_atoms, xtal.box)
+end
+
+
+
+const DEBUG = true
+function effect_replacement(xtal::Crystal, s_moty::Crystal, r_moty::Crystal, s2p_isomorphism::Array{Int}, m2r_isomorphism)::Crystal
+    if DEBUG
+        write_xyz(Cart(xtal.atoms, xtal.box), "01_xtal")
+        write_xyz(Cart(r_moty.atoms, r_moty.box), "02_r_moty")
+        write_xyz(Cart(s_moty.atoms, s_moty.box), "03_s_moty")
+    end
+    # adjust atomic coordinates to account for periodic boundaries
+    xtal_subset = xtal.atoms[s2p_isomorphism] # adjust coords on this, to preserve rest of original crystal in unit cell
+    xtal_subset_center = geometric_center(xtal_subset.coords.xf) # center of location for replacement
+    adjust_for_pb!([xtal_subset, s_moty.atoms, r_moty.atoms])
+    if DEBUG
+        write_xyz(Cart(xtal_subset, xtal.box), "04_adjusted_xtal_subset")
+        write_xyz(Cart(s_moty.atoms, s_moty.box), "05_adjusted_s_moty")
+        write_xyz(Cart(r_moty.atoms, r_moty.box), "06_adjusted_r_moty")
+    end
+
+    # determine s_mask
+    r_indices = MOFun.r_group_indices(s_moty) # which atoms from s_moty are NOT in r_moty?
+    s_mask_indices = [index for index in 1:length(s_moty.atoms.species) if !(index ∈ r_indices)]
+    s_mask_atoms = s_moty.atoms[s_mask_indices]
+    s_mask_coords = s_mask_atoms.coords.xf
+    if DEBUG
+        write_xyz(Cart(s_moty.atoms[r_indices], s_moty.box), "07_r_group")
+        write_xyz(Cart(s_mask_atoms, s_moty.box), "08_search_moiety_mask")
+    end
+
+    # shift coords to align centers at origin
+    shift_to_origin!([s_moty.atoms.coords.xf, xtal_subset.coords.xf, s_mask_coords])
+    # r_moty is different: shift all nodes according to center of a subset
+    r_moty.atoms.coords.xf .-= geometric_center(r_moty.atoms.coords.xf[:, m2r_isomorphism])
+    if DEBUG
+        write_xyz(Cart(s_moty.atoms, s_moty.box), "09_shifted_s_moty")
+        write_xyz(Cart(xtal_subset, xtal.box), "10_shifted_xtal_subset")
+        write_xyz(Cart(r_moty.atoms, r_moty.box), "11_shifted_r_moty")
+    end
+
+    # do orthogonal Procrustes for s_moty-to-parent and mask-to-replacement alignments
+    rot_s2p, rot_r2m = perform_ops(s_moty, r_moty, xtal, s2p_isomorphism,
+        r_moty.atoms[m2r_isomorphism].coords.xf, s_mask_coords)
+
+    # transform r_moty according to rot_r2m, rot_s2p, and xtal_subset_center, align to box
+    r_coords = xform_r_moty(r_moty, rot_r2m, rot_s2p, xtal_subset_center, xtal)
+
+    # subtract s_moty isomorphic subset from xtal
+    keep = [i for i in 1:length(xtal.atoms.species) if !(i ∈ s2p_isomorphism)]
+    crystal_species = xtal.atoms.species[keep]
+    crystal_coords = xtal.atoms.coords[keep]
+
+    # concatenate transformed r_moty's coords/species w/ xtal's
+    species = vcat(crystal_species, r_moty.atoms.species)
+    coords = hcat(crystal_coords.xf, r_coords.coords.xf)
+
+    # return new crystal
+    name = remove_extension(xtal) * "_find_" * MOFun.remove_path_prefix(s_moty.name) * "_replace_" * r_moty.name
+    atoms = Atoms(species, Frac(coords))
+    crystal = Crystal(name, xtal.box, atoms, Charges{Frac}(0))
+    wrap!(crystal)
+    infer_bonds!(crystal, true)
+    return crystal
+end
+
+
+"""
+Finds the search moiety in the parent structure and replaces it at one or more locations.
+"""
+function find_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal; c::Int=1)::Crystal
+	s2p_isomorphism = (s_moty ∈ parent).results[c].isomorphism
+	mask = subtract_r_group(s_moty)
+	infer_bonds!(mask, false)
+	m2r_isomorphism = (mask ∈ r_moty).results[1].isomorphism # may eventually want others, if they occur?
+	return effect_replacement(parent, s_moty, r_moty, s2p_isomorphism, m2r_isomorphism)
+end
+
+
 export
 	# MOFfun.jl
 	remove_extension, read_fragment_from_xyz, functionalize_mof,
 	choose_side, substructure_search, SubstructureSearchResult,
 	SubstructureQuery, SubstructureSearchResults, Configuration,
+	find_replace,
 
 	# ring_constructor.jl
 	empty_ring, is_aromatic, find_aromatic_cycles,
