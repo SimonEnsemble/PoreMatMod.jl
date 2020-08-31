@@ -6,6 +6,7 @@ include("../src/moiety.jl")
 
 
 # function for a specific test case. NOT a generally useful function!
+# frag and moty inputs are expected to be permuted sets of atoms with unique species
 function test_is_equiv(frag::Crystal, moty::Crystal)::Bool
     @debug "fragment" frag.atoms.species frag.atoms.coords
     @debug "moiety" moty.atoms.species moty.atoms.coords
@@ -15,7 +16,7 @@ function test_is_equiv(frag::Crystal, moty::Crystal)::Bool
                 @debug "testing" f_label m_label frag.atoms.coords[f] moty.atoms.coords[m]
                 for i in 1:3
                     if frag.atoms.coords.xf[i,f] ≠ moty.atoms.coords.xf[i,m]
-                        return false
+                        return false # detected an atom w/ inconsistent coordinates
                     end
                 end
             end
@@ -31,6 +32,8 @@ end
     fragment_2!bcfm = read_fragment_from_xyz("test/!-S-bromochlorofluoromethane", fragment_location=PATH_TO_MOIETIES)
     moiety_2!bcfm = moiety("test/!-S-bromochlorofluoromethane")
     # check that the species/coordinates correspondence is identical between fragments and moieties
+    @test moiety_bcfm.atoms.species == [:C, :H, :Cl, :F, :Br]
+    @test moiety_2!bcfm.atoms.species == [:C, :Cl, :F, :Br, :H!]
     @test test_is_equiv(fragment_bcfm, moiety_bcfm)
     @test test_is_equiv(fragment_2!bcfm, moiety_2!bcfm)
 end
