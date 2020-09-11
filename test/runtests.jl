@@ -1,6 +1,9 @@
 using Logging, Test, LightGraphs, LinearAlgebra, Revise
 global_logger(ConsoleLogger(stdout, Logging.Info))
-using PorousMaterials, MOFun, Ullmann
+
+@info "\n\n\t\tMOFun Tests\n\n "
+
+using PorousMaterials, Ullmann, MOFun
 
 function runtest(testfile::String)
     @info "Testing $(testfile)"
@@ -19,5 +22,4 @@ testfiles = [#"alignment_operations.jl"
              "MOFun.jl"
              ]
 
-@info "\n\n\t\tMOFun Tests\n\n "
 [runtest(testfile) for testfile in testfiles]
