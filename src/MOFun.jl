@@ -46,8 +46,8 @@ end
 
 
 ## main function
-function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species::Symbol,
-				r_species::Symbol, bonding_rules::Array{BondingRule,1}; n::Int=6,
+function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species::Symbol, r_species::Symbol,
+				bonding_rules::Array{BondingRule,1}; n::Int=6,
 				side_to_functionalize::Int=2, randomize_side::Bool=true,
 				arene_substitution_type::String="meta")
 	## check for/create a directory to store the output files
@@ -121,15 +121,14 @@ function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species
 		add_edge!(dirty_functionalized_mof.bonds, ed[1], ed[2])
 	end
 
-	functionalized_mof = dirty_functionalized_mof[
-		[i for i = 1:dirty_functionalized_mof.atoms.n if ! (i in atoms_to_remove)]]
+	functionalized_mof = dirty_functionalized_mof[[i for i = 1:dirty_functionalized_mof.atoms.n
+				if ! (i in atoms_to_remove)]]
 	####
 	# write output files
 	####
 	write_xyz(Cart(functionalized_mof.atoms, functionalized_mof.box),
 		joinpath(remove_extension(crystal),
-		remove_extension(crystal) * "_" * substitution_position *
-			"_functionalized_" * fragment.name))
+		remove_extension(crystal) * "_" * substitution_position * "_functionalized_" * fragment.name))
 
 	write_bond_information(functionalized_mof,
 		joinpath(remove_extension(crystal),
