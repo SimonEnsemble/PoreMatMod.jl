@@ -76,10 +76,12 @@ debugxyz(t::Tuple{Crystal, String}) = debugxyz(t[1], t[2])
 debugxyz(a::Array{Tuple{Crystal, String}}) = [debugxyz(x[1], x[2]) for x in a]
 
 @doc raw"""
-Searches for a substructure within a `Crystal` and returns a `SubstructureSearchResults`
-struct containing all identified subgraph isomorphisms.
+Searches for a substructure within a `Crystal` and returns a
+`SubstructureSearchResults` struct containing all identified subgraph
+isomorphisms.
 """
-function substructure_search(s_moty::Crystal, xtal::Crystal)::SubstructureSearchResults
+function substructure_search(s_moty::Crystal,
+		xtal::Crystal)::SubstructureSearchResults
 	# Make a copy w/o R tags for searching
 	moty = deepcopy(s_moty)
 	untag_r_group!(moty)
@@ -97,7 +99,8 @@ function substructure_search(s_moty::Crystal, xtal::Crystal)::SubstructureSearch
 		end
 	end
 	# unpack dict
-	num_orientations = [length(results[location_set]) for location_set in keys(results)]
+	num_orientations = [
+		length(results[location_set]) for location_set in keys(results)]
 	results = [result for result in values(results)]
 	# repack as array of structs
 	result_struct_array = Array{SubstructureSearchResult}([])
@@ -107,8 +110,8 @@ function substructure_search(s_moty::Crystal, xtal::Crystal)::SubstructureSearch
 				(location, orientation), isomorphism))
         end
     end
-    return SubstructureSearchResults(result_struct_array, length(result_struct_array),
-		length(keys(results)), num_orientations)
+    return SubstructureSearchResults(result_struct_array,
+		length(result_struct_array), length(keys(results)), num_orientations)
 end
 
 # Translates all atoms in xtal such that Atoms[1] is @ origin, w/ correction for
@@ -126,13 +129,15 @@ function adjust_for_pb!(xtal::Crystal)
 end
 
 # Performs orthogonal Procrustes on correlated point clouds A and B
-function orthogonal_procrustes(A::Array{Float64,2}, B::Array{Float64,2})::Array{Float64,2}
+function orthogonal_procrustes(A::Array{Float64,2},
+		B::Array{Float64,2})::Array{Float64,2}
     F = svd(A * B')
     return F.V * F.U'
 end
 
 # Gets the s_moty-to-xtal rotation matrix
-function s2p_op(s_moty::Crystal, xtal::Crystal,	s2p_isomorphism::Array{Int})::Array{Float64}
+function s2p_op(s_moty::Crystal, xtal::Crystal,
+		s2p_isomorphism::Array{Int})::Array{Float64}
 	A = s_moty.box.f_to_c * s_moty.atoms.coords.xf
 	B = xtal.box.f_to_c * xtal.atoms.coords.xf[:, s2p_isomorphism]
 	return orthogonal_procrustes(A, B)
@@ -147,8 +152,9 @@ function r2m_op(r_moty::Crystal, s_moty::Crystal, m2r_isomorphism::Array{Int},
 end
 
 # Transforms r_moty according to two rotation matrices and a translational offset
-function xform_r_moty(r_moty::Crystal, rot_r2m::Array{Float64,2}, rot_s2p::Array{Float64,2},
-		xtal_offset::Array{Float64}, xtal::Crystal)::Crystal
+function xform_r_moty(r_moty::Crystal, rot_r2m::Array{Float64,2},
+		rot_s2p::Array{Float64,2}, xtal_offset::Array{Float64},
+		xtal::Crystal)::Crystal
 	# put r_moty into cartesian space
 	atoms = Atoms{Cart}(length(r_moty.atoms.species), r_moty.atoms.species,
 		Cart(r_moty.atoms.coords, r_moty.box))
@@ -162,10 +168,12 @@ function xform_r_moty(r_moty::Crystal, rot_r2m::Array{Float64,2}, rot_s2p::Array
 	atoms.coords.x .+= xtal.box.f_to_c * xtal_offset
 	debugxyz(atoms, "14_translation2")
 	# cast atoms back to Frac
-	return Crystal(r_moty.name, xtal.box, Atoms{Frac}(length(atoms.species), atoms.species, Frac(atoms.coords, xtal.box)), Charges{Frac}(0))
+	return Crystal(r_moty.name, xtal.box, Atoms{Frac}(length(atoms.species),
+		atoms.species, Frac(atoms.coords, xtal.box)), Charges{Frac}(0))
 end
 
-# shifts coordinates to make the geometric center of the point cloud coincident w/ the origin
+# shifts coordinates to make the geometric center of the point cloud coincident
+# w/ the origin
 function center_on_self!(xtal::Crystal)
 	xtal.atoms.coords.xf .-= geometric_center(xtal)
 end
@@ -176,22 +184,25 @@ function effect_replacement(xtal::Crystal, s_moty::Crystal,	r_moty::Crystal,
 	# prevent input mutation and slice off the target subset of the parent structure
 	s_moty, r_moty, xtal_subset = deepcopy.([s_moty, r_moty, xtal[s2p_isomorphism]])
 	debugxyz.([(xtal, "01_xtal"), (r_moty, "02_r_moty"), (s_moty, "03_s_moty")])
-	xtal_subset_center = geometric_center(xtal_subset) # where to return post-alignment
+	# where to return post-alignment
+	xtal_subset_center = geometric_center(xtal_subset)
 	# adjust the coordinates for periodic boundaries
     adjust_for_pb!(xtal_subset)
 	# shift to align centers at origin
 	center_on_self!.([xtal_subset, s_moty])
-	debugxyz.([(xtal_subset, "04_adjusted_xtal_subset"), (s_moty, "05_adjusted_s_moty")])
+	debugxyz.([(xtal_subset, "04_adjusted_xtal_subset"),
+		(s_moty, "05_adjusted_s_moty")])
     # determine s_mask (which atoms from s_moty are NOT in r_moty?)
-    s_mask_atoms = s_moty.atoms[[i for i in 1:s_moty.atoms.n if !(i ∈ r_group_indices(s_moty))]]
+    s_mask_atoms = s_moty.atoms[
+		[i for i in 1:s_moty.atoms.n if !(i ∈ r_group_indices(s_moty))]]
 	debugxyz(Cart(s_mask_atoms, s_moty.box), "08_search_moiety_mask")
     # shift all r_moty nodes according to center of isomorphic subset
     r_moty.atoms.coords.xf .-= geometric_center(r_moty[m2r_isomorphism])
 	debugxyz(r_moty, "11_shifted_r_moty")
-    # do orthogonal Procrustes for s_moty-to-parent and mask-to-replacement alignments
+    # do orthog. Procrustes for s_moty-to-parent and mask-to-replacement alignments
 	rot_s2p = s2p_op(s_moty, xtal, s2p_isomorphism)
 	rot_r2m = r2m_op(r_moty, s_moty, m2r_isomorphism, s_mask_atoms)
-    # transform r_moty according to rot_r2m, rot_s2p, and xtal_subset_center, align to box
+    # transform r_moty by rot_r2m, rot_s2p, and xtal_subset_center, align to box
     r_moty = xform_r_moty(r_moty, rot_r2m, rot_s2p, xtal_subset_center, xtal)
     # subtract s_moty isomorphic subset from xtal, add back r_moty
     xtal = Crystal(remove_extension(xtal) * "_find_" *
@@ -201,7 +212,7 @@ function effect_replacement(xtal::Crystal, s_moty::Crystal,	r_moty::Crystal,
 			xtal.box) + Cart(r_moty.atoms, r_moty.box),	xtal.box), Charges{Frac}(0))
 	debugxyz(xtal, "15_crystal")
     wrap!(xtal)
-    infer_bonds!(xtal, true) # this needs to be changed to intelligent bond creation!
+    infer_bonds!(xtal, true)
     return xtal
 end
 
@@ -216,5 +227,6 @@ function find_replace(s_moty::Crystal, r_moty::Crystal, xtal::Crystal;
 	mask = subtract_r_group(s_moty)
 	infer_bonds!(mask, false)
 	return effect_replacement(xtal, s_moty, r_moty,
-		(s_moty ∈ xtal).results[c].isomorphism, (mask ∈ r_moty).results[1].isomorphism)
+		(s_moty ∈ xtal).results[c].isomorphism,
+		(mask ∈ r_moty).results[1].isomorphism)
 end
