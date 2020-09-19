@@ -217,14 +217,18 @@ function effect_replacement(xtal::Crystal, s_moty::Crystal,	r_moty::Crystal,
     # transform r_moty by rot_r2m, rot_s2p, and xtal_subset_center, align to xtal
     r_moty = xform_r_moty(r_moty, rot_r2m, rot_s2p, xtal_subset_center, xtal)
     # subtract s_moty isomorphic subset from xtal, add back r_moty
-    xtal = Crystal(remove_extension(xtal) * "_find_" *
+	keep = [i for i in 1:length(xtal.atoms.species) if !(i ∈ s2p_isomorphism)]
+	atoms = Frac(Cart(xtal.atoms[keep],	xtal.box) +
+		Cart(r_moty.atoms, r_moty.box),	xtal.box)
+	# merge bonding graphs
+	# TODO
+	# build final crystal
+	xtal = Crystal(remove_extension(xtal) * "_find_" *
 		MOFun.remove_path_prefix(s_moty.name) *	"_replace_" * r_moty.name, xtal.box,
-		Frac(Cart(xtal.atoms[
-			[i for i in 1:length(xtal.atoms.species) if !(i ∈ s2p_isomorphism)]],
-			xtal.box) + Cart(r_moty.atoms, r_moty.box),	xtal.box), Charges{Frac}(0))
+		atoms, Charges{Frac}(0))
 	debugxyz(xtal, "crystal")
+	# re-wrap around periodic cell boundaries
     wrap!(xtal)
-    infer_bonds!(xtal, true)
     return xtal
 end
 
@@ -236,8 +240,7 @@ Searches for a substructure within a `Crystal` and returns a
 `Search` struct containing all identified subgraph
 isomorphisms.
 """
-function substructure_search(s_moty::Crystal,
-		xtal::Crystal)::Search
+function substructure_search(s_moty::Crystal, xtal::Crystal)::Search
 	# Make a copy w/o R tags for searching
 	moty = deepcopy(s_moty)
 	untag_r_group!(moty)
@@ -284,7 +287,7 @@ function find_replace(s_moty::Crystal, r_moty::Crystal, xtal::Crystal,
 	infer_bonds!(mask, false)
 	c = 0
 	if config == Configuration()
-		@warn "Find/replace configuration not specified. Choosing one randomly."
+		#@warn "Find/replace configuration not specified. Choosing one randomly."
 		c = rand(1:search.num_isomorphisms)
 	else
 		for i in 1:search.num_isomorphisms
@@ -301,3 +304,5 @@ end
 find_replace(s_moty::Crystal, r_moty::Crystal, xtal::Crystal,
 		config::Tuple{Int,Int}, search::Search=Search()) =
 	find_replace(s_moty, r_moty, xtal, Configuration(config[1], config[2]), search)
+find_replace(s_moty::Crystal, r_moty::Crystal, xtal::Crystal, search::Search) =
+	find_replace(s_moty, r_moty, xtal, Configuration(), search)
