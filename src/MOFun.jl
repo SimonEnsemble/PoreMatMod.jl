@@ -153,8 +153,8 @@ export
 	choose_side,
 
 	# findreplace.jl
-	substructure_search, find_replace, SubstructureSearchResult, SubstructureQuery, 
-	SubstructureSearchResults, Configuration,
+	substructure_search, find_replace, SubstructureSearchResult,
+	SubstructureQuery, Search, Configuration,
 
 	# ring_constructor.jl
 	empty_ring, is_aromatic, find_aromatic_cycles,
