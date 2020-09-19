@@ -150,9 +150,11 @@ end
 export
 	# MOFfun.jl
 	remove_extension, read_fragment_from_xyz, functionalize_mof,
-	choose_side, substructure_search, SubstructureSearchResult,
-	SubstructureQuery, SubstructureSearchResults, Configuration,
-	find_replace,
+	choose_side,
+
+	# findreplace.jl
+	substructure_search, find_replace, SubstructureSearchResult, SubstructureQuery, 
+	SubstructureSearchResults, Configuration,
 
 	# ring_constructor.jl
 	empty_ring, is_aromatic, find_aromatic_cycles,
