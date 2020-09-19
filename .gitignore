@@ -2,3 +2,5 @@
 test.txt
 scratch*
 output/*
+*.xyz
+*.vtk
