@@ -1,10 +1,25 @@
-using Logging, Test, LightGraphs, LinearAlgebra, Revise
+# runtests.jl
+
+## dependencies and logging
+using Logging, Test, LightGraphs, LinearAlgebra, PorousMaterials, Revise
 global_logger(ConsoleLogger(stdout, Logging.Info))
 
+## banner
 @info "\n\n\t\tMOFun Tests\n\n "
 
-using PorousMaterials, Ullmann, MOFun
+## silly hack to handle dumb errors loading local modules
+try
+    using Ullmann
+catch
+    using Ullmann
+end
+try
+    using MOFun
+catch
+    using MOFun
+end
 
+## gives timing data for tests, plus some formatting
 function runtest(testfile::String)
     @info "Testing $(testfile)"
     try
@@ -15,11 +30,9 @@ function runtest(testfile::String)
     println("")
 end
 
-testfiles = [#"alignment_operations.jl"
-             #"ring_constructor.jl"
-             "moiety.jl"
-             "Ullmann.jl"
-             "MOFun.jl"
-             ]
-
-[runtest(testfile) for testfile in testfiles]
+## Run the tests!
+runtest.([
+    "moiety.jl"
+    "Ullmann.jl"
+    "MOFun.jl"
+])

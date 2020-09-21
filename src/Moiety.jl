@@ -1,6 +1,6 @@
+export moiety, subtract_r_group, effect_replacement
 PATH_TO_MOIETIES = joinpath(pwd(), "data/moieties")
 R_GROUP_TAG = '!'
-
 
 """
 Returns bonding rules including R-group-tagged atom copies

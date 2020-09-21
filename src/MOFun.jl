@@ -6,9 +6,12 @@ using LightGraphs
 using LinearAlgebra
 using Printf
 using DataFrames
+
+## find-replace
 using Ullmann
 include("moiety.jl")
 include("findreplace.jl")
+
 ## other necessary files containing function definitions and tests
 include("ring_constructor.jl")
 include("alignment_operations.jl")
@@ -152,10 +155,6 @@ export
 	remove_extension, read_fragment_from_xyz, functionalize_mof,
 	choose_side,
 
-	# findreplace.jl
-	substructure_search, find_replace, SubstructureSearchResult,
-	SubstructureQuery, Search, Configuration,
-
 	# ring_constructor.jl
 	empty_ring, is_aromatic, find_aromatic_cycles,
 	is_species, have_neighbor, find_ipso_id,
@@ -163,8 +162,5 @@ export
 
 	# alignment_operations.jl
 	crystal_aro_triplet_ids, fragment_aro_triplet_ids, fragment_aro_R_id,
-	center_of_aro_triplet, triplet_locality, align_fragment,
-
-	# moiety.jl
-	moiety
+	center_of_aro_triplet, triplet_locality, align_fragment
 end
