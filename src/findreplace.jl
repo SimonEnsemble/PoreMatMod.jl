@@ -234,6 +234,11 @@ function idx_filter(xtal::Crystal, subset::Array{Int})::Array{Int,1}
 	return [i for i in 1:xtal.atoms.n if !(i ∈ subset)]
 end
 
+# create the bonds between the inserted r_moty and the anchor atoms of the parent
+function make_bonds!(new_xtal::Crystal)
+	infer_bonds!(new_xtal, true) # TODO replace w/ real bonds
+end
+
 # returns a Crystal with a specific replacement made
 function effect_replacement(xtal::Crystal, s_moty::Crystal,	r_moty::Crystal,
 		s2p_isomorphism::Array{Int}, m2r_isomorphism)::Crystal
@@ -265,20 +270,23 @@ function effect_replacement(xtal::Crystal, s_moty::Crystal,	r_moty::Crystal,
 	keep = idx_filter(xtal, s2p_isomorphism)
 	atoms = Frac(Cart(xtal.atoms[keep],	xtal.box) +
 		Cart(r_moty.atoms, r_moty.box),	xtal.box)
-	# merge bonding graphs
-	# TODO
 	# build final crystal
-	xtal = Crystal(remove_extension(xtal)*"_find_"*remove_path_prefix(s_moty.name)*
+	new_xtal = Crystal(remove_extension(xtal)*"_find_"*remove_path_prefix(s_moty.name)*
 		"_replace_"*r_moty.name, xtal.box, atoms, Charges{Frac}(0))
-	debugxyz(xtal, "crystal")
-	infer_bonds!(xtal, true) # TODO remove after fixing bonding above
+	debugxyz(new_xtal, "crystal")
+	# create the appropriate bonds
+	make_bonds!(new_xtal)
 	# re-wrap around periodic cell boundaries
-    wrap!(xtal)
-    return xtal
+    wrap!(new_xtal)
+    return new_xtal
 end
 
 # do a single specific replacement, or a random one
-function fr_one_rep(s_moty::Crystal, r_moty::Crystal, xtal::Crystal; search::Search=Search(), config::Configuration=Configuration(), outdir::String="", save::Bool=false)
+function fr_one_rep(s_moty::Crystal, r_moty::Crystal, xtal::Crystal;
+		search::Search=Search(),
+		config::Configuration=Configuration(),
+		outdir::String="",
+		save::Bool=false)
 	mask = subtract_r_group(s_moty)
 	infer_bonds!(mask, false)
 	c = 0
@@ -297,8 +305,9 @@ function fr_one_rep(s_moty::Crystal, r_moty::Crystal, xtal::Crystal; search::Sea
 			end
 		end
 	end
-	@assert c ≠ 0 "No replacements to make." # in case replacement specified, but not found
-	new_xtal = effect_replacement(xtal, s_moty, r_moty, search.results[c].isomorphism, (mask ∈ r_moty).results[1].isomorphism)
+	@assert c ≠ 0 "No replacements to make." # invalid replacement specified
+	new_xtal = effect_replacement(xtal, s_moty, r_moty,
+		search.results[c].isomorphism, (mask ∈ r_moty).results[1].isomorphism)
 	if save
 		write_cif(new_xtal, outdir*new_xtal.name*"_$c.cif")
 	end
@@ -306,27 +315,40 @@ function fr_one_rep(s_moty::Crystal, r_moty::Crystal, xtal::Crystal; search::Sea
 end
 
 # returns a series of randomly-substituted crystals with increasing substitution
-function fr_cumulative(s_moty::Crystal, r_moty::Crystal, xtal::Crystal; search::Search=Search(), outdir::String="", incremental::Bool=false, save::Bool=false)::Array{Crystal}
+function fr_cumulative(s_moty::Crystal, r_moty::Crystal, xtal::Crystal;
+		search::Search=Search(),
+		outdir::String="",
+		incremental::Bool=false,
+		save::Bool=false)::Array{Crystal}
     xtals = [xtal]
-    @showprogress 1 "Processing $(search.num_locations) replacements:\t" for i in 1:search.num_locations
+    @showprogress 1 "Processing $(search.num_locations) replacements:\t" for
+			i in 1:search.num_locations
         push!(xtals, fr_one_rep(s_moty, r_moty, xtals[i], search=s_moty ∈ xtals[i]))
     end
     if save
         if incremental
             for (i,x) in enumerate(xtals[2:end])
-            	write_cif(x, outdir*remove_extension(xtal)*"_find_"*remove_path_prefix(s_moty.name)*"_replace_"*r_moty.name*"_$i")
+            	write_cif(x, outdir*remove_extension(xtal)*"_find_"*
+					remove_path_prefix(s_moty.name)*"_replace_"*r_moty.name*"_$i")
 			end
 		else
-			write_cif(xtals[end], outdir*remove_extension(xtal)*"_find_"*remove_path_prefix(s_moty.name)*"_replace_"*r_moty.name)
+			write_cif(xtals[end], outdir*remove_extension(xtal)*"_find_"*
+				remove_path_prefix(s_moty.name)*"_replace_"*r_moty.name)
 		end
     end
     return xtals
 end
 
 # runs find_replace to get every possible replacement
-function fr_all_configs(s_moty::Crystal, r_moty::Crystal, xtal::Crystal; search::Search=Search(), outdir::String="", save::Bool=false)::Array{Crystal}
+function fr_all_configs(s_moty::Crystal, r_moty::Crystal, xtal::Crystal;
+		search::Search=Search(),
+		outdir::String="",
+		save::Bool=false)::Array{Crystal}
     xtals = Array{Crystal}([])
-    @showprogress 1 "Processing replacements:\t" for i in 1:search.num_locations
+	msg1 = "Processing $(search.num_locations) replacements:\t"
+	msg2 = "Processing replacements:\t"
+	msg = search.num_locations > 0 ? msg1 : msg2
+    @showprogress 1 msg for i in 1:search.num_locations
         for j in 1:search.num_orientations[i]
             push!(xtals, fr_one_rep(s_moty, r_moty, xtal, search=search))
             if save
@@ -338,12 +360,16 @@ function fr_all_configs(s_moty::Crystal, r_moty::Crystal, xtal::Crystal; search:
 end
 
 # runs find_replace to get one random replacement at each site
-function fr_random_all(s_moty::Crystal, r_moty::Crystal, xtal::Crystal; search::Search=Search(), outdir::String="", save::Bool=false)::Array{Crystal}
+function fr_random_all(s_moty::Crystal, r_moty::Crystal, xtal::Crystal;
+		search::Search=Search(),
+		outdir::String="",
+		save::Bool=false)::Array{Crystal}
     xtals = Array{Crystal}([])
     @showprogress 1 "Processing $(search.num_locations) replacements:\t" for
 		config in [(location, rand(1:search.num_orientations[location])) for
 			location in 1:search.num_locations]
-        push!(xtals, fr_one_rep(s_moty, r_moty, xtal, search=search, config=Configuration(config)))
+        push!(xtals, fr_one_rep(s_moty, r_moty, xtal, search=search,
+			config=Configuration(config)))
         if save
             i = 0
             for x in xtals
@@ -356,7 +382,7 @@ function fr_random_all(s_moty::Crystal, r_moty::Crystal, xtal::Crystal; search::
 end
 
 
-## Search function
+## Search function (exposed)
 
 @doc raw"""
 Searches for a substructure within a `Crystal` and returns a
@@ -397,7 +423,7 @@ function substructure_search(s_moty::Crystal, xtal::Crystal)::Search
 end
 
 
-## Find/replace function
+## Find/replace function (exposed)
 
 @doc raw"""
 Finds the search moiety in the parent structure and replaces it at a location.
@@ -421,8 +447,10 @@ function find_replace(s_moty::Crystal, r_moty::Crystal, xtal::Crystal;
     elseif random_all # one random output for each possible location
         return fr_random_all(s_moty, r_moty, xtal, search=search, outdir=outdir, save=save)
     elseif cumulative # a single output with each location randomly altered once
-        return fr_cumulative(s_moty, r_moty, xtal, search=search, outdir=outdir, incremental=incremental, save=save)
+        return fr_cumulative(s_moty, r_moty, xtal, search=search, outdir=outdir,
+			incremental=incremental, save=save)
     else # one replacement (default)
-        return fr_one_rep(s_moty, r_moty, xtal, config=config, search=search, outdir=outdir, save=save)
+        return fr_one_rep(s_moty, r_moty, xtal, config=config, search=search,
+			outdir=outdir, save=save)
     end
 end
