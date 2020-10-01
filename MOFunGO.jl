@@ -25,6 +25,39 @@ begin
 	global_logger(ConsoleLogger(stdout, Logging.Info))
 end;
 
+# ╔═╡ 13459850-03c9-11eb-06dc-d91bd1826b28
+# This is from https://gist.github.com/GiggleLiu/aff2af66a896cf8a05310b8ba66f540f#file-plutouitips-jl :
+html"""
+Expand/Contract Code <button id="showhide">↔</button>
+<style>
+	body.hide_all_inputs pluto-input {
+		display: none;
+	}
+	body.hide_all_inputs pluto-shoulder {
+		display: none;
+	}
+	body.hide_all_inputs pluto-trafficlight {
+		display: none;
+	}
+	body.hide_all_inputs pluto-runarea {
+		display: none;
+	}
+	body.hide_all_inputs .add_cell {
+		display: none;
+	}
+	body.hide_all_inputs pluto-cell {
+		min-height: 0;
+		margin-top: 10px;
+	}
+</style>
+<script>
+	const button = this.querySelector("#showhide");
+	button.onclick = () => {
+		document.body.classList.toggle("hide_all_inputs")
+	}
+</script>
+"""
+
 # ╔═╡ 6c1969e0-02f5-11eb-3fa2-09931a63b1ac
 # title/info
 # Made with some inspiration from [https://gist.github.com/GiggleLiu](https://gist.github.com/GiggleLiu) 
@@ -49,14 +82,17 @@ Replace Moiety $(@bind REPLACE_MOIETY TextField(default="2-acetylamido-p-phenyle
 # ╔═╡ 47ca486e-03c2-11eb-3b76-6337fc07c447
 # vis refresh button
 md"""
-### Visualization $(@bind UPDATE_VISUALIZATION Button("♻"))
+### Substitute and Visualize $(@bind UPDATE Button("GO"))
 """
 
 # ╔═╡ 8768f630-03bc-11eb-0be1-338983860b0d
 # refreshes visualization on button press
-let UPDATE_VISUALIZATION
+let UPDATE
 	# not sure why this isn't rendering the unit cell, but it also doesn't in the tutorial notebook...
-	viewfile("MOFunGO_temp.xyz", "xyz", vtkcell="MOFunGO_temp.vtk")
+	try
+		viewfile("MOFunGO_temp.xyz", "xyz", vtkcell="MOFunGO_temp.vtk")
+	catch # suppress errors when no visuals have processed yet
+	end
 end
 
 # ╔═╡ 41448e10-03c3-11eb-2a21-2102e629ffca
@@ -170,6 +206,7 @@ Expand/Contract Code <button id="showhide">↔</button>
 """
 
 # ╔═╡ Cell order:
+# ╠═13459850-03c9-11eb-06dc-d91bd1826b28
 # ╠═6c1969e0-02f5-11eb-3fa2-09931a63b1ac
 # ╠═50269ffe-02ef-11eb-0614-f11975d991fe
 # ╠═77d70610-02ec-11eb-0004-fff39ffbb197
