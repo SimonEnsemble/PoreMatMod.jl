@@ -24,35 +24,21 @@ begin
 end;
 
 # ╔═╡ 13459850-03c9-11eb-06dc-d91bd1826b28
-# This is from https://gist.github.com/GiggleLiu/aff2af66a896cf8a05310b8ba66f540f#file-plutouitips-jl :
+# This is from https://gist.github.com/GiggleLiu/aff2af66a896cf8a05310b8ba66f540f#file-plutouitips-jl
+# it toggles collapsing/expanding of all code in the notebook
 html"""
 <button id="showhide">↔</button>
 <style>
-	body.hide_all_inputs pluto-input {
-		display: none;
-	}
-	body.hide_all_inputs pluto-shoulder {
-		display: none;
-	}
-	body.hide_all_inputs pluto-trafficlight {
-		display: none;
-	}
-	body.hide_all_inputs pluto-runarea {
-		display: none;
-	}
-	body.hide_all_inputs .add_cell {
-		display: none;
-	}
-	body.hide_all_inputs pluto-cell {
-		min-height: 0;
-		margin-top: 10px;
-	}
+	body.hide_all_inputs pluto-input {display: none;}
+	body.hide_all_inputs pluto-shoulder {display: none;}
+	body.hide_all_inputs pluto-trafficlight {display: none;}
+	body.hide_all_inputs pluto-runarea {display: none;}
+	body.hide_all_inputs .add_cell {display: none;}
+	body.hide_all_inputs pluto-cell {min-height: 0;	margin-top: 10px;}
 </style>
 <script>
 	const button = this.querySelector("#showhide");
-	button.onclick = () => {
-		document.body.classList.toggle("hide_all_inputs")
-	}
+	button.onclick = () => {document.body.classList.toggle("hide_all_inputs")}
 </script>
 """
 
@@ -86,7 +72,7 @@ md"""
 # ╔═╡ 8768f630-03bc-11eb-0be1-338983860b0d
 # refreshes visualization on button press
 let UPDATE
-	# not sure why this isn't rendering the unit cell, but it also doesn't in the tutorial notebook...
+	# not sure why this isn't rendering the unit cell, but it also doesn't in the tutorial notebook... WAIT IT DOES IN HTML MODE
 	try
 		viewfile("MOFunGO_temp.xyz", "xyz", vtkcell="MOFunGO_temp.vtk")
 	catch # suppress errors when no visuals have processed yet
@@ -104,20 +90,18 @@ $(@bind SAVE_RESULT Button("Save"))
 """
 
 # ╔═╡ c4865f10-02ec-11eb-3cb1-8fa065c4b09f
+# reactive cell for keeping current w/ file inputs
 begin
 	xtal = Crystal(PARENT)
 	strip_numbers_from_atom_labels!(xtal)
 	infer_bonds!(xtal, true)
 	s_moty = moiety(SEARCH_MOIETY)
 	r_moty = moiety(REPLACE_MOIETY)
-end;
-
-# ╔═╡ 685ff86e-0302-11eb-06fe-11a418009951
-begin
 	search = s_moty ∈ xtal
 end;
 
 # ╔═╡ 5fff5d30-02fb-11eb-011c-e9af7248c73e
+# reactive cell for updating location selector on search
 begin
 	locations = ["$(loc)" for loc in 1:search.num_locations]
 end;
@@ -129,6 +113,7 @@ Location in Parent $(@bind LOCATION Select(locations))
 """
 
 # ╔═╡ 76bf2b6e-0302-11eb-2331-8dac63ed0b94
+# reactive cell for updating orientation selector on location selector
 begin
 	orientations = ["$(res.configuration.orientation)" for res in search.results if "$(res.configuration.location)" == LOCATION]
 end;
@@ -140,8 +125,11 @@ Orientation at Location $(@bind ORIENTATION Select(orientations))
 """
 
 # ╔═╡ f723c59e-03b6-11eb-3e5d-15aa0edd28c3
+# reactive cell for keeping current w/ UI inputs
 begin
 	new_xtal = find_replace(s_moty, r_moty, xtal, config=Configuration(parse(Int, LOCATION), parse(Int, ORIENTATION)))
+	write_xyz(new_xtal, "MOFunGO_temp.xyz")
+	write_vtk(new_xtal.box, "MOFunGO_temp.vtk")
 end;
 
 # ╔═╡ d8c9faf0-03bd-11eb-15b5-7b74057459c5
@@ -150,9 +138,10 @@ begin
 	with_terminal() do
 		@info new_xtal
 	end
-end;
+end
 
 # ╔═╡ 57d03120-03c3-11eb-0b53-67c02471b008
+# the button behavior is so confusing... how to make this not insta-update??
 let SAVE_RESULT
 	if SAVE_CIF
 		write_cif(new_xtal, SAVE_PATH*".cif")
@@ -160,52 +149,28 @@ let SAVE_RESULT
 	if SAVE_VTK
 		write_vtk(new_xtal.box, SAVE_PATH*".vtk")
 	end
-end;
-
-# ╔═╡ 06eaee10-03ac-11eb-0743-8f9c7bdfea5a
-begin
-	write_xyz(new_xtal, "MOFunGO_temp.xyz")
-	write_vtk(new_xtal.box, "MOFunGO_temp.vtk")
-end;
-# visual doesn't update w/o button, but when button exists, no need to click it! (???)
+end
 
 # ╔═╡ 3b0134f0-02f5-11eb-0237-15a21c849f2a
-# This is from https://gist.github.com/GiggleLiu/aff2af66a896cf8a05310b8ba66f540f#file-plutouitips-jl :
 html"""
 <button id="showhide">↔</button>
 <style>
-	body.hide_all_inputs pluto-input {
-		display: none;
-	}
-	body.hide_all_inputs pluto-shoulder {
-		display: none;
-	}
-	body.hide_all_inputs pluto-trafficlight {
-		display: none;
-	}
-	body.hide_all_inputs pluto-runarea {
-		display: none;
-	}
-	body.hide_all_inputs .add_cell {
-		display: none;
-	}
-	body.hide_all_inputs pluto-cell {
-		min-height: 0;
-		margin-top: 10px;
-	}
+	body.hide_all_inputs pluto-input {display: none;}
+	body.hide_all_inputs pluto-shoulder {display: none;}
+	body.hide_all_inputs pluto-trafficlight {display: none;}
+	body.hide_all_inputs pluto-runarea {display: none;}
+	body.hide_all_inputs .add_cell {display: none;}
+	body.hide_all_inputs pluto-cell {min-height: 0;	margin-top: 10px;}
 </style>
 <script>
 	const button = this.querySelector("#showhide");
-	button.onclick = () => {
-		document.body.classList.toggle("hide_all_inputs")
-	}
+	button.onclick = () => {document.body.classList.toggle("hide_all_inputs")}
 </script>
 """
 
 # ╔═╡ Cell order:
 # ╠═13459850-03c9-11eb-06dc-d91bd1826b28
 # ╠═6c1969e0-02f5-11eb-3fa2-09931a63b1ac
-# ╠═50269ffe-02ef-11eb-0614-f11975d991fe
 # ╠═77d70610-02ec-11eb-0004-fff39ffbb197
 # ╠═fea0b040-03c0-11eb-2fc4-cb02d90a5be1
 # ╠═f705aac2-03c0-11eb-1185-eb29469be398
@@ -213,11 +178,10 @@ html"""
 # ╠═8768f630-03bc-11eb-0be1-338983860b0d
 # ╠═d8c9faf0-03bd-11eb-15b5-7b74057459c5
 # ╠═41448e10-03c3-11eb-2a21-2102e629ffca
+# ╠═50269ffe-02ef-11eb-0614-f11975d991fe
 # ╠═57d03120-03c3-11eb-0b53-67c02471b008
 # ╠═c4865f10-02ec-11eb-3cb1-8fa065c4b09f
-# ╠═685ff86e-0302-11eb-06fe-11a418009951
 # ╠═5fff5d30-02fb-11eb-011c-e9af7248c73e
 # ╠═76bf2b6e-0302-11eb-2331-8dac63ed0b94
-# ╠═06eaee10-03ac-11eb-0743-8f9c7bdfea5a
 # ╠═f723c59e-03b6-11eb-3e5d-15aa0edd28c3
 # ╠═3b0134f0-02f5-11eb-0237-15a21c849f2a
