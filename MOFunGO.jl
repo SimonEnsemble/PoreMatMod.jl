@@ -21,14 +21,12 @@ begin
 	using PorousMaterials, MOFun, Logging, PlutoUI, Bio3DView
 	# Pluto also doesn't like to run from ~/.julia/ 😖
 	@eval MOFun PATH_TO_MOIETIES="C:\\Users\\eahen\\.julia\\dev\\MOFfun.jl\\data\\moieties"
-	# Main console gets output and it isn't color-coded 😢
-	global_logger(ConsoleLogger(stdout, Logging.Info))
 end;
 
 # ╔═╡ 13459850-03c9-11eb-06dc-d91bd1826b28
 # This is from https://gist.github.com/GiggleLiu/aff2af66a896cf8a05310b8ba66f540f#file-plutouitips-jl :
 html"""
-Expand/Contract Code <button id="showhide">↔</button>
+<button id="showhide">↔</button>
 <style>
 	body.hide_all_inputs pluto-input {
 		display: none;
@@ -152,30 +150,29 @@ begin
 	with_terminal() do
 		@info new_xtal
 	end
-end
+end;
 
 # ╔═╡ 57d03120-03c3-11eb-0b53-67c02471b008
 let SAVE_RESULT
 	if SAVE_CIF
 		write_cif(new_xtal, SAVE_PATH*".cif")
-		
 	end
 	if SAVE_VTK
 		write_vtk(new_xtal.box, SAVE_PATH*".vtk")
 	end
-end
+end;
 
 # ╔═╡ 06eaee10-03ac-11eb-0743-8f9c7bdfea5a
 begin
 	write_xyz(new_xtal, "MOFunGO_temp.xyz")
 	write_vtk(new_xtal.box, "MOFunGO_temp.vtk")
-end
+end;
 # visual doesn't update w/o button, but when button exists, no need to click it! (???)
 
 # ╔═╡ 3b0134f0-02f5-11eb-0237-15a21c849f2a
 # This is from https://gist.github.com/GiggleLiu/aff2af66a896cf8a05310b8ba66f540f#file-plutouitips-jl :
 html"""
-Expand/Contract Code <button id="showhide">↔</button>
+<button id="showhide">↔</button>
 <style>
 	body.hide_all_inputs pluto-input {
 		display: none;
