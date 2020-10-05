@@ -7,7 +7,9 @@ global_logger(ConsoleLogger(stdout, Logging.Info))
 ## banner
 @info "\n\n\t\tMOFun Tests\n\n "
 
-## silly hack to handle dumb errors loading local modules
+## silly hack to handle dumb errors loading local modules. race condition w/
+# multiple threads leads to some workers thinking the module hasn't been loaded.
+# solution is to just load the module again.
 try
     using Ullmann
 catch
