@@ -253,17 +253,17 @@ function build_replacement_data(c::Array{Int}, search::Search, parent::Crystal, 
         # find parent subset
         parent_subset = deepcopy(parent[s2p_isom])
         # adjust coordinates for periodic boundaries
-        MOFun.adjust_for_pb!(parent_subset)
+        adjust_for_pb!(parent_subset)
         # record the center of xtal_subset so we can translate back later
-        parent_subset_center = MOFun.geometric_center(parent_subset)
+        parent_subset_center = geometric_center(parent_subset)
         # shift to align centers at origin
-        MOFun.center_on_self!.([parent_subset, s_moty])
+        center_on_self!.([parent_subset, s_moty])
         # do orthog. Procrustes for s_moty-to-parent and mask-to-replacement alignments
-        rot_s2p = MOFun.s2p_op(s_moty, parent_subset)
-        rot_r2m = MOFun.r2m_op(r_moty, s_moty, m2r_isom, mask.atoms)
+        rot_s2p = s2p_op(s_moty, parent_subset)
+        rot_r2m = r2m_op(r_moty, s_moty, m2r_isom, mask.atoms)
         # transform r_moty by rot_r2m, rot_s2p, and xtal_subset_center, align to parent
         # (this is now a crystal to add)
-        xrm = MOFun.xform_r_moty(r_moty, rot_r2m, rot_s2p, parent_subset_center, parent)
+        xrm = xform_r_moty(r_moty, rot_r2m, rot_s2p, parent_subset_center, parent)
         push!(xrms, xrm)
         # push obsolete atoms to array
         for x in s2p_isom
@@ -333,7 +333,7 @@ function find_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal;
     # mutation guard
     s_moty, r_moty = deepcopy.([s_moty, r_moty])
     # if search not specified, do it now
-	search = MOFun.isequal(search, Search()) ? s_moty ∈ parent : search
+	search = isequal(search, Search()) ? s_moty ∈ parent : search
     # if there are no replacements to be made, just return the parent
     if search.num_isomorphisms == 0
         return parent
@@ -341,11 +341,11 @@ function find_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal;
     # determine configuration index array
     c = config_idx_arr(configs, search)
     # determine s_mask (which atoms from s_moty are NOT in r_moty?)
-    mask = s_moty[MOFun.idx_filter(s_moty, MOFun.r_group_indices(s_moty))]
+    mask = s_moty[idx_filter(s_moty, r_group_indices(s_moty))]
     # get isomrphism between s_moty/mask and r_moty
     m2r_isom = (mask ∈ r_moty).results[1].isomorphism
     # shift all r_moty nodes according to center of isomorphic subset
-    r_moty.atoms.coords.xf .-= MOFun.geometric_center(r_moty[m2r_isom])
+    r_moty.atoms.coords.xf .-= geometric_center(r_moty[m2r_isom])
     # loop over configs to build replacement data
     xrms, del_atoms, bonds = build_replacement_data(c, search, parent, s_moty, r_moty, m2r_isom, mask)
     # append temporary crystals to parent
