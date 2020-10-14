@@ -22,7 +22,7 @@ end
 
 
 """
-Returns R group indices
+Returns R group indices (whichever atoms have species symbols appended by '!')
 """
 function r_group_indices(xtal::Crystal)::Array{Int}
 	@debug "Filtering R group" R_GROUP_TAG
@@ -39,7 +39,7 @@ end
 
 
 """
-Un-tags R group atoms (removes '! suffix')
+Un-tags R group atoms (removes '!' suffix)
 """
 function untag_r_group!(xtal::Crystal)
 	@debug "Un-tagging R group in $(xtal.name)" R_GROUP_TAG
@@ -50,7 +50,6 @@ function untag_r_group!(xtal::Crystal)
 end
 
 
-
 """
 Returns a copy of a crystal w/ R group atoms deleted
 """
@@ -59,22 +58,6 @@ function subtract_r_group(xtal::Crystal)::Crystal
 	coords = xtal.atoms.coords[not_r]
 	species = xtal.atoms.species[not_r]
 	return Crystal("no_r_$(xtal.name)", xtal.box, Atoms(species, coords), xtal.charges)
-end
-
-
-"""
-Removes a (single) subfolder prefix in a string naming an input file
-"""
-function remove_path_prefix(name::String)::String
-    s = split(name, '/')
-    @debug "split" s[2]
-    n = length(s)
-    @debug n
-    if n > 1
-        return s[2]
-    else
-        return name
-    end
 end
 
 
