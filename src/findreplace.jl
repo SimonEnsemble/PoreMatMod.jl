@@ -1,13 +1,9 @@
 # findreplace.jl
 
-
 ## exposed interface
 
-export isequal, substructure_search, find_replace, SearchResult, SearchQuery,
-	Search, Configuration, convert
-
-## debugging global
-DEBUG = false
+export substructure_search, find_replace, SearchResult, SearchQuery,
+	Search, Configuration, convert, isequal
 
 
 ## imports for extension
