@@ -2,101 +2,46 @@
 
 ## exposed interface
 
-export substructure_search, find_replace, SearchResult, SearchQuery,
-	Search, Configuration, convert, isequal
+export substructure_search, substructure_replace, SearchResult, Query, Search,
+	nb_isomorphisms, nb_locations, nb_configs_at_loc
 
 
 ## imports for extension
 
-import Base.convert
-import Base.isequal
 import Base.(∈)
 import PorousMaterials.write_xyz
 
 
-## Structs, conversions, and helpers
+## Structs
 
-# for encoding the location and orientation indices within a group of search results
-struct Configuration
-    location::Int
-    orientation::Int
+# The parent structure and search moiety Crystals
+struct Query
+    parent::Crystal
+    s_moty::Crystal
 end
 
-# default case (invalid configuration)
-Configuration() = Configuration(0, 0)
-
-# hacks for weird bugs and convenient syntax
-convert(Configuration, (i,j)) = Configuration(i,j)
-Configuration(t::Tuple{Int,Int}) = Configuration(t[1],t[2])
-
-# make Configurations display nicely BUG does not play nice with @info in jupyter
-function Base.show(io::IO, c::Configuration)
-	print("($(c.location),$(c.orientation))")
-end
-
-# for describing the search query ("find x in y")
-struct SearchQuery
-    substructure::Crystal
-    parent_structure::Crystal
-end
-
-# empty default constructor
-SearchQuery() = SearchQuery(nothing, nothing)
-
-# hack for convenience
-convert(SearchQuery,
-	(a,b)::Tuple{Crystal, Crystal}) = SearchQuery(a,b)
-
-# hack to display queries nicely
-function Base.show(io::IO, sq::SearchQuery)
-	print("$(sq.substructure.name) ∈ $(sq.parent_structure.name)")
-end
-
-# for storing search results in a user-friendly way
-struct SearchResult
-    query::SearchQuery
-    configuration::Configuration
-    isomorphism::Array{Int}
-end
-
-# make SearchResults look better
-function Base.show(io::IO, ssr::SearchResult)
-	print(ssr.query)
-	print(" ")
-	print(ssr.configuration)
-	print(" ")
-	print(ssr.isomorphism)
-end
-
-# stores a set of search results and basic meta data
+# The result of running a substructure search
 struct Search
-    results::Array{SearchResult}
-    num_isomorphisms::Int
-    num_locations::Int
-    num_orientations::Array{Int}
+    query::Query # the search query (s-moty ∈ parent)
+    results::DataFrame # the isomorphisms
 end
-
-# default constructor
-Search() = Search([], 0, 0, [])
-
-# display helper
-function Base.show(io::IO, ssrs::Search)
-	print("$(ssrs.num_isomorphisms) result(s) in $(ssrs.num_locations) location(s)")
-	for result in ssrs.results
-		print("\n\t")
-		print(result)
-	end
-	print("\n")
-end
-
-# define equality for Search object
-isequal(a::Search, b:: Search) =
-	a.num_isomorphisms == b.num_isomorphisms &&
-	a.num_locations == b.num_locations &&
-	all(a.results .== b.results) &&
-	all(a.num_orientations .== b.num_orientations)
 
 ## Helpers
+
+# total number of isomorphisms
+function nb_isomorphisms(search::Search)::Int
+    return length(search.results.isomorphism)
+end
+
+# number of unique locations
+function nb_locations(search::Search)::Int
+    return length(unique(search.results.p_subset))
+end
+
+# number of configurations at each location
+function nb_configs_at_loc(search::Search)::Array{Int}
+    return [length(location.isomorphism) for location in groupby(search.results, :p_subset)]
+end
 
 # Retuns the geometric center of an Array, Frac/Atoms object, or Crystal.
 function geometric_center(xf::Array{Float64,2})::Array{Float64}
@@ -197,23 +142,6 @@ function idx_filter(xtal::Crystal, subset::Array{Int})::Array{Int,1}
 	return [i for i in 1:xtal.atoms.n if !(i ∈ subset)]
 end
 
-function config_idx_arr(configs::Array{Configuration}, search::Search)::Array{Int}
-    c = Int[]
-    if configs == Configuration[] # if configs not specified, choose one randomly
-        push!(c, rand(1:search.num_isomorphisms))
-    else # find indices of specified configs
-        for config in configs
-            for i in 1:search.num_isomorphisms
-                if search.results[i].configuration == config
-                    push!(c, i)
-                    break
-                end
-            end
-        end
-    end
-    return c
-end
-
 
 function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int}, parent::Crystal, m2r_isom::Array{Int}, r_moty::Crystal, xrms::Array{Crystal})
     # loop over s2p_isom
@@ -245,7 +173,7 @@ function build_replacement_data(c::Array{Int}, search::Search, parent::Crystal, 
     bonds = Tuple{Int,Int}[] # each tuple (i,j) encodes a parent[i] -> xrms[k][j] bond
     for cᵢ in c
         # find isomorphism
-        s2p_isom = search.results[cᵢ].isomorphism
+        s2p_isom = search.results.isomorphism[cᵢ]
         # find parent subset
         parent_subset = deepcopy(parent[s2p_isom])
         # adjust coordinates for periodic boundaries
@@ -282,75 +210,59 @@ Searches for a substructure within a `Crystal` and returns a
 isomorphisms.
 """
 function substructure_search(s_moty::Crystal, xtal::Crystal)::Search
+
 	# Make a copy w/o R tags for searching
 	moty = deepcopy(s_moty)
 	untag_r_group!(moty)
+
 	# Get array of configuration arrays
 	configurations = Ullmann.find_subgraph_isomorphisms(moty.bonds,
 		moty.atoms.species, xtal.bonds,	xtal.atoms.species)
-	# Group configurations by location: [node sets] .=> [configurations]
-	results = Dict{Array, Array{Array{Int}}}()
-	for configuration in configurations
-		sorted_config = sort(configuration)
-		if sorted_config ∈ keys(results)
-			push!(results[sorted_config], configuration)
-		else
-			merge!(results, Dict([sorted_config => [configuration]]))
-		end
-	end
-	# unpack dict
-	num_orientations = [
-		length(results[location_set]) for location_set in keys(results)]
-	results = [result for result in values(results)]
-	# repack as array of structs
-	result_struct_array = Array{SearchResult}([])
-    for (location, isomorphisms) ∈ enumerate(results)
-        for (orientation, isomorphism) ∈ enumerate(results[location])
-            push!(result_struct_array, SearchResult((s_moty, xtal),
-				(location, orientation), isomorphism))
-        end
-    end
-    return Search(result_struct_array,
-		length(result_struct_array), length(keys(results)), num_orientations)
+
+    results = DataFrame(
+		id = [1:length(configurations)...],
+		p_subset = [sort(c) for c in configurations],
+		isomorphism = configurations
+		)
+
+    return Search(Query(xtal, s_moty), results)
 end
 
 
 ## Find/replace function (exposed)
 
 @doc raw"""
-Finds the search moiety in the parent structure and replaces it at a location.
+Replaces the search moiety in the parent structure and replaces it at specified locations.
 
 			TODO: docs
 """
-function find_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal;
-        configs::Array{Configuration}=Configuration[],
-        search::Search=Search(),
-        kwargs...)::Crystal
-    # mutation guard
+function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal, search::Search, configs::Array{Int})::Crystal
+	# configs must all be unique
+	@assert length(configs) == length(unique(configs))
+	# mutation guard
     s_moty, r_moty = deepcopy.([s_moty, r_moty])
-    # if search not specified, do it now
-	search = isequal(search, Search()) ? s_moty ∈ parent : search
     # if there are no replacements to be made, just return the parent
-    if search.num_isomorphisms == 0
+    if length(search.results.isomorphism) == 0
+		@warn "No replacements to be made." search.query.s_moty.name search.query.parent.name r_moty.name
         return parent
     end
-    # determine configuration index array
-    c = config_idx_arr(configs, search)
     # determine s_mask (which atoms from s_moty are NOT in r_moty?)
     mask = s_moty[idx_filter(s_moty, r_group_indices(s_moty))]
     # get isomrphism between s_moty/mask and r_moty
-    m2r_isom = (mask ∈ r_moty).results[1].isomorphism
+    m2r_isom = (mask ∈ r_moty).results.isomorphism[1]
     # shift all r_moty nodes according to center of isomorphic subset
     r_moty.atoms.coords.xf .-= geometric_center(r_moty[m2r_isom])
     # loop over configs to build replacement data
-    xrms, del_atoms, bonds = build_replacement_data(c, search, parent, s_moty, r_moty, m2r_isom, mask)
+    xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, s_moty, r_moty, m2r_isom, mask)
+
     # append temporary crystals to parent
     xtal = Crystal("TODO", parent.box, parent.atoms + sum([xrm.atoms for xrm in xrms]), Charges{Frac}(0))
+
     # create bonds from dictionary
     for (p, r) in bonds
         add_edge!(xtal.bonds, p, r)
     end
-	# correct for periodic boundaries
+    # correct for periodic boundaries
 	wrap!(xtal)
     # delete atoms from array and return result
     return xtal[[x for x in 1:xtal.atoms.n if !(x ∈ del_atoms)]]
