@@ -2,8 +2,8 @@
 
 ## exposed interface
 
-export substructure_search, substructure_replace, SearchResult, Query, Search,
-	nb_isomorphisms, nb_locations, nb_configs_at_loc
+export substructure_search, SearchResult, Query, Search,
+	nb_isomorphisms, nb_locations, nb_configs_at_loc, find_replace
 
 
 ## imports for extension
@@ -202,6 +202,17 @@ function build_replacement_data(c::Array{Int}, search::Search, parent::Crystal, 
 end
 
 
+# returns ids of results corresponding to the
+function get_config_ids(search::Search; orientations::Array{Int}=Int[], nb_loc::Int=0, locations::Array{Int}=Int[])::Array{Int}
+    # randomize orientations
+    orientations = orientations == [] ? [rand(1:n) for n ∈ nb_configs_at_loc(search)] : orientations
+    nb_loc = nb_loc == 0 ? nb_locations(search) : nb_loc
+    locations = locations == [] ? [1:nb_locations(search)...] : locations
+    # get id of ith isom in each group per orientations array
+    return [loc.id[orientations[i]] for (i, loc) ∈ enumerate(groupby(search.results, :p_subset)) if i ∈ locations][1:nb_loc]
+end
+
+
 ## Search function (exposed)
 
 @doc raw"""
@@ -219,17 +230,16 @@ function substructure_search(s_moty::Crystal, xtal::Crystal)::Search
 	configurations = Ullmann.find_subgraph_isomorphisms(moty.bonds,
 		moty.atoms.species, xtal.bonds,	xtal.atoms.species)
 
-    results = DataFrame(
-		id = [1:length(configurations)...],
-		p_subset = [sort(c) for c in configurations],
-		isomorphism = configurations
-		)
-
-    return Search(Query(xtal, s_moty), results)
+    return Search(
+		Query(xtal, s_moty),
+		DataFrame(
+			id = [1:length(configurations)...],
+			p_subset = [sort(c) for c in configurations],
+			isomorphism = configurations))
 end
 
 
-## Find/replace function (exposed)
+## Internal method for performing substructure replacements
 
 @doc raw"""
 Replaces the search moiety in the parent structure and replaces it at specified locations.
@@ -266,4 +276,22 @@ function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
 	wrap!(xtal)
     # delete atoms from array and return result
     return xtal[[x for x in 1:xtal.atoms.n if !(x ∈ del_atoms)]]
+end
+
+
+## Find/replace function (exposed)
+
+function find_replace(search::Search, r_moty::Crystal; rand_all::Bool=false, nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[])::Crystal
+    if rand_all
+        return substructure_replace(search.query.s_moty, r_moty, search.query.parent, search, get_config_ids(search))
+    elseif nb_loc > 0
+        return substructure_replace(search.query.s_moty, r_moty, search.query.parent, search, get_config_ids(search, nb_loc=nb_loc));
+	elseif ori ≠ Int[]
+        return substructure_replace(search.query.s_moty, r_moty, search.query.parent, search, get_config_ids(search, locations=loc, orientations=ori))
+	elseif loc ≠ Int[]
+        return substructure_replace(search.query.s_moty, r_moty, search.query.parent, search, get_config_ids(search, locations=loc))
+    else
+        @error "No replacements specified." search.query.s_moty.name search.query.parent.name r_moty
+    end
+    return search.query.parent
 end
