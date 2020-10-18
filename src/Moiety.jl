@@ -61,8 +61,13 @@ function subtract_r_group(xtal::Crystal)::Crystal
 end
 
 
+## moiety import function (exposed)
 @doc raw"""
+`moiety(name::String) -> Crystal`
+
 Generates a moiety (Crystal) from an .xyz file found in PATH_TO_MOIETIES
+
+`name` is the file name without the .xyz extension.
 """
 function moiety(name::String)::Crystal
 	@debug "Getting moiety: $name"
