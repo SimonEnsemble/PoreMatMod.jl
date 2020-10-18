@@ -5,3 +5,4 @@ output/*
 *.xyz
 *.vtk
 docs/make.bat
+docs/build/*
