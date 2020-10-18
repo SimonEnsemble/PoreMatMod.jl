@@ -6,3 +6,4 @@ output/*
 *.vtk
 docs/make.bat
 docs/build/*
+*.bat
