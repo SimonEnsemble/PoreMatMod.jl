@@ -1,0 +1,33 @@
+language: julia
+
+coveralls: true
+
+julia:
+    - 1.4
+
+addons:
+  apt:
+    packages:
+    - libhdf5-serial-dev
+
+sudo: enabled
+
+script:
+    - julia --project --check-bounds=yes -e 'import Pkg; Pkg.build(); Pkg.test("MOFun")'
+
+after_success:
+    - julia --project -e 'import Pkg; Pkg.add("Documenter")'
+    - julia --project ./docs/make.jl
+
+# TODO
+notifications:
+  email: false
+#  slack:
+#    rooms:
+#      - secure: 
+#    on_success: always
+#    on_failure: always
+#    template:
+#      - "Repo `%{repository_slug}` *%{result}* build (<%{build_url}|#%{build_number}>) for commit (<%{compare_url}|%{commit}>) on branch `%{branch}`."
+#      - "Execution time: *%{duration}*"
+#      - "Message: %{message}"
