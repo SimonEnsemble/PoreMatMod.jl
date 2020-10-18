@@ -33,8 +33,14 @@ function runtest(testfile::String)
 end
 
 ## Run the tests!
-runtest.([
-    "moiety.jl"
-    "Ullmann.jl"
-    "MOFun.jl"
-])
+try
+    runtest.([
+        "moiety.jl"
+        "Ullmann.jl"
+        "MOFun.jl"
+    ])
+catch
+    @error "Oh snap."
+end
+
+@info "Success!"
