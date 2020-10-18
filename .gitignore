@@ -1,0 +1,9 @@
+.ipynb_checkpoints/*
+test.txt
+scratch*
+output/*
+*.xyz
+*.vtk
+docs/make.bat
+docs/build/*
+*.bat
