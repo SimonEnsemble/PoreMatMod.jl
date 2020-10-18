@@ -61,6 +61,12 @@ geometric_center(xtal::Crystal)::Array{Float64} = geometric_center(xtal.atoms)
 #	s .∈ [g1, g2]			→	find the moiety in each crystal
 #	[s1, s2] .∈ [g1, g2]	→	find each moiety in each crystal
 (∈)(s::Crystal, g::Crystal) = substructure_search(s, g)
+# and some more like that for doing find-replace operations in one line
+# these are objectively unnecessary, but fun.
+(∈)(pair::Pair{Crystal, Crystal}, xtal::Crystal) = find_replace((pair[1] ∈ xtal), pair[2], rand_all=true)
+(∈)(tuple::Tuple{Pair, Int}, xtal::Crystal) = find_replace(tuple[1][1] ∈ xtal, tuple[1][2], nb_loc=tuple[2])
+(∈)(tuple::Tuple{Pair, Array{Int}}, xtal::Crystal) = find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2])
+(∈)(tuple::Tuple{Pair, Array{Int}, Array{Int}}, xtal::Crystal) = find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2], ori=tuple[3])
 
 # Helper for making .xyz's
 write_xyz(xtal::Crystal, name::String) = write_xyz(Cart(xtal.atoms, xtal.box), name)
@@ -207,9 +213,19 @@ function get_config_ids(search::Search; orientations::Array{Int}=Int[], nb_loc::
     # randomize orientations
     orientations = orientations == [] ? [rand(1:n) for n ∈ nb_configs_at_loc(search)] : orientations
     nb_loc = nb_loc == 0 ? nb_locations(search) : nb_loc
-    locations = locations == [] ? [1:nb_locations(search)...] : locations
+	if locations == []
+		locations = [1:nb_locations(search)...]
+	else
+		nb_loc = length(locations)
+	end
     # get id of ith isom in each group per orientations array
-    return [loc.id[orientations[i]] for (i, loc) ∈ enumerate(groupby(search.results, :p_subset)) if i ∈ locations][1:nb_loc]
+	ids = Int[]
+	for (i, locᵢ) ∈ enumerate(groupby(search.results, :p_subset))
+		if i ∈ locations && length(ids) < nb_loc
+			push!(ids, locᵢ.id[orientations[length(ids)+1]])
+		end
+	end
+	return ids
 end
 
 
@@ -227,7 +243,7 @@ function substructure_search(s_moty::Crystal, xtal::Crystal)::Search
 	untag_r_group!(moty)
 
 	# Get array of configuration arrays
-	configurations = Ullmann.find_subgraph_isomorphisms(moty.bonds,
+	configurations = find_subgraph_isomorphisms(moty.bonds,
 		moty.atoms.species, xtal.bonds,	xtal.atoms.species)
 
     return Search(

@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.3
+# v0.12.4
 
 using Markdown
 using InteractiveUtils
@@ -13,175 +13,200 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 50269ffe-02ef-11eb-0614-f11975d991fe
-# libraries and stuff
+# ╔═╡ 90696d20-10b7-11eb-20b5-6174faeaf613
+# gist.github.com/GiggleLiu/aff2af66a896cf8a05310b8ba66f540f#file-plutouitips-jl
+# used to be able to toggle collapsing/expanding of all code in the notebook...
 begin
-	# Pluto doesn't inherit environment variables, it seems. 😠
-	push!(LOAD_PATH, joinpath("C:\\Users\\eahen\\.julia\\dev\\MOFfun.jl\\src"))
-	using PorousMaterials, MOFun, Logging, PlutoUI, Bio3DView
-	# Pluto also doesn't like to run from ~/.julia/ 😖
-	@eval MOFun PATH_TO_MOIETIES="C:\\Users\\eahen\\.julia\\dev\\MOFfun.jl\\data\\moieties"
-end;
-
-# ╔═╡ 13459850-03c9-11eb-06dc-d91bd1826b28
-# This is from https://gist.github.com/GiggleLiu/aff2af66a896cf8a05310b8ba66f540f#file-plutouitips-jl
-# it toggles collapsing/expanding of all code in the notebook
-html"""
-<button id="showhide">↔</button>
-<style>
-	body.hide_all_inputs pluto-input {display: none;}
-	body.hide_all_inputs pluto-shoulder {display: none;}
-	body.hide_all_inputs pluto-trafficlight {display: none;}
-	body.hide_all_inputs pluto-runarea {display: none;}
-	body.hide_all_inputs .add_cell {display: none;}
-	body.hide_all_inputs pluto-cell {min-height: 0;	margin-top: 10px;}
-</style>
-<script>
-	const button = this.querySelector("#showhide");
-	button.onclick = () => {document.body.classList.toggle("hide_all_inputs")}
-</script>
-"""
+	push!(LOAD_PATH, joinpath(homedir(), ".julia/dev/MOFfun.jl/src"))
+	using PorousMaterials, MOFun, PlutoUI, Bio3DView
+	@eval PorousMaterials PATH_TO_DATA=joinpath(homedir(), ".mofungo/data")
+	@eval MOFun PATH_TO_MOIETIES=joinpath(PorousMaterials.PATH_TO_DATA, "moieties")
+	HOME = joinpath(homedir(), ".mofungo")
+	dirs = ["", "temp", "data", "data/moieties", "data/crystals"]
+	for dir in dirs
+		dir = joinpath(HOME, dir)
+		if !isdir(dir)
+			mkdir(dir)
+		end
+	end
+	@bind load_inputs Button("Reset")
+end
 
 # ╔═╡ 6c1969e0-02f5-11eb-3fa2-09931a63b1ac
-# title/info
-# Made with some inspiration from [https://gist.github.com/GiggleLiu](https://gist.github.com/GiggleLiu) 
 md"""
 # [💠 MOFunGO 🍌](https://en.wikipedia.org/wiki/Mofongo)
 
-This notebook interactively substitutes moieties within a `Crystal` using a modified implementation of Ullmann's algorithm to perform substructure searches and applying the orthogonal Procrustes problem to align fragments of the generated materials.
+This notebook interactively substitutes moieties within a `Crystal` using a modified implementation of Ullmann's algorithm to perform substructure searches and applying singular value decomposition to align fragments of the generated materials.
+
+See the original publication on MOFun.jl here: [(article)](http://localhost:1234) [(GitHub)](http://localhost:1234)
+
+
 """
 
-# ╔═╡ 77d70610-02ec-11eb-0004-fff39ffbb197
-# input fields: s_moty, r_moty, xtal
-md"""
-### Find/Replace Options
+# ╔═╡ 50269ffe-02ef-11eb-0614-f11975d991fe
+begin load_inputs
+	# input fields: s_moty, r_moty, xtal
+	md"""
+	### Structure Inputs
 
-Parent Crystal $(@bind PARENT TextField(default="IRMOF-1.cif"))
+	Parent Crystal $(@bind parent_crystal FilePicker()))
 
-Search Moiety $(@bind SEARCH_MOIETY TextField(default="find-replace/2-!-p-phenylene"))
+	Search Moiety $(@bind search_moiety FilePicker()))
 
-Replace Moiety $(@bind REPLACE_MOIETY TextField(default="2-acetylamido-p-phenylene"))
-"""
+	Replace Moiety $(@bind replace_moiety FilePicker()))
+	"""
+end
 
-# ╔═╡ 47ca486e-03c2-11eb-3b76-6337fc07c447
-# vis refresh button
-md"""
-### Substitute and Visualize $(@bind UPDATE Button("GO"))
-"""
-
-# ╔═╡ 8768f630-03bc-11eb-0be1-338983860b0d
-# refreshes visualization on button press
-let UPDATE
-	# not sure why this isn't rendering the unit cell, but it also doesn't in the tutorial notebook... WAIT IT DOES IN HTML MODE
-	try
-		viewfile("MOFunGO_temp.xyz", "xyz", vtkcell="MOFunGO_temp.vtk")
-	catch # suppress errors when no visuals have processed yet
+# ╔═╡ 33b1fb50-0f73-11eb-2ab2-9d2cb6c5a533
+# write file input strings to files in temp directory
+begin
+	# dict for tracking load status of inputs
+	isloaded = Dict([:r_moty => false, :s_moty => false, :parent => false])
+	# r_moty loader
+	if replace_moiety["data"] != UInt8[]
+		write("$HOME/data/moieties/r_moty.xyz", replace_moiety["data"])
+		r_moty = moiety("r_moty")
+		isloaded[:r_moty] = true
+	end
+	# s_moty loader
+	if search_moiety["data"] != UInt8[]
+		write("$HOME/data/moieties/s_moty.xyz", search_moiety["data"])
+		s_moty = moiety("s_moty")
+		isloaded[:s_moty] = true
+	end
+	# xtal loader
+	if parent_crystal["data"] != UInt8[]
+		write("$HOME/data/parent.cif", parent_crystal["data"])
+		xtal = Crystal("$HOME/temp/parent.cif")
+		strip_numbers_from_atom_labels!(xtal)
+		infer_bonds!(xtal, true)
+		isloaded[:parent] = true
+	end
+	# run search and display terminal message
+	if all(values(isloaded))
+		search = s_moty ∈ xtal
+		with_terminal() do
+			@info "Search Results" isomorphisms=nb_isomorphisms(search) locations=nb_locations(search)
+		end
 	end
 end
 
-# ╔═╡ 41448e10-03c3-11eb-2a21-2102e629ffca
-# file output
-md"""
-#### Save Result
-$(@bind SAVE_PATH TextField(default="new_xtal"))
-.cif $(@bind SAVE_CIF CheckBox())
-.vtk $(@bind SAVE_VTK CheckBox())
-$(@bind SAVE_RESULT Button("Save"))
-"""
+# ╔═╡ 415e9210-0f71-11eb-15c8-e7484b5be309
+# choose replacement type
+if all(values(isloaded))
+	md"""
+	### Find/Replace Options
 
-# ╔═╡ c4865f10-02ec-11eb-3cb1-8fa065c4b09f
-# reactive cell for keeping current w/ file inputs
+	Mode $(@bind replace_mode Select(["", "random replacement at each location", "random replacement at n random locations", "random replacement at specific locations", "specific replacements"]))
+	"""
+end
+
+# ╔═╡ 3997c4d0-0f75-11eb-2976-c161879b8d0c
+# options populated w/ conditional logic based on mode selection
 begin
-	xtal = Crystal(PARENT)
-	strip_numbers_from_atom_labels!(xtal)
-	infer_bonds!(xtal, true)
-	s_moty = moiety(SEARCH_MOIETY)
-	r_moty = moiety(REPLACE_MOIETY)
-	search = s_moty ∈ xtal
-end;
+	local output = nothing
+	if all(values(isloaded))
+		x = ["$(x)" for x in 1:nb_locations(search)]
+		if replace_mode == "random replacement at each location"
+			output = nothing
+		elseif replace_mode == "random replacement at n random locations"
+			output = md"Number of locations $(@bind nb_loc Slider(0:nb_locations(search)))"
+		elseif replace_mode == "random replacement at specific locations"
+			output = md"Locations $(@bind loc MultiSelect(x))"
+		elseif replace_mode == "specific replacements"
+			output = md"""
+		Locations $(@bind loc MultiSelect(x))
 
-# ╔═╡ 5fff5d30-02fb-11eb-011c-e9af7248c73e
-# reactive cell for updating location selector on search
-begin
-	locations = ["$(loc)" for loc in 1:search.num_locations]
-end;
-
-# ╔═╡ fea0b040-03c0-11eb-2fc4-cb02d90a5be1
-# location selector
-md"""
-Location in Parent $(@bind LOCATION Select(locations))
-"""
-
-# ╔═╡ 76bf2b6e-0302-11eb-2331-8dac63ed0b94
-# reactive cell for updating orientation selector on location selector
-begin
-	orientations = ["$(res.configuration.orientation)" for res in search.results if "$(res.configuration.location)" == LOCATION]
-end;
-
-# ╔═╡ f705aac2-03c0-11eb-1185-eb29469be398
-# orientation selector
-md"""
-Orientation at Location $(@bind ORIENTATION Select(orientations))
-"""
-
-# ╔═╡ f723c59e-03b6-11eb-3e5d-15aa0edd28c3
-# reactive cell for keeping current w/ UI inputs
-begin
-	new_xtal = find_replace(s_moty, r_moty, xtal, config=Configuration(parse(Int, LOCATION), parse(Int, ORIENTATION)))
-	write_xyz(new_xtal, "MOFunGO_temp.xyz")
-	write_vtk(new_xtal.box, "MOFunGO_temp.vtk")
-end;
-
-# ╔═╡ d8c9faf0-03bd-11eb-15b5-7b74057459c5
-# terminal output
-begin
-	with_terminal() do
-		@info new_xtal
+		Orientations $(@bind ori TextField())
+		"""
+		else
+			output = nothing
+		end
+		output
 	end
 end
 
-# ╔═╡ 57d03120-03c3-11eb-0b53-67c02471b008
-# the button behavior is so confusing... how to make this not insta-update??
-let SAVE_RESULT
-	if SAVE_CIF
-		write_cif(new_xtal, SAVE_PATH*".cif")
-	end
-	if SAVE_VTK
-		write_vtk(new_xtal.box, SAVE_PATH*".vtk")
+# ╔═╡ 69edca20-0f94-11eb-13ba-334438ca2406
+begin
+	new_xtal_flag = false
+	if all(values(isloaded))
+		new_xtal_flag = true
+		if replace_mode == "random replacement at each location"
+			new_xtal = find_replace(search, r_moty, rand_all=true)
+		elseif replace_mode == "random replacement at n random locations"
+			new_xtal = find_replace(search, r_moty, nb_loc=nb_loc)
+		elseif replace_mode == "random replacement at specific locations"
+			new_xtal = find_replace(search, r_moty, loc=[parse(Int, x) for x in loc])
+		elseif replace_mode == "specific replacements"
+			if loc ≠ [] && ori ≠ "" && length(loc) == length(split(ori, ","))
+				new_xtal = find_replace(search, r_moty, 
+					loc=[parse(Int, x) for x in loc],
+					ori=[parse(Int, x) for x in split(ori, ",")])
+			else
+				new_xtal_flag = false
+			end
+		else
+			new_xtal_flag = false
+		end
+		if new_xtal_flag
+			with_terminal() do
+				if replace_mode == "random replacement at each location"
+					@info replace_mode new_xtal
+				elseif replace_mode == "random replacement at n random locations"
+					@info replace_mode nb_loc new_xtal
+				elseif replace_mode == "random replacement at specific locations"
+					@info replace_mode loc new_xtal
+				elseif replace_mode == "specific replacements"
+					@info replace_mode loc ori new_xtal
+				end
+			end
+		end
 	end
 end
 
-# ╔═╡ 3b0134f0-02f5-11eb-0237-15a21c849f2a
-html"""
-<button id="showhide">↔</button>
-<style>
-	body.hide_all_inputs pluto-input {display: none;}
-	body.hide_all_inputs pluto-shoulder {display: none;}
-	body.hide_all_inputs pluto-trafficlight {display: none;}
-	body.hide_all_inputs pluto-runarea {display: none;}
-	body.hide_all_inputs .add_cell {display: none;}
-	body.hide_all_inputs pluto-cell {min-height: 0;	margin-top: 10px;}
-</style>
-<script>
-	const button = this.querySelector("#showhide");
-	button.onclick = () => {document.body.classList.toggle("hide_all_inputs")}
-</script>
+# ╔═╡ 84a3724e-1059-11eb-3586-8dbef7b1233f
+if new_xtal_flag
+	md"""
+	### Visualization
+	
+	(This is broken now, and I don't know why.)
+	
+	Enable $(@bind vis_czbx CheckBox())
+	"""
+end
+
+# ╔═╡ 5918f770-103d-11eb-0537-81036bd3e675
+if new_xtal_flag
+	write_cif(new_xtal, "new_xtal.cif")
+	write_vtk(new_xtal.box, "new_xtal")
+	vis_czbx ? viewfile("new_xtal.cif", "cif", style=Style("stick"), vtkcell="new_xtal.vtk", axes=Axes(4, 0.25)) : nothing
+end
+
+# ╔═╡ 31832e30-1054-11eb-24ed-219fd3e236a1
+if new_xtal_flag
+	md"""
+	### Output Files
+	$(DownloadButton(read("new_xtal.cif"), "MOFunGO.cif")) 
+	$(DownloadButton(read("new_xtal.vtk"), "MOFunGO.vtk"))
+	"""
+end
+
+# ╔═╡ 5dc43a20-10b8-11eb-26dc-7fb98e9aeb1a
+md"""
+Adrian Henle, [Simon Ensemble](http://simonensemble.github.io), 2020
+
+$(Resource("https://simonensemble.github.io/osu_logo.jpg", :width => 250))
 """
 
 # ╔═╡ Cell order:
-# ╠═13459850-03c9-11eb-06dc-d91bd1826b28
-# ╠═6c1969e0-02f5-11eb-3fa2-09931a63b1ac
-# ╠═77d70610-02ec-11eb-0004-fff39ffbb197
-# ╠═fea0b040-03c0-11eb-2fc4-cb02d90a5be1
-# ╠═f705aac2-03c0-11eb-1185-eb29469be398
-# ╠═47ca486e-03c2-11eb-3b76-6337fc07c447
-# ╠═8768f630-03bc-11eb-0be1-338983860b0d
-# ╠═d8c9faf0-03bd-11eb-15b5-7b74057459c5
-# ╠═41448e10-03c3-11eb-2a21-2102e629ffca
-# ╠═50269ffe-02ef-11eb-0614-f11975d991fe
-# ╠═57d03120-03c3-11eb-0b53-67c02471b008
-# ╠═c4865f10-02ec-11eb-3cb1-8fa065c4b09f
-# ╠═5fff5d30-02fb-11eb-011c-e9af7248c73e
-# ╠═76bf2b6e-0302-11eb-2331-8dac63ed0b94
-# ╠═f723c59e-03b6-11eb-3e5d-15aa0edd28c3
-# ╠═3b0134f0-02f5-11eb-0237-15a21c849f2a
+# ╟─6c1969e0-02f5-11eb-3fa2-09931a63b1ac
+# ╟─50269ffe-02ef-11eb-0614-f11975d991fe
+# ╟─33b1fb50-0f73-11eb-2ab2-9d2cb6c5a533
+# ╟─415e9210-0f71-11eb-15c8-e7484b5be309
+# ╟─3997c4d0-0f75-11eb-2976-c161879b8d0c
+# ╟─69edca20-0f94-11eb-13ba-334438ca2406
+# ╟─84a3724e-1059-11eb-3586-8dbef7b1233f
+# ╟─5918f770-103d-11eb-0537-81036bd3e675
+# ╟─31832e30-1054-11eb-24ed-219fd3e236a1
+# ╟─90696d20-10b7-11eb-20b5-6174faeaf613
+# ╟─5dc43a20-10b8-11eb-26dc-7fb98e9aeb1a
