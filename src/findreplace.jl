@@ -1,19 +1,16 @@
 # findreplace.jl
 
 ## exposed interface
-
 export substructure_search, SearchResult, Query, Search,
 	nb_isomorphisms, nb_locations, nb_configs_at_loc, find_replace
 
 
 ## imports for extension
-
 import Base.(∈)
 import PorousMaterials.write_xyz
 
 
 ## Structs
-
 # The parent structure and search moiety Crystals
 struct Query
     parent::Crystal
@@ -26,22 +23,40 @@ struct Search
     results::DataFrame # the isomorphisms
 end
 
-## Helpers
 
-# total number of isomorphisms
+## Helpers
+@doc raw"""
+`nb_isomorphisms(search::Search) -> Int`
+
+Returns the number of isomorphisms found in the specified `Search`
+"""
 function nb_isomorphisms(search::Search)::Int
     return length(search.results.isomorphism)
 end
 
-# number of unique locations
+
+@doc raw"""
+`nb_locations(search::Search) -> Int`
+
+Returns the number of unique locations (collections of atoms) at which the
+specified `Search` results contain isomorphisms.
+"""
 function nb_locations(search::Search)::Int
     return length(unique(search.results.p_subset))
 end
 
-# number of configurations at each location
+
+@doc raw"""
+`nb_configs_at_loc(search::Search) -> Array{Int}`
+
+Returns a array containing the number of isomorphic configurations at a given
+location (collection of atoms) for which the specified `Search` results
+contain isomorphisms.
+"""
 function nb_configs_at_loc(search::Search)::Array{Int}
     return [length(location.isomorphism) for location in groupby(search.results, :p_subset)]
 end
+
 
 # Retuns the geometric center of an Array, Frac/Atoms object, or Crystal.
 function geometric_center(xf::Array{Float64,2})::Array{Float64}
@@ -53,6 +68,7 @@ geometric_center(coords::Frac)::Array{Float64} = geometric_center(coords.xf)
 geometric_center(atoms::Atoms)::Array{Float64} = geometric_center(atoms.coords)
 
 geometric_center(xtal::Crystal)::Array{Float64} = geometric_center(xtal.atoms)
+
 
 # extension of infix `in` operator for expressive searching
 # this allows all of the following:
@@ -68,8 +84,10 @@ geometric_center(xtal::Crystal)::Array{Float64} = geometric_center(xtal.atoms)
 (∈)(tuple::Tuple{Pair, Array{Int}}, xtal::Crystal) = find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2])
 (∈)(tuple::Tuple{Pair, Array{Int}, Array{Int}}, xtal::Crystal) = find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2], ori=tuple[3])
 
+
 # Helper for making .xyz's
 write_xyz(xtal::Crystal, name::String) = write_xyz(Cart(xtal.atoms, xtal.box), name)
+
 
 # Translates all atoms in xtal such that xtal[1] is in its original position
 # and the rest of xtal is in its nearest-image position relative to xtal[1]
@@ -89,6 +107,7 @@ function adjust_for_pb!(xtal::Crystal)
     end
 end
 
+
 # Performs orthogonal Procrustes on correlated point clouds A and B
 function orthogonal_procrustes(A::Array{Float64,2},
 		B::Array{Float64,2})::Array{Float64,2}
@@ -97,6 +116,7 @@ function orthogonal_procrustes(A::Array{Float64,2},
 	# return rotation matrix
     return F.V * F.U'
 end
+
 
 # Gets the s_moty-to-xtal rotation matrix
 function s2p_op(s_moty::Crystal, xtal::Crystal)::Array{Float64,2}
@@ -108,6 +128,7 @@ function s2p_op(s_moty::Crystal, xtal::Crystal)::Array{Float64,2}
 	return orthogonal_procrustes(A, B)
 end
 
+
 # Gets the r_moty-to-s_mask rotation matrix
 function r2m_op(r_moty::Crystal, s_moty::Crystal, m2r_isomorphism::Array{Int},
 		s_mask_atoms::Atoms)::Array{Float64,2}
@@ -118,6 +139,7 @@ function r2m_op(r_moty::Crystal, s_moty::Crystal, m2r_isomorphism::Array{Int},
 	# get rotation matrix
 	return orthogonal_procrustes(A, B)
 end
+
 
 # Transforms r_moty according to two rotation matrices and a translational offset
 function xform_r_moty(r_moty::Crystal, rot_r2m::Array{Float64,2},
@@ -137,11 +159,13 @@ function xform_r_moty(r_moty::Crystal, rot_r2m::Array{Float64,2},
 		atoms.species, Frac(atoms.coords, xtal.box)), Charges{Frac}(0))
 end
 
+
 # shifts coordinates to make the geometric center of the point cloud coincident
 # w/ the origin
 function center_on_self!(xtal::Crystal)
 	xtal.atoms.coords.xf .-= geometric_center(xtal)
 end
+
 
 # returns an Array containing the indices
 function idx_filter(xtal::Crystal, subset::Array{Int})::Array{Int,1}
@@ -149,6 +173,7 @@ function idx_filter(xtal::Crystal, subset::Array{Int})::Array{Int,1}
 end
 
 
+# tracks which bonds need to be made between the parent and array of transformed r_moty's (xrms)
 function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int}, parent::Crystal, m2r_isom::Array{Int}, r_moty::Crystal, xrms::Array{Crystal})
     # loop over s2p_isom
     for (s, p) in enumerate(s2p_isom)
@@ -172,6 +197,7 @@ function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int}, p
 end
 
 
+# generates data for effecting a series of replacements
 function build_replacement_data(c::Array{Int}, search::Search, parent::Crystal, s_moty::Crystal, r_moty::Crystal, m2r_isom::Array{Int}, mask::Crystal
         )::Tuple{Array{Crystal},Array{Int},Array{Tuple{Int,Int}}}
     xrms = Crystal[]
@@ -230,22 +256,19 @@ end
 
 
 ## Search function (exposed)
-
 @doc raw"""
+`substructure_search(s_moty::Crystal, xtal::Crystal) -> Search`
+
 Searches for a substructure within a `Crystal` and returns a
-`Search` struct containing all identified subgraph
-isomorphisms.
+`Search` struct containing all identified subgraph isomorphisms.
 """
 function substructure_search(s_moty::Crystal, xtal::Crystal)::Search
-
 	# Make a copy w/o R tags for searching
 	moty = deepcopy(s_moty)
 	untag_r_group!(moty)
-
 	# Get array of configuration arrays
 	configurations = find_subgraph_isomorphisms(moty.bonds,
 		moty.atoms.species, xtal.bonds,	xtal.atoms.species)
-
     return Search(
 		Query(xtal, s_moty),
 		DataFrame(
