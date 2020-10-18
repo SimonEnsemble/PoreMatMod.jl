@@ -10,14 +10,10 @@ makedocs(
             "MOFun" => "index.md",
             "How-To" => "guides/how2.md",
             "Manual" => [
-                "Crystals and Moieties" =>
-                    "manual/inputs.md",
-
-                "Substructure Search" =>
-                    "manual/find.md",
-
-                "Substructure Find/Replace" =>
-                    "manual/replace.md",
+                "Crystals and Moieties" => "manual/inputs.md",
+                "Substructure Search" => "manual/find.md",
+                "Substructure Find/Replace" => "manual/replace.md",
+                "Infix Syntax" => "manual/infix.md"
                 ],
             "MOFunGO" => "mofungo.md"
             ],
