@@ -4,3 +4,4 @@ scratch*
 output/*
 *.xyz
 *.vtk
+docs/make.bat
