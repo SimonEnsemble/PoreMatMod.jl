@@ -76,7 +76,7 @@ begin
 	end
 	# xtal loader
 	if parent_crystal["data"] != UInt8[]
-		write("$HOME/data/parent.cif", parent_crystal["data"])
+		write("$HOME/temp/parent.cif", parent_crystal["data"])
 		xtal = Crystal("$HOME/temp/parent.cif")
 		strip_numbers_from_atom_labels!(xtal)
 		infer_bonds!(xtal, true)
@@ -201,7 +201,7 @@ $(Resource("https://simonensemble.github.io/osu_logo.jpg", :width => 250))
 # ╔═╡ Cell order:
 # ╟─6c1969e0-02f5-11eb-3fa2-09931a63b1ac
 # ╟─50269ffe-02ef-11eb-0614-f11975d991fe
-# ╟─33b1fb50-0f73-11eb-2ab2-9d2cb6c5a533
+# ╠═33b1fb50-0f73-11eb-2ab2-9d2cb6c5a533
 # ╟─415e9210-0f71-11eb-15c8-e7484b5be309
 # ╟─3997c4d0-0f75-11eb-2976-c161879b8d0c
 # ╟─69edca20-0f94-11eb-13ba-334438ca2406
