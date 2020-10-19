@@ -177,9 +177,9 @@ end
 
 # ╔═╡ 5918f770-103d-11eb-0537-81036bd3e675
 if new_xtal_flag
-	write_cif(new_xtal, "new_xtal.cif")
-	write_vtk(new_xtal.box, "new_xtal")
-	vis_czbx ? viewfile("new_xtal.cif", "cif", style=Style("stick"), vtkcell="new_xtal.vtk", axes=Axes(4, 0.25)) : nothing
+	write_cif(new_xtal, "$HOME/temp/cif.cif")
+	write_vtk(new_xtal.box, "$HOME/temp/vtk")
+	vis_czbx ? viewfile("cif.cif", "cif", style=Style("stick"), vtkcell="vtk.vtk", axes=Axes(4, 0.25)) : nothing
 end
 
 # ╔═╡ 31832e30-1054-11eb-24ed-219fd3e236a1
@@ -201,12 +201,12 @@ $(Resource("https://simonensemble.github.io/osu_logo.jpg", :width => 250))
 # ╔═╡ Cell order:
 # ╟─6c1969e0-02f5-11eb-3fa2-09931a63b1ac
 # ╟─50269ffe-02ef-11eb-0614-f11975d991fe
-# ╠═33b1fb50-0f73-11eb-2ab2-9d2cb6c5a533
+# ╟─33b1fb50-0f73-11eb-2ab2-9d2cb6c5a533
 # ╟─415e9210-0f71-11eb-15c8-e7484b5be309
 # ╟─3997c4d0-0f75-11eb-2976-c161879b8d0c
 # ╟─69edca20-0f94-11eb-13ba-334438ca2406
-# ╟─84a3724e-1059-11eb-3586-8dbef7b1233f
-# ╟─5918f770-103d-11eb-0537-81036bd3e675
+# ╠═84a3724e-1059-11eb-3586-8dbef7b1233f
+# ╠═5918f770-103d-11eb-0537-81036bd3e675
 # ╟─31832e30-1054-11eb-24ed-219fd3e236a1
-# ╟─90696d20-10b7-11eb-20b5-6174faeaf613
+# ╠═90696d20-10b7-11eb-20b5-6174faeaf613
 # ╟─5dc43a20-10b8-11eb-26dc-7fb98e9aeb1a
