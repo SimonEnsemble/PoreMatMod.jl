@@ -1,9 +1,7 @@
 .ipynb_checkpoints/*
-test.txt
-scratch*
-output/*
+docs/build/*
+*.cssr
+*.cif
 *.xyz
 *.vtk
-docs/make.bat
-docs/build/*
 *.bat
