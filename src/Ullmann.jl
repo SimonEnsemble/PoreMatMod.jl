@@ -170,7 +170,6 @@ returns an array of arrays, each containing one unique subgraph isomorphism
 """
 function find_subgraph_isomorphisms(subgraph::SimpleGraph, subgraph_species::Array{Symbol, 1},
                                     graph::SimpleGraph,    graph_species::Array{Symbol, 1})
-    @assert is_connected(subgraph)
     # store list of solutions here
     solns = Array{Array{Int, 1}, 1}()
     # encodes an isomorhism. maps α ∈ subgraph --> β ∈ graph

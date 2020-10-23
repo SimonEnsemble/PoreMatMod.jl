@@ -37,7 +37,6 @@ end
     @test find_subgraph_isomorphisms(s3, l3, g, lg) == [[2, 3, 4], [3, 2, 4]]
     @test find_subgraph_isomorphisms(s4, l4, g, lg) == []
     @test find_subgraph_isomorphisms(s5, l5, g, lg) == []
-    @test_throws AssertionError find_subgraph_isomorphisms(s6, l6, g, lg)
     @test find_subgraph_isomorphisms(s7, l7, g, lg) == [[6, 5, 3]]
 end
 end
