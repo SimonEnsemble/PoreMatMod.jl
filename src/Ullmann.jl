@@ -23,8 +23,8 @@ function compatibility_matrix(subgraph::SimpleGraph, subgraph_species::Array{Sym
     path4_G = deg_G^2
     path8_S = path4_S^2
     path8_G = path4_G^2
-    for α ∈ 1:nv(subgraph) # Loop over rows (subgraph nodes)
-        for β ∈ 1:nv(graph) # Loop over columns (graph nodes)
+    @inbounds for α ∈ 1:nv(subgraph) # Loop over rows (subgraph nodes)
+        @inbounds for β ∈ 1:nv(graph) # Loop over columns (graph nodes)
             # Record Bool for each (i,j): true if atom species match, graph node degree is sufficient, and 4 and 8 length self-paths are sufficient.
             M₀[α, β] = subgraph_species[α] == graph_species[β] && deg_G[β, β] ≥ deg_S[α, α] && path4_G[β, β] ≥ path4_S[α, α] && path8_G[β, β] ≥ path8_S[α, α]
         end
@@ -41,7 +41,7 @@ end
 
 # does node α have possible candidate matches in the graph?
 function has_candidates(M::Array{Bool, 2}, α::Int)::Bool
-    for β ∈ 1:size(M, 2) # loop over graph nodes
+    @inbounds for β ∈ 1:size(M, 2) # loop over graph nodes
         if M[α, β]
             return true
         end
@@ -54,14 +54,14 @@ end
 function is_isomorphism(M::Array{Bool, 2})::Bool
     # (1) each row of M, corresponding to a node α ∈ subgraph, contains exactly one 1.
     #     i.e., every subgraph node has exactly one correspondence
-    for α ∈ 1:size(M, 1)
+    @inbounds for α ∈ 1:size(M, 1)
         if sum(M[α, :]) != 1
             return false
         end
     end
     # (2) no column of M, corresponding to a node β ∈ graph, contains more than one 1.
     #     i.e., a graph node does not correspond to more than 1 subgraph node.
-    for β ∈ 1:size(M, 2)
+    @inbounds for β ∈ 1:size(M, 2)
         if sum(M[:, β]) > 1
             return false
         end
@@ -76,7 +76,7 @@ end
 #   return true iff M has no empty candidate lists for subgraph nodes.
 function possibly_contains_isomorphism(M::Array{Bool, 2})::Bool
     @debug "Validating M: $(M)"
-    for α ∈ 1:size(M, 1) # loop over subgraph nodes
+    @inbounds for α ∈ 1:size(M, 1) # loop over subgraph nodes
         if ! has_candidates(M, α)
             return false # subgraph node α cannot be assigned!
         end
@@ -89,14 +89,14 @@ function prune!(M::Array{Bool, 2}, subgraph::SimpleGraph, graph::SimpleGraph)
     pruned = true # to enter while loop
     while pruned
         pruned = false
-        for α ∈ 1:size(M, 1) # loop thru subgraph nodes
+        @inbounds for α ∈ 1:size(M, 1) # loop thru subgraph nodes
             # get neighbors of node α
             neighbors_of_α = neighbors(subgraph, α)
             # loop thru candidate matches β ∈ graph for this subgraph node α
-            for β ∈ candidate_list(M, α)
+            @inbounds for β ∈ candidate_list(M, α)
                 neighbors_of_β = neighbors(graph, β)
                 # now, suppose α ∈ subgraph and β ∈ graph correspond...
-                for x ∈ neighbors_of_α
+                @inbounds for x ∈ neighbors_of_α
                     # if there is no neighbor of β that could correspond to x, neighbor of α, then, contradiction.
                     if length(intersect(candidate_list(M, x), neighbors_of_β)) == 0
                         M[α, β] = false
@@ -127,7 +127,7 @@ function depth_first_search!(α::Int, subgraph::SimpleGraph, graph::SimpleGraph,
     end
 
     # loop thru un-assigned graph nodes β that could possibly correspond to subnode α
-    for β ∈ candidate_list(M, α)
+    @inbounds for β ∈ candidate_list(M, α)
         # if βraph is already mapped, not a viable solution.
         #   (not sure if necessary, i.e. if M already knows this)
         if β_mapped[β]
