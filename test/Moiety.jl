@@ -27,9 +27,10 @@ end
 
 
 @testset "Moiety Tests" begin
-    fragment_bcfm = read_fragment_from_xyz("test/S-bromochlorofluoromethane", fragment_location=PATH_TO_MOIETIES)
+    @eval MOFun fragment_location=PATH_TO_MOIETIES
+    fragment_bcfm = read_fragment_from_xyz("test/S-bromochlorofluoromethane")
     moiety_bcfm = moiety("test/S-bromochlorofluoromethane")
-    fragment_2!bcfm = read_fragment_from_xyz("test/!-S-bromochlorofluoromethane", fragment_location=PATH_TO_MOIETIES)
+    fragment_2!bcfm = read_fragment_from_xyz("test/!-S-bromochlorofluoromethane")
     moiety_2!bcfm = moiety("test/!-S-bromochlorofluoromethane")
     # check that the species/coordinates correspondence is identical between fragments and moieties
     @test moiety_bcfm.atoms.species == [:C, :H, :Cl, :F, :Br]

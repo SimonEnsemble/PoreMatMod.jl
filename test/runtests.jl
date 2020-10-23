@@ -42,5 +42,3 @@ try
 catch
     @error "Oh snap."
 end
-
-@info "Success!"
