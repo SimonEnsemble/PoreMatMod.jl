@@ -279,12 +279,6 @@ end
 
 
 ## Internal method for performing substructure replacements
-
-@doc raw"""
-Replaces the search moiety in the parent structure and replaces it at specified locations.
-
-			TODO: docs
-"""
 function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal, search::Search, configs::Array{Int})::Crystal
 	# configs must all be unique
 	@assert length(configs) == length(unique(configs))
@@ -319,7 +313,11 @@ end
 
 
 ## Find/replace function (exposed)
+@doc raw"""
+`find_replace(search::Search, r_moty::Crystal; rand_all::Bool=false, nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[]) -> Crystal`
 
+Inserts `r_moty` into a parent structure according to `search` and `kwargs`
+"""
 function find_replace(search::Search, r_moty::Crystal; rand_all::Bool=false, nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[])::Crystal
     if rand_all
         return substructure_replace(search.query.s_moty, r_moty, search.query.parent, search, get_config_ids(search))
