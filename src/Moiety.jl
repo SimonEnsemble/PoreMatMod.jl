@@ -9,12 +9,23 @@ function new_bonding_rules()::Array{BondingRule}
 	bondingrules = PorousMaterials.default_bondingrules()
 	push!(bondingrules, BondingRule(:C, :*, 0.4, 1.9))
 	newrules = []
-	# this loop is stupidly structured because the non-stupid version would hang, inexplicably, forever
 	for i in 1:length(bondingrules)
 	    if bondingrules[i].species_i != :*
-	        push!(newrules, BondingRule(Symbol("$(bondingrules[i].species_i)!"), bondingrules[i].species_j, bondingrules[i].min_dist, bondingrules[i].max_dist))
-	        push!(newrules, BondingRule(Symbol("$(bondingrules[i].species_j)!"), bondingrules[i].species_i, bondingrules[i].min_dist, bondingrules[i].max_dist))
-	        push!(newrules, BondingRule(Symbol("$(bondingrules[i].species_i)!"), Symbol("$(bondingrules[i].species_j)!"), bondingrules[i].min_dist, bondingrules[i].max_dist))
+	        push!(newrules, BondingRule(
+				Symbol("$(bondingrules[i].species_i)!"),
+				bondingrules[i].species_j,
+				bondingrules[i].min_dist,
+				bondingrules[i].max_dist))
+	        push!(newrules, BondingRule(
+				Symbol("$(bondingrules[i].species_j)!"),
+				bondingrules[i].species_i,
+				bondingrules[i].min_dist,
+				bondingrules[i].max_dist))
+	        push!(newrules, BondingRule(
+				Symbol("$(bondingrules[i].species_i)!"),
+				Symbol("$(bondingrules[i].species_j)!"),
+				bondingrules[i].min_dist,
+				bondingrules[i].max_dist))
 	    end
 	end
 	return unique(vcat(bondingrules, newrules))
@@ -83,7 +94,12 @@ function moiety(name::String)::Crystal
 	infer_bonds!(moiety, false, bondingrules)
 	order = sortperm(degree(moiety.bonds), rev=true)
 	# ordered atoms
-	order_wo_R = length(R_group_indices) > 0 ? order[[i for i in 1:length(order) if !(order[i] ∈ R_group_indices)]] : order
+	if length(R_group_indices) > 0
+		order_wo_R = order[
+			[i for i in 1:length(order) if !(order[i] ∈ R_group_indices)]]
+	else
+		order_wo_R = order
+	end
 	# append R-group to the end
 	order = vcat(order_wo_R, R_group_indices)
 	# rebuild Atoms
