@@ -98,7 +98,7 @@ function prune!(M::Array{Bool, 2}, subgraph::SimpleGraph, graph::SimpleGraph)
                 # now, suppose α ∈ subgraph and β ∈ graph correspond...
                 @inbounds for x ∈ neighbors_of_α
                     # if there is no neighbor of β that could correspond to x, neighbor of α, then, contradiction.
-                    if length(intersect(candidate_list(M, x), neighbors_of_β)) == 0
+                    if isdisjoint(candidate_list(M, x), neighbors_of_β)
                         M[α, β] = false
                         pruned = true
                     end
