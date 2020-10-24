@@ -20,7 +20,7 @@ end
 # The result of running a substructure search
 struct Search
     query::Query # the search query (s-moty ∈ parent)
-    results::DataFrame # the isomorphisms
+    results # the isomorphisms
 end
 
 
@@ -79,10 +79,14 @@ geometric_center(xtal::Crystal)::Array{Float64} = geometric_center(xtal.atoms)
 (∈)(s::Crystal, g::Crystal) = substructure_search(s, g)
 # and some more like that for doing find-replace operations in one line
 # these are objectively unnecessary, but fun.
-(∈)(pair::Pair{Crystal, Crystal}, xtal::Crystal) = find_replace((pair[1] ∈ xtal), pair[2], rand_all=true)
-(∈)(tuple::Tuple{Pair, Int}, xtal::Crystal) = find_replace(tuple[1][1] ∈ xtal, tuple[1][2], nb_loc=tuple[2])
-(∈)(tuple::Tuple{Pair, Array{Int}}, xtal::Crystal) = find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2])
-(∈)(tuple::Tuple{Pair, Array{Int}, Array{Int}}, xtal::Crystal) = find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2], ori=tuple[3])
+(∈)(pair::Pair{Crystal, Crystal}, xtal::Crystal) =
+	find_replace((pair[1] ∈ xtal), pair[2], rand_all=true)
+(∈)(tuple::Tuple{Pair, Int}, xtal::Crystal) =
+	find_replace(tuple[1][1] ∈ xtal, tuple[1][2], nb_loc=tuple[2])
+(∈)(tuple::Tuple{Pair, Array{Int}}, xtal::Crystal) =
+	find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2])
+(∈)(tuple::Tuple{Pair, Array{Int}, Array{Int}}, xtal::Crystal) =
+	find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2], ori=tuple[3])
 
 
 # Helper for making .xyz's
@@ -173,15 +177,18 @@ function idx_filter(xtal::Crystal, subset::Array{Int})::Array{Int,1}
 end
 
 
-# tracks which bonds need to be made between the parent and array of transformed r_moty's (xrms)
-function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int}, parent::Crystal, m2r_isom::Array{Int}, r_moty::Crystal, xrms::Array{Crystal})
+# tracks which bonds need to be made between the parent and array
+# of transformed r_moty's (xrms)
+function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int},
+		parent::Crystal, m2r_isom::Array{Int}, r_moty::Crystal, xrms::Array{Crystal})
     # loop over s2p_isom
     for (s, p) in enumerate(s2p_isom)
         # find neighbors of parent_subset atoms
         n = LightGraphs.neighbors(parent.bonds, p)
         # loop over neighbors
         for nᵢ in n
-            # if neighbor not in s2p_isom, must bond it to r_moty replacement of parent_subset atom
+            # if neighbor not in s2p_isom, must bond it to r_moty replacement
+			# of parent_subset atom
             if !(nᵢ ∈ s2p_isom)
                 # ID the atom in r_moty
                 r = m2r_isom[s]
@@ -198,7 +205,8 @@ end
 
 
 # generates data for effecting a series of replacements
-function build_replacement_data(c::Array{Int}, search::Search, parent::Crystal, s_moty::Crystal, r_moty::Crystal, m2r_isom::Array{Int}, mask::Crystal
+function build_replacement_data(c::Array{Int}, search::Search, parent::Crystal,
+		s_moty::Crystal, r_moty::Crystal, m2r_isom::Array{Int}, mask::Crystal
         )::Tuple{Array{Crystal},Array{Int},Array{Tuple{Int,Int}}}
     xrms = Crystal[]
     del_atoms = Int[]
@@ -235,9 +243,12 @@ end
 
 
 # returns ids of results corresponding to the
-function get_config_ids(search::Search; orientations::Array{Int}=Int[], nb_loc::Int=0, locations::Array{Int}=Int[])::Array{Int}
+function get_config_ids(search::Search; orientations::Array{Int}=Int[], nb_loc::Int=0,
+		locations::Array{Int}=Int[])::Array{Int}
     # randomize orientations
-    orientations = orientations == [] ? [rand(1:n) for n ∈ nb_configs_at_loc(search)] : orientations
+    if orientations == []
+		orientations = [rand(1:n) for n ∈ nb_configs_at_loc(search)]
+	end
     nb_loc = nb_loc == 0 ? nb_locations(search) : nb_loc
 	if locations == []
 		locations = [1:nb_locations(search)...]
@@ -279,14 +290,15 @@ end
 
 
 ## Internal method for performing substructure replacements
-function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal, search::Search, configs::Array{Int})::Crystal
+function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
+		search::Search, configs::Array{Int})::Crystal
 	# configs must all be unique
 	@assert length(configs) == length(unique(configs))
 	# mutation guard
     s_moty, r_moty = deepcopy.([s_moty, r_moty])
     # if there are no replacements to be made, just return the parent
     if length(search.results.isomorphism) == 0
-		@warn "No replacements to be made." search.query.s_moty.name search.query.parent.name r_moty.name
+		@warn "No replacements to be made."
         return parent
     end
     # determine s_mask (which atoms from s_moty are NOT in r_moty?)
@@ -296,10 +308,12 @@ function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
     # shift all r_moty nodes according to center of isomorphic subset
     r_moty.atoms.coords.xf .-= geometric_center(r_moty[m2r_isom])
     # loop over configs to build replacement data
-    xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, s_moty, r_moty, m2r_isom, mask)
+    xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, s_moty,
+		r_moty, m2r_isom, mask)
 
     # append temporary crystals to parent
-    xtal = Crystal("TODO", parent.box, parent.atoms + sum([xrm.atoms for xrm in xrms]), Charges{Frac}(0))
+    xtal = Crystal("TODO", parent.box,
+		parent.atoms + sum([xrm.atoms for xrm in xrms]), Charges{Frac}(0))
 
     # create bonds from dictionary
     for (p, r) in bonds
@@ -314,21 +328,27 @@ end
 
 ## Find/replace function (exposed)
 @doc raw"""
-`find_replace(search::Search, r_moty::Crystal; rand_all::Bool=false, nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[]) -> Crystal`
+`find_replace(search::Search, r_moty::Crystal; rand_all::Bool=false, nb_loc::Int=0,
+	loc::Array{Int}=Int[], ori::Array{Int}=Int[]) -> Crystal`
 
 Inserts `r_moty` into a parent structure according to `search` and `kwargs`
 """
-function find_replace(search::Search, r_moty::Crystal; rand_all::Bool=false, nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[])::Crystal
+function find_replace(search::Search, r_moty::Crystal; rand_all::Bool=false,
+		nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[])::Crystal
     if rand_all
-        return substructure_replace(search.query.s_moty, r_moty, search.query.parent, search, get_config_ids(search))
+        return substructure_replace(search.query.s_moty, r_moty, search.query.parent,
+			search, get_config_ids(search))
     elseif nb_loc > 0
-        return substructure_replace(search.query.s_moty, r_moty, search.query.parent, search, get_config_ids(search, nb_loc=nb_loc));
+        return substructure_replace(search.query.s_moty, r_moty, search.query.parent,
+			search, get_config_ids(search, nb_loc=nb_loc));
 	elseif ori ≠ Int[]
-        return substructure_replace(search.query.s_moty, r_moty, search.query.parent, search, get_config_ids(search, locations=loc, orientations=ori))
+        return substructure_replace(search.query.s_moty, r_moty, search.query.parent,
+			search, get_config_ids(search, locations=loc, orientations=ori))
 	elseif loc ≠ Int[]
-        return substructure_replace(search.query.s_moty, r_moty, search.query.parent, search, get_config_ids(search, locations=loc))
+        return substructure_replace(search.query.s_moty, r_moty, search.query.parent,
+			search, get_config_ids(search, locations=loc))
     else
-        @error "No replacements specified." search.query.s_moty.name search.query.parent.name r_moty
+        @error "No replacements specified."
     end
     return search.query.parent
 end
