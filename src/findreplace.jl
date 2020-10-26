@@ -5,7 +5,8 @@ export substructure_search, SearchResult, Query, Search,
 	nb_isomorphisms, nb_locations, nb_configs_at_loc, find_replace
 
 
-## imports for extension
+## libraries and imports for extension
+using StatsBase
 import Base.(∈)
 import PorousMaterials.write_xyz
 
@@ -20,7 +21,7 @@ end
 # The result of running a substructure search
 struct Search
     query::Query # the search query (s-moty ∈ parent)
-    results # the isomorphisms
+    results
 end
 
 
@@ -31,7 +32,7 @@ end
 Returns the number of isomorphisms found in the specified `Search`
 """
 function nb_isomorphisms(search::Search)::Int
-    return length(search.results.isomorphism)
+    return sum([size(grp, 1) for grp in search.results])
 end
 
 
@@ -42,7 +43,7 @@ Returns the number of unique locations (collections of atoms) at which the
 specified `Search` results contain isomorphisms.
 """
 function nb_locations(search::Search)::Int
-    return length(unique(search.results.p_subset))
+    return length([size(grp, 1) for grp in search.results])
 end
 
 
@@ -54,7 +55,7 @@ location (collection of atoms) for which the specified `Search` results
 contain isomorphisms.
 """
 function nb_configs_at_loc(search::Search)::Array{Int}
-    return [length(location.isomorphism) for location in groupby(search.results, :p_subset)]
+    return [size(grp, 1) for grp in search.results]
 end
 
 
@@ -205,15 +206,15 @@ end
 
 
 # generates data for effecting a series of replacements
-function build_replacement_data(c::Array{Int}, search::Search, parent::Crystal,
+function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search, parent::Crystal,
 		s_moty::Crystal, r_moty::Crystal, m2r_isom::Array{Int}, mask::Crystal
         )::Tuple{Array{Crystal},Array{Int},Array{Tuple{Int,Int}}}
     xrms = Crystal[]
     del_atoms = Int[]
     bonds = Tuple{Int,Int}[] # each tuple (i,j) encodes a parent[i] -> xrms[k][j] bond
-    for cᵢ in c
+    for config in configs
         # find isomorphism
-        s2p_isom = search.results.isomorphism[cᵢ]
+        s2p_isom = search.results[config[1]].isomorphism[config[2]]
         # find parent subset
         parent_subset = deepcopy(parent[s2p_isom])
         # adjust coordinates for periodic boundaries
@@ -242,30 +243,6 @@ function build_replacement_data(c::Array{Int}, search::Search, parent::Crystal,
 end
 
 
-# returns ids of results corresponding to the
-function get_config_ids(search::Search; orientations::Array{Int}=Int[], nb_loc::Int=0,
-		locations::Array{Int}=Int[])::Array{Int}
-    # randomize orientations
-    if orientations == []
-		orientations = [rand(1:n) for n ∈ nb_configs_at_loc(search)]
-	end
-    nb_loc = nb_loc == 0 ? nb_locations(search) : nb_loc
-	if locations == []
-		locations = [1:nb_locations(search)...]
-	else
-		nb_loc = length(locations)
-	end
-    # get id of ith isom in each group per orientations array
-	ids = Int[]
-	for (i, locᵢ) ∈ enumerate(groupby(search.results, :p_subset))
-		if i ∈ locations && length(ids) < nb_loc
-			push!(ids, locᵢ.id[orientations[length(ids)+1]])
-		end
-	end
-	return ids
-end
-
-
 ## Search function (exposed)
 @doc raw"""
 `substructure_search(s_moty::Crystal, xtal::Crystal) -> Search`
@@ -278,43 +255,46 @@ function substructure_search(s_moty::Crystal, xtal::Crystal)::Search
 	moty = deepcopy(s_moty)
 	untag_r_group!(moty)
 	# Get array of configuration arrays
-	configurations = find_subgraph_isomorphisms(moty.bonds,
+	configs = find_subgraph_isomorphisms(moty.bonds,
 		moty.atoms.species, xtal.bonds,	xtal.atoms.species)
-    return Search(
-		Query(xtal, s_moty),
-		DataFrame(
-			id = [1:length(configurations)...],
-			p_subset = [sort(c) for c in configurations],
-			isomorphism = configurations))
+	df = DataFrame(p_subset=[sort(c) for c in configs], isomorphism=configs)
+	locs = Int[]
+	isoms = Array{Int}[]
+	for (i, loc) in enumerate(groupby(df, :p_subset))
+		for isom in loc.isomorphism
+			push!(locs, i)
+			push!(isoms, isom)
+		end
+	end
+	results = groupby(DataFrame(location=locs, isomorphism=isoms), :location)
+	return Search(Query(xtal, s_moty), results)
 end
 
 
 ## Internal method for performing substructure replacements
 function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
-		search::Search, configs::Array{Int})::Crystal
+		search::Search, configs::Array{Tuple{Int,Int}}, new_xtal_name::String)::Crystal
 	# configs must all be unique
-	@assert length(configs) == length(unique(configs))
+	@assert length(configs) == length(unique(configs)) "configs must be unique"
 	# mutation guard
     s_moty, r_moty = deepcopy.([s_moty, r_moty])
     # if there are no replacements to be made, just return the parent
-    if length(search.results.isomorphism) == 0
+    if nb_isomorphisms(search) == 0
 		@warn "No replacements to be made."
         return parent
     end
     # determine s_mask (which atoms from s_moty are NOT in r_moty?)
     mask = s_moty[idx_filter(s_moty, r_group_indices(s_moty))]
     # get isomrphism between s_moty/mask and r_moty
-    m2r_isom = (mask ∈ r_moty).results.isomorphism[1]
+    m2r_isom = (mask ∈ r_moty).results[1].isomorphism[1]
     # shift all r_moty nodes according to center of isomorphic subset
     r_moty.atoms.coords.xf .-= geometric_center(r_moty[m2r_isom])
     # loop over configs to build replacement data
     xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, s_moty,
 		r_moty, m2r_isom, mask)
-
     # append temporary crystals to parent
-    xtal = Crystal("TODO", parent.box,
+    xtal = Crystal(new_xtal_name, parent.box,
 		parent.atoms + sum([xrm.atoms for xrm in xrms]), Charges{Frac}(0))
-
     # create bonds from dictionary
     for (p, r) in bonds
         add_edge!(xtal.bonds, p, r)
@@ -334,21 +314,29 @@ end
 Inserts `r_moty` into a parent structure according to `search` and `kwargs`
 """
 function find_replace(search::Search, r_moty::Crystal; rand_all::Bool=false,
-		nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[])::Crystal
-    if rand_all
-        return substructure_replace(search.query.s_moty, r_moty, search.query.parent,
-			search, get_config_ids(search))
-    elseif nb_loc > 0
-        return substructure_replace(search.query.s_moty, r_moty, search.query.parent,
-			search, get_config_ids(search, nb_loc=nb_loc));
-	elseif ori ≠ Int[]
-        return substructure_replace(search.query.s_moty, r_moty, search.query.parent,
-			search, get_config_ids(search, locations=loc, orientations=ori))
-	elseif loc ≠ Int[]
-        return substructure_replace(search.query.s_moty, r_moty, search.query.parent,
-			search, get_config_ids(search, locations=loc))
+		nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[],
+		name::String="new_xtal")::Crystal
+	# handle input
+    if rand_all # random replacement at each location
+		nb_loc = nb_locations(search)
+		loc = [1:nb_loc...]
+		ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
+	# random replacement at nb_loc random locations
+	elseif nb_loc > 0 && ori == Int[] && loc == Int[]
+		loc = sample([1:nb_locations(search)...], nb_loc, replace=false)
+		ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
+	elseif ori ≠ Int[] && loc ≠ Int[] # specific replacements
+		@assert length(loc) == length(ori) "one orientation per location"
+		nb_loc = length(ori)
+	elseif loc ≠ Int[] # random replacement at specific locations
+		nb_loc = length(loc)
+		ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
     else
-        @error "No replacements specified."
+        @error "Invalid or missing replacement scheme."
     end
-    return search.query.parent
+	# generate configuration tuples (location, orientation)
+	configs = Tuple{Int,Int}[(loc[i], ori[i]) for i in 1:nb_loc]
+	# process replacements
+	return substructure_replace(search.query.s_moty, r_moty, search.query.parent,
+		search, configs, name)
 end
