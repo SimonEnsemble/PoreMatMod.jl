@@ -37,7 +37,7 @@ try
     runtest.([
         "moiety.jl"
         "Ullmann.jl"
-        "MOFun.jl"
+        "findreplace.jl"
     ])
 catch
     @error "Oh snap."
