@@ -6,7 +6,7 @@ export substructure_search, SearchResult, Query, Search,
 
 
 ## libraries and imports for extension
-using StatsBase
+using StatsBase, LightGraphs
 import Base.(∈)
 import PorousMaterials.write_xyz
 
@@ -160,8 +160,13 @@ function xform_r_moty(r_moty::Crystal, rot_r2m::Array{Float64,2},
 	# transformation 3: translate to align with original xtal center
 	atoms.coords.x .+= xtal.box.f_to_c * xtal_offset
 	# cast atoms back to Frac
-	return Crystal(r_moty.name, xtal.box, Atoms{Frac}(length(atoms.species),
+	xrm = Crystal(r_moty.name, xtal.box, Atoms{Frac}(length(atoms.species),
 		atoms.species, Frac(atoms.coords, xtal.box)), Charges{Frac}(0))
+	# restore bonding network
+	for e in edges(r_moty.bonds)
+		add_edge!(xrm.bonds, src(e), dst(e))
+	end
+	return xrm
 end
 
 
@@ -179,10 +184,11 @@ end
 
 
 # tracks which bonds need to be made between the parent and array
-# of transformed r_moty's (xrms)
+# of transformed r_moty's (xrms) along with the new fragments
 function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int},
 		parent::Crystal, m2r_isom::Array{Int}, r_moty::Crystal, xrms::Array{Crystal})
-    # loop over s2p_isom
+	# bonds between new fragments and parent
+	# loop over s2p_isom
     for (s, p) in enumerate(s2p_isom)
         # find neighbors of parent_subset atoms
         n = LightGraphs.neighbors(parent.bonds, p)
@@ -193,25 +199,31 @@ function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int},
             if !(nᵢ ∈ s2p_isom)
                 # ID the atom in r_moty
                 r = m2r_isom[s]
-
                 # add the index offset
-                r += parent.atoms.n + length(xrms) * r_moty.atoms.n
-
+                r += parent.atoms.n + length(xrms) * r_moty.atoms.n # BUG I think it's here
                 # push bond to array
                 push!(bonds, (nᵢ, r))
             end
         end
     end
+	# new fragment bonds
+	for (i, xrm) in enumerate(xrms) # loop over new fragments
+		# calculate indices in new xtal
+		offset = (i - 1) * xrm.atoms.n + parent.atoms.n
+		for e in edges(xrm.bonds) # loop over fragment edges
+			push!(bonds, (offset + src(e), offset + dst(e)))
+		end
+	end
 end
 
 
 # generates data for effecting a series of replacements
-function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search, parent::Crystal,
-		s_moty::Crystal, r_moty::Crystal, m2r_isom::Array{Int}, mask::Crystal
-        )::Tuple{Array{Crystal},Array{Int},Array{Tuple{Int,Int}}}
+function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
+		parent::Crystal, s_moty::Crystal, r_moty::Crystal, m2r_isom::Array{Int},
+		mask::Crystal)::Tuple{Array{Crystal},Array{Int},Array{Tuple{Int,Int}}}
     xrms = Crystal[]
     del_atoms = Int[]
-    bonds = Tuple{Int,Int}[] # each tuple (i,j) encodes a parent[i] -> xrms[k][j] bond
+    bonds = Tuple{Int,Int}[] # tuple (i,j) encodes a parent[i] -> xrms[k][j] bond
     for config in configs
         # find isomorphism
         s2p_isom = search.results[config[1]].isomorphism[config[2]]
@@ -223,11 +235,11 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search, 
         parent_subset_center = geometric_center(parent_subset)
         # shift to align centers at origin
         center_on_self!.([parent_subset, s_moty])
-        # do orthog. Procrustes for s_moty-to-parent and mask-to-replacement alignments
+        # orthog. Procrustes for s_moty-to-parent and mask-to-replacement alignments
         rot_s2p = s2p_op(s_moty, parent_subset)
         rot_r2m = r2m_op(r_moty, s_moty, m2r_isom, mask.atoms)
-        # transform r_moty by rot_r2m, rot_s2p, and xtal_subset_center, align to parent
-        # (this is now a crystal to add)
+        # transform r_moty by rot_r2m, rot_s2p, and xtal_subset_center, align
+		# to parent (this is now a crystal to add)
         xrm = xform_r_moty(r_moty, rot_r2m, rot_s2p, parent_subset_center, parent)
         push!(xrms, xrm)
         # push obsolete atoms to array
@@ -236,6 +248,10 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search, 
         end
         # clean up del_atoms
         del_atoms = unique(del_atoms)
+		# parent bonds
+		for e in edges(parent.bonds) # loop over parent structure bonds
+			push!(bonds, (src(e), dst(e))) # preserve them
+		end
         # accumulate bonds
         accumulate_bonds!(bonds, s2p_isom, parent, m2r_isom, r_moty, xrms)
     end
@@ -273,7 +289,8 @@ end
 
 ## Internal method for performing substructure replacements
 function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
-		search::Search, configs::Array{Tuple{Int,Int}}, new_xtal_name::String)::Crystal
+		search::Search, configs::Array{Tuple{Int,Int}},
+		new_xtal_name::String)::Crystal
 	# configs must all be unique
 	@assert length(configs) == length(unique(configs)) "configs must be unique"
 	# mutation guard
@@ -296,13 +313,14 @@ function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
     xtal = Crystal(new_xtal_name, parent.box,
 		parent.atoms + sum([xrm.atoms for xrm in xrms]), Charges{Frac}(0))
     # create bonds from dictionary
-    for (p, r) in bonds
+	for (p, r) in bonds
         add_edge!(xtal.bonds, p, r)
     end
     # correct for periodic boundaries
 	wrap!(xtal)
     # delete atoms from array and return result
-    return xtal[[x for x in 1:xtal.atoms.n if !(x ∈ del_atoms)]]
+    new_xtal = xtal[[x for x in 1:xtal.atoms.n if !(x ∈ del_atoms)]]
+	return new_xtal
 end
 
 
