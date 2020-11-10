@@ -2,7 +2,7 @@
 
 ## exposed interface
 export substructure_search, SearchResult, Query, Search,
-	nb_isomorphisms, nb_locations, nb_configs_at_loc, find_replace
+    nb_isomorphisms, nb_locations, nb_configs_at_loc, find_replace
 
 
 ## libraries and imports for extension
@@ -61,7 +61,7 @@ end
 
 # Retuns the geometric center of an Array, Frac/Atoms object, or Crystal.
 function geometric_center(xf::Array{Float64,2})::Array{Float64}
-	return sum(xf, dims=2)[:] / size(xf, 2)
+    return sum(xf, dims=2)[:] / size(xf, 2)
 end
 
 geometric_center(coords::Frac)::Array{Float64} = geometric_center(coords.xf)
@@ -73,21 +73,21 @@ geometric_center(xtal::Crystal)::Array{Float64} = geometric_center(xtal.atoms)
 
 # extension of infix `in` operator for expressive searching
 # this allows all of the following:
-#	s ∈ g					→	find the moiety in the crystal
-#	[s1, s2] .∈ [g]			→	find each moiety in a crystal
-#	s .∈ [g1, g2]			→	find the moiety in each crystal
-#	[s1, s2] .∈ [g1, g2]	→	find each moiety in each crystal
+#    s ∈ g                    →    find the moiety in the crystal
+#    [s1, s2] .∈ [g]            →    find each moiety in a crystal
+#    s .∈ [g1, g2]            →    find the moiety in each crystal
+#    [s1, s2] .∈ [g1, g2]    →    find each moiety in each crystal
 (∈)(s::Crystal, g::Crystal) = substructure_search(s, g)
 # and some more like that for doing find-replace operations in one line
 # these are objectively unnecessary, but fun.
 (∈)(pair::Pair{Crystal, Crystal}, xtal::Crystal) =
-	find_replace((pair[1] ∈ xtal), pair[2], rand_all=true)
+    find_replace((pair[1] ∈ xtal), pair[2], rand_all=true)
 (∈)(tuple::Tuple{Pair, Int}, xtal::Crystal) =
-	find_replace(tuple[1][1] ∈ xtal, tuple[1][2], nb_loc=tuple[2])
+    find_replace(tuple[1][1] ∈ xtal, tuple[1][2], nb_loc=tuple[2])
 (∈)(tuple::Tuple{Pair, Array{Int}}, xtal::Crystal) =
-	find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2])
+    find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2])
 (∈)(tuple::Tuple{Pair, Array{Int}, Array{Int}}, xtal::Crystal) =
-	find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2], ori=tuple[3])
+    find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2], ori=tuple[3])
 
 
 # Helper for making .xyz's
@@ -97,17 +97,17 @@ write_xyz(xtal::Crystal, name::String) = write_xyz(Cart(xtal.atoms, xtal.box), n
 # Translates all atoms in xtal such that xtal[1] is in its original position
 # and the rest of xtal is in its nearest-image position relative to xtal[1]
 function adjust_for_pb!(xtal::Crystal)
-	# record position vector of xtal[1]
-	origin_offset = deepcopy(xtal.atoms.coords.xf[:, 1])
-	# loop over atom indices and correct coordinates
+    # record position vector of xtal[1]
+    origin_offset = deepcopy(xtal.atoms.coords.xf[:, 1])
+    # loop over atom indices and correct coordinates
     for i in 1:xtal.atoms.n
-		# move atoms near the origin for nearest-image calculation
-		dxf = xtal.atoms.coords.xf[:, i] .- origin_offset
-		# nearest_image! expects points to be within same or adjacent unit cells
-		@assert all(abs.(dxf) .< 2) "Invalid xf coords in $(xtal.name)"
-		# resolve periodic boundaries (other vectors unchanged)
+        # move atoms near the origin for nearest-image calculation
+        dxf = xtal.atoms.coords.xf[:, i] .- origin_offset
+        # nearest_image! expects points to be within same or adjacent unit cells
+        @assert all(abs.(dxf) .< 2) "Invalid xf coords in $(xtal.name)"
+        # resolve periodic boundaries (other vectors unchanged)
         nearest_image!(dxf)
-		# return atoms to their [nearest-image] original positions
+        # return atoms to their [nearest-image] original positions
         xtal.atoms.coords.xf[:, i] = dxf .+ origin_offset
     end
 end
@@ -115,87 +115,87 @@ end
 
 # Performs orthogonal Procrustes on correlated point clouds A and B
 function orthogonal_procrustes(A::Array{Float64,2},
-		B::Array{Float64,2})::Array{Float64,2}
-	# solve the SVD
+        B::Array{Float64,2})::Array{Float64,2}
+    # solve the SVD
     F = svd(A * B')
-	# return rotation matrix
+    # return rotation matrix
     return F.V * F.U'
 end
 
 
 # Gets the s_moty-to-xtal rotation matrix
 function s2p_op(s_moty::Crystal, xtal::Crystal)::Array{Float64,2}
-	# s_moty in Cartesian
-	A = s_moty.box.f_to_c * s_moty.atoms.coords.xf
-	# parent subset in Cartesian
-	B = xtal.box.f_to_c * xtal.atoms.coords.xf
-	# get rotation matrix
-	return orthogonal_procrustes(A, B)
+    # s_moty in Cartesian
+    A = s_moty.box.f_to_c * s_moty.atoms.coords.xf
+    # parent subset in Cartesian
+    B = xtal.box.f_to_c * xtal.atoms.coords.xf
+    # get rotation matrix
+    return orthogonal_procrustes(A, B)
 end
 
 
 # Gets the r_moty-to-s_mask rotation matrix
 function r2m_op(r_moty::Crystal, s_moty::Crystal, m2r_isomorphism::Array{Int},
-		s_mask_atoms::Atoms)::Array{Float64,2}
-	# r_moty subset in Cartesian
-	A = r_moty.box.f_to_c * r_moty.atoms[m2r_isomorphism].coords.xf
-	# s_mask in Cartesian
-	B = s_moty.box.f_to_c * s_mask_atoms.coords.xf
-	# get rotation matrix
-	return orthogonal_procrustes(A, B)
+        s_mask_atoms::Atoms)::Array{Float64,2}
+    # r_moty subset in Cartesian
+    A = r_moty.box.f_to_c * r_moty.atoms[m2r_isomorphism].coords.xf
+    # s_mask in Cartesian
+    B = s_moty.box.f_to_c * s_mask_atoms.coords.xf
+    # get rotation matrix
+    return orthogonal_procrustes(A, B)
 end
 
 
 # Transforms r_moty according to two rotation matrices and a translational offset
 function xform_r_moty(r_moty::Crystal, rot_r2m::Array{Float64,2},
-		rot_s2p::Array{Float64,2}, xtal_offset::Array{Float64},
-		xtal::Crystal)::Crystal
-	# put r_moty into cartesian space
-	atoms = Atoms{Cart}(length(r_moty.atoms.species), r_moty.atoms.species,
-		Cart(r_moty.atoms.coords, r_moty.box))
-	# transformation 1: rotate r_moty to align with s_moty
-	atoms.coords.x[:,:] = rot_r2m * atoms.coords.x
-	# transformation 2: rotate to align with xtal_subset
-	atoms.coords.x[:,:] = rot_s2p * atoms.coords.x
-	# transformation 3: translate to align with original xtal center
-	atoms.coords.x .+= xtal.box.f_to_c * xtal_offset
-	# cast atoms back to Frac
-	xrm = Crystal(r_moty.name, xtal.box, Atoms{Frac}(length(atoms.species),
-		atoms.species, Frac(atoms.coords, xtal.box)), Charges{Frac}(0))
-	# restore bonding network
-	for e in edges(r_moty.bonds)
-		add_edge!(xrm.bonds, src(e), dst(e))
-	end
-	return xrm
+        rot_s2p::Array{Float64,2}, xtal_offset::Array{Float64},
+        xtal::Crystal)::Crystal
+    # put r_moty into cartesian space
+    atoms = Atoms{Cart}(length(r_moty.atoms.species), r_moty.atoms.species,
+        Cart(r_moty.atoms.coords, r_moty.box))
+    # transformation 1: rotate r_moty to align with s_moty
+    atoms.coords.x[:,:] = rot_r2m * atoms.coords.x
+    # transformation 2: rotate to align with xtal_subset
+    atoms.coords.x[:,:] = rot_s2p * atoms.coords.x
+    # transformation 3: translate to align with original xtal center
+    atoms.coords.x .+= xtal.box.f_to_c * xtal_offset
+    # cast atoms back to Frac
+    xrm = Crystal(r_moty.name, xtal.box, Atoms{Frac}(length(atoms.species),
+        atoms.species, Frac(atoms.coords, xtal.box)), Charges{Frac}(0))
+    # restore bonding network
+    for e in edges(r_moty.bonds)
+        add_edge!(xrm.bonds, src(e), dst(e))
+    end
+    return xrm
 end
 
 
 # shifts coordinates to make the geometric center of the point cloud coincident
 # w/ the origin
 function center_on_self!(xtal::Crystal)
-	xtal.atoms.coords.xf .-= geometric_center(xtal)
+    xtal.atoms.coords.xf .-= geometric_center(xtal)
 end
 
 
 # returns an Array containing the indices
 function idx_filter(xtal::Crystal, subset::Array{Int})::Array{Int,1}
-	return [i for i in 1:xtal.atoms.n if !(i ∈ subset)]
+    return [i for i in 1:xtal.atoms.n if !(i ∈ subset)]
 end
 
 
 # tracks which bonds need to be made between the parent and array
 # of transformed r_moty's (xrms) along with the new fragments
 function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int},
-		parent::Crystal, m2r_isom::Array{Int}, r_moty::Crystal, xrms::Array{Crystal})
-	# bonds between new fragments and parent
-	# loop over s2p_isom
+        parent::Crystal, m2r_isom::Array{Int}, r_moty::Crystal, xrms::Array{Crystal})
+    # bonds between new fragments and parent
+    # loop over s2p_isom
     for (s, p) in enumerate(s2p_isom)
         # find neighbors of parent_subset atoms
         n = LightGraphs.neighbors(parent.bonds, p)
         # loop over neighbors
         for nᵢ in n
             # if neighbor not in s2p_isom, must bond it to r_moty replacement
-			# of parent_subset atom
+            # of parent_subset atom
             if !(nᵢ ∈ s2p_isom)
                 # ID the atom in r_moty
                 r = m2r_isom[s]
@@ -206,21 +206,21 @@ function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int},
             end
         end
     end
-	# new fragment bonds
-	for (i, xrm) in enumerate(xrms) # loop over new fragments
-		# calculate indices in new xtal
-		offset = (i - 1) * xrm.atoms.n + parent.atoms.n
-		for e in edges(xrm.bonds) # loop over fragment edges
-			push!(bonds, (offset + src(e), offset + dst(e)))
-		end
-	end
+    # new fragment bonds
+    for (i, xrm) in enumerate(xrms) # loop over new fragments
+        # calculate indices in new xtal
+        offset = (i - 1) * xrm.atoms.n + parent.atoms.n
+        for e in edges(xrm.bonds) # loop over fragment edges
+            push!(bonds, (offset + src(e), offset + dst(e)))
+        end
+    end
 end
 
 
 # generates data for effecting a series of replacements
 function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
-		parent::Crystal, s_moty::Crystal, r_moty::Crystal, m2r_isom::Array{Int},
-		mask::Crystal)::Tuple{Array{Crystal},Array{Int},Array{Tuple{Int,Int}}}
+        parent::Crystal, s_moty::Crystal, r_moty::Crystal, m2r_isom::Array{Int},
+        mask::Crystal)::Tuple{Array{Crystal},Array{Int},Array{Tuple{Int,Int}}}
     xrms = Crystal[]
     del_atoms = Int[]
     bonds = Tuple{Int,Int}[] # tuple (i,j) encodes a parent[i] -> xrms[k][j] bond
@@ -239,7 +239,7 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
         rot_s2p = s2p_op(s_moty, parent_subset)
         rot_r2m = r2m_op(r_moty, s_moty, m2r_isom, mask.atoms)
         # transform r_moty by rot_r2m, rot_s2p, and xtal_subset_center, align
-		# to parent (this is now a crystal to add)
+        # to parent (this is now a crystal to add)
         xrm = xform_r_moty(r_moty, rot_r2m, rot_s2p, parent_subset_center, parent)
         push!(xrms, xrm)
         # push obsolete atoms to array
@@ -248,10 +248,10 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
         end
         # clean up del_atoms
         del_atoms = unique(del_atoms)
-		# parent bonds
-		for e in edges(parent.bonds) # loop over parent structure bonds
-			push!(bonds, (src(e), dst(e))) # preserve them
-		end
+        # parent bonds
+        for e in edges(parent.bonds) # loop over parent structure bonds
+            push!(bonds, (src(e), dst(e))) # preserve them
+        end
         # accumulate bonds
         accumulate_bonds!(bonds, s2p_isom, parent, m2r_isom, r_moty, xrms)
     end
@@ -267,37 +267,37 @@ Searches for a substructure within a `Crystal` and returns a
 `Search` struct containing all identified subgraph isomorphisms.
 """
 function substructure_search(s_moty::Crystal, xtal::Crystal)::Search
-	# Make a copy w/o R tags for searching
-	moty = deepcopy(s_moty)
-	untag_r_group!(moty)
-	# Get array of configuration arrays
-	configs = find_subgraph_isomorphisms(moty.bonds,
-		moty.atoms.species, xtal.bonds,	xtal.atoms.species)
-	df = DataFrame(p_subset=[sort(c) for c in configs], isomorphism=configs)
-	locs = Int[]
-	isoms = Array{Int}[]
-	for (i, loc) in enumerate(groupby(df, :p_subset))
-		for isom in loc.isomorphism
-			push!(locs, i)
-			push!(isoms, isom)
-		end
-	end
-	results = groupby(DataFrame(location=locs, isomorphism=isoms), :location)
-	return Search(Query(xtal, s_moty), results)
+    # Make a copy w/o R tags for searching
+    moty = deepcopy(s_moty)
+    untag_r_group!(moty)
+    # Get array of configuration arrays
+    configs = find_subgraph_isomorphisms(moty.bonds,
+        moty.atoms.species, xtal.bonds,    xtal.atoms.species)
+    df = DataFrame(p_subset=[sort(c) for c in configs], isomorphism=configs)
+    locs = Int[]
+    isoms = Array{Int}[]
+    for (i, loc) in enumerate(groupby(df, :p_subset))
+        for isom in loc.isomorphism
+            push!(locs, i)
+            push!(isoms, isom)
+        end
+    end
+    results = groupby(DataFrame(location=locs, isomorphism=isoms), :location)
+    return Search(Query(xtal, s_moty), results)
 end
 
 
 ## Internal method for performing substructure replacements
 function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
-		search::Search, configs::Array{Tuple{Int,Int}},
-		new_xtal_name::String)::Crystal
-	# configs must all be unique
-	@assert length(configs) == length(unique(configs)) "configs must be unique"
-	# mutation guard
+        search::Search, configs::Array{Tuple{Int,Int}},
+        new_xtal_name::String)::Crystal
+    # configs must all be unique
+    @assert length(configs) == length(unique(configs)) "configs must be unique"
+    # mutation guard
     s_moty, r_moty = deepcopy.([s_moty, r_moty])
     # if there are no replacements to be made, just return the parent
     if nb_isomorphisms(search) == 0
-		@warn "No replacements to be made."
+        @warn "No replacements to be made."
         return parent
     end
     # determine s_mask (which atoms from s_moty are NOT in r_moty?)
@@ -308,53 +308,53 @@ function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
     r_moty.atoms.coords.xf .-= geometric_center(r_moty[m2r_isom])
     # loop over configs to build replacement data
     xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, s_moty,
-		r_moty, m2r_isom, mask)
+        r_moty, m2r_isom, mask)
     # append temporary crystals to parent
     xtal = Crystal(new_xtal_name, parent.box,
-		parent.atoms + sum([xrm.atoms for xrm in xrms]), Charges{Frac}(0))
+        parent.atoms + sum([xrm.atoms for xrm in xrms]), Charges{Frac}(0))
     # create bonds from dictionary
-	for (p, r) in bonds
+    for (p, r) in bonds
         add_edge!(xtal.bonds, p, r)
     end
     # correct for periodic boundaries
-	wrap!(xtal)
+    wrap!(xtal)
     # delete atoms from array and return result
     new_xtal = xtal[[x for x in 1:xtal.atoms.n if !(x ∈ del_atoms)]]
-	return new_xtal
+    return new_xtal
 end
 
 
 ## Find/replace function (exposed)
 @doc raw"""
 `find_replace(search::Search, r_moty::Crystal; rand_all::Bool=false, nb_loc::Int=0,
-	loc::Array{Int}=Int[], ori::Array{Int}=Int[]) -> Crystal`
+    loc::Array{Int}=Int[], ori::Array{Int}=Int[]) -> Crystal`
 
 Inserts `r_moty` into a parent structure according to `search` and `kwargs`
 """
 function find_replace(search::Search, r_moty::Crystal; rand_all::Bool=false,
-		nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[],
-		name::String="new_xtal")::Crystal
-	# handle input
+        nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[],
+        name::String="new_xtal")::Crystal
+    # handle input
     if rand_all # random replacement at each location
-		nb_loc = nb_locations(search)
-		loc = [1:nb_loc...]
-		ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
-	# random replacement at nb_loc random locations
-	elseif nb_loc > 0 && ori == Int[] && loc == Int[]
-		loc = sample([1:nb_locations(search)...], nb_loc, replace=false)
-		ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
-	elseif ori ≠ Int[] && loc ≠ Int[] # specific replacements
-		@assert length(loc) == length(ori) "one orientation per location"
-		nb_loc = length(ori)
-	elseif loc ≠ Int[] # random replacement at specific locations
-		nb_loc = length(loc)
-		ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
+        nb_loc = nb_locations(search)
+        loc = [1:nb_loc...]
+        ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
+    # random replacement at nb_loc random locations
+    elseif nb_loc > 0 && ori == Int[] && loc == Int[]
+        loc = sample([1:nb_locations(search)...], nb_loc, replace=false)
+        ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
+    elseif ori ≠ Int[] && loc ≠ Int[] # specific replacements
+        @assert length(loc) == length(ori) "one orientation per location"
+        nb_loc = length(ori)
+    elseif loc ≠ Int[] # random replacement at specific locations
+        nb_loc = length(loc)
+        ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
     else
         @error "Invalid or missing replacement scheme."
     end
-	# generate configuration tuples (location, orientation)
-	configs = Tuple{Int,Int}[(loc[i], ori[i]) for i in 1:nb_loc]
-	# process replacements
-	return substructure_replace(search.query.s_moty, r_moty, search.query.parent,
-		search, configs, name)
+    # generate configuration tuples (location, orientation)
+    configs = Tuple{Int,Int}[(loc[i], ori[i]) for i in 1:nb_loc]
+    # process replacements
+    return substructure_replace(search.query.s_moty, r_moty, search.query.parent,
+        search, configs, name)
 end
