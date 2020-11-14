@@ -186,7 +186,7 @@ end
 # tracks which bonds need to be made between the parent and array
 # of transformed r_moty's (xrms) along with the new fragments
 function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int},
-        parent::Crystal, m2r_isom::Array{Int}, r_moty::Crystal, xrms::Array{Crystal})
+        parent::Crystal, m2r_isom::Array{Int}, xrm::Crystal, count_xrms::Int)
     # bonds between new fragments and parent
     # loop over s2p_isom
     for (s, p) in enumerate(s2p_isom)
@@ -200,19 +200,17 @@ function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int},
                 # ID the atom in r_moty
                 r = m2r_isom[s]
                 # add the index offset
-                r += parent.atoms.n + length(xrms) * r_moty.atoms.n # BUG I think it's here
+                r += parent.atoms.n + (count_xrms - 1) * xrm.atoms.n
                 # push bond to array
                 push!(bonds, (nᵢ, r))
             end
         end
     end
     # new fragment bonds
-    for (i, xrm) in enumerate(xrms) # loop over new fragments
-        # calculate indices in new xtal
-        offset = (i - 1) * xrm.atoms.n + parent.atoms.n
-        for e in edges(xrm.bonds) # loop over fragment edges
-            push!(bonds, (offset + src(e), offset + dst(e)))
-        end
+    # calculate indices in new xtal
+    offset = (count_xrms - 1) * xrm.atoms.n + parent.atoms.n
+    for e in edges(xrm.bonds) # loop over fragment edges
+        push!(bonds, (offset + src(e), offset + dst(e)))
     end
 end
 
@@ -224,6 +222,12 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
     xrms = Crystal[]
     del_atoms = Int[]
     bonds = Tuple{Int,Int}[] # tuple (i,j) encodes a parent[i] -> xrms[k][j] bond
+    # parent bonds
+    for e in edges(parent.bonds) # loop over parent structure bonds
+        push!(bonds, (src(e), dst(e))) # preserve them
+    end
+    # generate transformed replace moiety (xrm), ID which atoms to delete,
+    # and accumulate list of bonds for each replacement configuration
     for config in configs
         # find isomorphism
         s2p_isom = search.results[config[1]].isomorphism[config[2]]
@@ -248,12 +252,8 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
         end
         # clean up del_atoms
         del_atoms = unique(del_atoms)
-        # parent bonds
-        for e in edges(parent.bonds) # loop over parent structure bonds
-            push!(bonds, (src(e), dst(e))) # preserve them
-        end
         # accumulate bonds
-        accumulate_bonds!(bonds, s2p_isom, parent, m2r_isom, r_moty, xrms)
+        accumulate_bonds!(bonds, s2p_isom, parent, m2r_isom, xrm, length(xrms))
     end
     return xrms, del_atoms, bonds
 end

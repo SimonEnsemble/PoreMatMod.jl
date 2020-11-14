@@ -1,7 +1,10 @@
 module temp
+
 using LightGraphs, Test, PorousMaterials, Revise
 using MOFun
+
 @testset "bonding" begin
+
 xtal = Crystal("IRMOF-1.cif")
 strip_numbers_from_atom_labels!(xtal)
 infer_bonds!(xtal, true)
@@ -17,5 +20,7 @@ r_moty = moiety("p-phenylene")
 r_moty = moiety("2-acetylamido-p-phenylene")
 @test ne(((s_moty => r_moty, 1) ∈ xtal).bonds) ==
     (ne(xtal.bonds) - ne(s_moty.bonds) + ne(r_moty.bonds))
+
 end # testset
+
 end # module
