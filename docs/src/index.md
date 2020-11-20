@@ -14,7 +14,7 @@ clean and derivatize
 ```julia
 using MOFun
 xtal = Crystal("guest&disorder.cif", infer_bonds=:periodic)
-repaired = (moiety("disordered!.xyz") => moiety("discrete.xyz")) ∈ xtal
-active = (moiety("solvent.xyz") => moiety("nothing.xyz")) ∈ repaired
+repaired = (moiety("disordered!") => moiety("discrete")) ∈ xtal
+active = (moiety("solvent") => moiety(nothing)) ∈ repaired
 novel = (moiety("2-!-p-phenylene") => moiety("2-Me-p-phenylene")) ∈ active
 ```
