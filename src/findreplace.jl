@@ -137,6 +137,9 @@ end
 # Gets the r_moty-to-s_mask rotation matrix
 function r2m_op(r_moty::Crystal, s_moty::Crystal, m2r_isomorphism::Array{Int},
         s_mask_atoms::Atoms)::Array{Float64,2}
+    if m2r_isomorphism == Int[]
+        return Matrix{Int}(I, 3, 3) # if no actual isom, skip OP and return identity
+    end
     # r_moty subset in Cartesian
     A = r_moty.box.f_to_c * r_moty.atoms[m2r_isomorphism].coords.xf
     # s_mask in Cartesian
@@ -187,6 +190,10 @@ end
 # of transformed r_moty's (xrms) along with the new fragments
 function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int},
         parent::Crystal, m2r_isom::Array{Int}, xrm::Crystal, count_xrms::Int)
+    # skip bond accumulation for null replacement
+    if m2r_isom == Int[]
+        return
+    end
     # bonds between new fragments and parent
     # loop over s2p_isom
     for (s, p) in enumerate(s2p_isom)
@@ -303,9 +310,14 @@ function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
     # determine s_mask (which atoms from s_moty are NOT in r_moty?)
     mask = s_moty[idx_filter(s_moty, r_group_indices(s_moty))]
     # get isomrphism between s_moty/mask and r_moty
-    m2r_isom = (mask ∈ r_moty).results[1].isomorphism[1]
-    # shift all r_moty nodes according to center of isomorphic subset
-    r_moty.atoms.coords.xf .-= geometric_center(r_moty[m2r_isom])
+    s′_in_r = mask ∈ r_moty
+    if nb_isomorphisms(s′_in_r) ≠ 0
+        m2r_isom = s′_in_r.results[1].isomorphism[1]
+        # shift all r_moty nodes according to center of isomorphic subset
+        r_moty.atoms.coords.xf .-= geometric_center(r_moty[m2r_isom])
+    else
+        m2r_isom = Int[]
+    end
     # loop over configs to build replacement data
     xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, s_moty,
         r_moty, m2r_isom, mask)
@@ -326,8 +338,7 @@ end
 
 ## Find/replace function (exposed)
 @doc raw"""
-`find_replace(search::Search, r_moty::Crystal; rand_all::Bool=false, nb_loc::Int=0,
-    loc::Array{Int}=Int[], ori::Array{Int}=Int[]) -> Crystal`
+find_replace(search, r_moty, kwargs) -> Crystal
 
 Inserts `r_moty` into a parent structure according to `search` and `kwargs`
 """
