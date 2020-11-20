@@ -5,5 +5,5 @@
 [![Docs Badge](https://img.shields.io/badge/docs-latest-blue.svg)](https://SimonEnsemble.github.io/MOFun.jl/latest)
 
 A pure-[Julia](https://julialang.org/) software package for manipulating chemical
-structures of porous crystals.  Part of the [PorousMaterials](https://SimonEnsemble.github.io/PorousMaterials.jl)
-software.
+structures of porous crystals.  Part of the
+[PorousMaterials](https://github.com/SimonEnsemble/PorousMaterials.jl) software.
