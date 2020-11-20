@@ -1,4 +1,4 @@
-export moiety, subtract_r_group, effect_replacement
+export moiety
 PATH_TO_MOIETIES = joinpath(pwd(), "data/moieties")
 R_GROUP_TAG = '!'
 
