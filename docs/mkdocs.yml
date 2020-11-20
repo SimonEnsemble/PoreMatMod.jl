@@ -31,9 +31,9 @@ docs_dir: 'build'
 
 pages:
   - MOfun: index.md
-  - How-To: guides/how2.md
-  - Manual:
-    - Crystals and Moieties: manual/inputs.md
-    - Substructure Search: manual/find.md
-    - Sustructure Find/Replace: manual/replace.md
-  -MOFunGO: mofungo.md
+  - Getting Started: manual/start.md
+  - Loading Data: manual/inputs.md
+  - Substructure Search: manual/find.md
+  - Sustructure Find/Replace: manual/replace.md
+  - Docstrings: manual/docstrings.md
+  - MOFunGO: manual/mofungo.md
