@@ -6,7 +6,7 @@ R_GROUP_TAG = '!'
 Returns bonding rules including R-group-tagged atom copies
 """
 function new_bonding_rules()::Array{BondingRule}
-	bondingrules = PorousMaterials.default_bondingrules()
+	bondingrules = Xtals.default_bondingrules()
 	push!(bondingrules, BondingRule(:C, :*, 0.4, 1.9))
 	newrules = []
 	for i in 1:length(bondingrules)

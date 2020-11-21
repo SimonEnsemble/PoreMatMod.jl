@@ -1,10 +1,9 @@
 module MOFun_Test
 
 using LightGraphs, Test, Revise
-using PorousMaterials, MOFun
+using Xtals, MOFun
 
 @testset "substructure_search" begin
-
 irmof1 = Crystal("IRMOF-1.cif")
 strip_numbers_from_atom_labels!(irmof1)
 infer_bonds!(irmof1, true)
@@ -45,7 +44,6 @@ strip_numbers_from_atom_labels!(parent)
 infer_bonds!(parent, true)
 search = s_moty ∈ parent
 @test search.results[1].isomorphism[1] == [34, 38, 39, 36, 26, 27, 51, 46, 50, 48]
-
 end # test set: substructure_search
 
 @testset "find_repalce" begin
@@ -68,6 +66,18 @@ new_xtal = (s_moty => r_moty) ∈ parent
 r_moty = moiety("2-acetylamido-p-phenylene")
 new_xtal = (s_moty => r_moty, 1) ∈ parent
 @test ne(new_xtal.bonds) == (ne(parent.bonds) - ne(s_moty.bonds) + ne(r_moty.bonds))
+xtal = Crystal("IRMOF-1.cif")
+strip_numbers_from_atom_labels!(xtal)
+infer_bonds!(xtal, true)
+s_moty = moiety("find-replace/2-!-p-phenylene")
+nb_bonds(xtal) = ne(xtal.bonds)
+# test that a "no-op" leaves the number of bonds unchanged
+r_moty = moiety("p-phenylene")
+@test nb_bonds((s_moty => r_moty) ∈ xtal) == nb_bonds(xtal)
+# test that adding a new moiety increases the number of bonds correctly
+r_moty = moiety("2-acetylamido-p-phenylene")
+@test ne(((s_moty => r_moty, 1) ∈ xtal).bonds) ==
+    (ne(xtal.bonds) - ne(s_moty.bonds) + ne(r_moty.bonds))
 end # test set: find_repalce
 
 end # module

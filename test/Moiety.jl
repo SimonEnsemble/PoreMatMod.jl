@@ -1,7 +1,7 @@
 module Moiety_Test
 
 using Test, Revise
-using PorousMaterials, LightGraphs, MOFun
+using Xtals, LightGraphs, MOFun
 include("../src/moiety.jl")
 
 

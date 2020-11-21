@@ -1,7 +1,7 @@
 # runtests.jl
 
 ## dependencies and logging
-using Logging, Test, LightGraphs, LinearAlgebra, PorousMaterials, Revise
+using Logging, Test, LightGraphs, LinearAlgebra, Xtals, Revise
 global_logger(ConsoleLogger(stdout, Logging.Info))
 
 ## banner

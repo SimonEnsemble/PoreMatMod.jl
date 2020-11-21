@@ -16,9 +16,9 @@ end
 # ╔═╡ 90696d20-10b7-11eb-20b5-6174faeaf613
 begin
 	push!(LOAD_PATH, joinpath(homedir(), ".julia/dev/MOFfun.jl/src"))
-	using PorousMaterials, MOFun, PlutoUI, Bio3DView
-	@eval PorousMaterials PATH_TO_DATA=joinpath(homedir(), ".mofungo")
-	@eval MOFun PATH_TO_MOIETIES=PorousMaterials.PATH_TO_DATA
+	using Xtals, MOFun, PlutoUI, Bio3DView
+	@eval Xtals PATH_TO_DATA=joinpath(homedir(), ".mofungo")
+	@eval MOFun PATH_TO_MOIETIES=Xtals.PATH_TO_DATA
 	HOME = joinpath(homedir(), ".mofungo")
 	cd(HOME)
 	dirs = ["", "temp"]
@@ -138,7 +138,7 @@ begin
 			new_xtal = find_replace(search, r_moty, loc=[parse(Int, x) for x in loc])
 		elseif replace_mode == "specific replacements"
 			if loc ≠ [] && ori ≠ "" && length(loc) == length(split(ori, ","))
-				new_xtal = find_replace(search, r_moty, 
+				new_xtal = find_replace(search, r_moty,
 					loc=[parse(Int, x) for x in loc],
 					ori=[parse(Int, x) for x in split(ori, ",")])
 			else
@@ -182,7 +182,7 @@ if new_xtal_flag
 	download_bonds = DownloadButton(read("temp/bonds.vtk"), "bonds.vtk")
 	md"""
 	### Output Files
-	$download_cif 
+	$download_cif
 	$download_box
 	$download_xyz
 	$download_bonds

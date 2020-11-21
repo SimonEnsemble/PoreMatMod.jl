@@ -1,7 +1,7 @@
 module MOFun
 
 ## packages that are used by this module
-using PorousMaterials
+using Xtals
 using LightGraphs
 using LinearAlgebra
 using Printf
@@ -58,11 +58,11 @@ end
 
 
 ## main function
-function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species::Symbol, 
+function functionalize_mof(crystal::Crystal, fragment_name::String, ipso_species::Symbol,
 				r_species::Symbol,
 				bonding_rules::Array{BondingRule,1}; n::Int=6,
-				side_to_functionalize::Int=2, randomize_side::Bool=true, 
-				arene_substitution_type::String="meta", 
+				side_to_functionalize::Int=2, randomize_side::Bool=true,
+				arene_substitution_type::String="meta",
 				label_functional_group::Bool=false)
 	## check for/create a directory to store the output files
 	if ! isdir(joinpath(remove_extension(crystal)))
