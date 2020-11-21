@@ -7,18 +7,12 @@ global_logger(ConsoleLogger(stdout, Logging.Info))
 ## banner
 @info "\n\n\t\tMOFun Tests\n\n "
 
-## silly hack to handle dumb errors loading local modules. race condition w/
-# multiple threads leads to some workers thinking the module hasn't been loaded.
-# solution is to just load the module again.
-try
-    using Ullmann
-catch
-    using Ullmann
-end
-try
-    using MOFun
-catch
-    using MOFun
+## race condition -> workers think modules not loaded. solution: just load again.
+for _ in 1:2
+    try
+        using PorousMaterials, MOFun
+    catch
+    end
 end
 
 ## gives timing data for tests, plus some formatting
@@ -32,13 +26,9 @@ function runtest(testfile::String)
     println("")
 end
 
-## Run the tests!
-try
-    runtest.([
-        "moiety.jl"
-        "Ullmann.jl"
-        "findreplace.jl"
-    ])
-catch
-    @error "Oh snap."
-end
+## Run tests
+runtest.([
+    "moiety.jl"
+    "Ullmann.jl"
+    "findreplace.jl"
+])
