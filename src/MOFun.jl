@@ -162,6 +162,9 @@ end
 
 
 export
+	# Xtals.jl
+	Crystal,
+
 	# MOFfun.jl
 	remove_extension, read_fragment_from_xyz, functionalize_mof,
 	choose_side,
