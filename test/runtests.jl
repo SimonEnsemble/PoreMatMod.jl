@@ -1,8 +1,18 @@
-# runtests.jl
+TRAVIS=false
+
+testfiles = [
+    "moiety.jl"
+    "Ullmann.jl"
+    "findreplace.jl"
+]
 
 ## dependencies and logging
-using Logging, Test, LightGraphs, LinearAlgebra, Xtals, Revise
+using Logging, Test, Xtals
+#using LightGraphs, LinearAlgebra
 global_logger(ConsoleLogger(stdout, Logging.Info))
+if !TRAVIS
+    using Revise
+end
 
 ## banner
 @info "\n\n\t\tMOFun Tests\n\n "
@@ -27,8 +37,8 @@ function runtest(testfile::String)
 end
 
 ## Run tests
-runtest.([
-    "moiety.jl"
-    "Ullmann.jl"
-    "findreplace.jl"
-])
+if TRAVIS
+    include.(testfiles)
+else
+    runtest.(testfiles)
+end

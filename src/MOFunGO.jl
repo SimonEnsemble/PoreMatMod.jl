@@ -17,8 +17,8 @@ end
 begin
 	push!(LOAD_PATH, joinpath(homedir(), ".julia/dev/MOFfun.jl/src"))
 	using Xtals, MOFun, PlutoUI, Bio3DView
-	@eval Xtals PATH_TO_DATA=joinpath(homedir(), ".mofungo")
-	@eval MOFun PATH_TO_MOIETIES=Xtals.PATH_TO_DATA
+	set_path_to_data(joinpath(homedir(), ".mofungo"))
+	set_path_to_moieties(Xtals.PATH_TO_DATA)
 	HOME = joinpath(homedir(), ".mofungo")
 	cd(HOME)
 	dirs = ["", "temp"]
