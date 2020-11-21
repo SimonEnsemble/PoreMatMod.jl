@@ -1,8 +1,4 @@
-src/.ipynb_checkpoints/*
-.ipynb_checkpoints/*
 docs/build/*
-*.cssr
-*.cif
-*.xyz
-*.vtk
+data/*
+test/*
 *.bat
