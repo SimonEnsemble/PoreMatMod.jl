@@ -1,4 +1,4 @@
-TRAVIS=false
+TRAVIS=false # set false for better UX in local testing. must set true for CI!
 
 testfiles = [
     "moiety.jl"
