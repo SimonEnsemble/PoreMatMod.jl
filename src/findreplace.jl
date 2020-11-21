@@ -6,9 +6,8 @@ export substructure_search, SearchResult, Query, Search,
 
 
 ## libraries and imports for extension
-using StatsBase, LightGraphs
+using StatsBase, LightGraphs, Xtals
 import Base.(∈)
-import PorousMaterials.write_xyz
 
 
 ## Structs
