@@ -17,7 +17,6 @@ makedocs(
         "Loading Data" => "manual/inputs.md",
         "Substructure Search" => "manual/find.md",
         "Substructure Find/Replace" => "manual/replace.md",
-        "Docstrings" => "docstrings.md",
         "MOFunGO" => "manual/mofungo.md"
     ],
     format = Documenter.HTML(assets = ["assets/flux.css"])

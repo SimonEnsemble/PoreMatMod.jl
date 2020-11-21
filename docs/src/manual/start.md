@@ -1,17 +1,18 @@
 # Getting Started
 
-Download and install the [Julia programming language](https://julialang.org/), v1.5 or higher.
+Download and install the [Julia programming language](https://julialang.org/),
+v1.5 or higher.
 
-Install [PorousMaterials](https://github.com/SimonEnsemble/PorousMaterials.jl).
+Install [Xtals](https://github.com/SimonEnsemble/Xtals.jl).
 
 In the Julia REPL, open the package manager (using `]`) and enter:
 
-```
+```julia
 pkg> add MOFun
 ```
 
-Next, load `PorousMaterials.jl` and `MOFun.jl` into the namespace:
+Next, load `MOFun.jl` into the namespace:
 
-```
-julia> using PorousMaterials, MOFun
+```julia
+julia> using MOFun # That's it!
 ```

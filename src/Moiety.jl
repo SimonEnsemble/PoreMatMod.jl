@@ -74,11 +74,18 @@ end
 
 ## moiety import function (exposed)
 @doc raw"""
-`moiety(name::String) -> Crystal`
+	moiety(name)
 
-Generates a moiety (Crystal) from an .xyz file found in PATH_TO_MOIETIES
+Generates a moiety (`Crystal`) from an .xyz file found in `PATH_TO_MOIETIES`
 
-`name` is the file name without the .xyz extension.
+Use `set_path_to_moieties` or `set_path_to_data` to change the input path.
+
+Atoms appended with '!' are tagged for replacement via `find_replace`.
+
+Bonds are inferred within the local unit cell only (no bonds across periodic boundaries).
+
+# Arguments
+- `name::String` the moiety name (input file name without the .xyz extension).
 """
 function moiety(name::String)::Crystal
 	@debug "Getting moiety: $name"
