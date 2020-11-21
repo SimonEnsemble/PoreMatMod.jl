@@ -12,13 +12,30 @@ import PorousMaterials.write_xyz
 
 
 ## Structs
-# The parent structure and search moiety Crystals
+"""
+    Query(xtal, s_moty)
+
+Stores the `Crystal` inputs used to generate a `Search`
+"""
 struct Query
     parent::Crystal
     s_moty::Crystal
 end
 
-# The result of running a substructure search
+"""
+    Search(query, results)
+
+Stores the `Query` used for a substructure search, and the results `DataFrame`
+returned by carrying out the search.  Results are grouped by location in the
+parent `Crystal` and can be examined using `nb_isomorphisms`, `nb_locations`,
+and `nb_configs_at_loc`.  Subgraph isomorphisms are encoded like
+
+    `isom = [7, 21, 9]`
+
+where `isom[i]` is the index of the atom in `search.query.parent` corresponding
+to atom `i` in `search.query.s_moty` for the location and orientation specific
+to `isom`.
+"""
 struct Search
     query::Query # the search query (s-moty ∈ parent)
     results
@@ -27,9 +44,12 @@ end
 
 ## Helpers
 @doc raw"""
-`nb_isomorphisms(search::Search) -> Int`
+    nb_isomorphisms(search::Search) -> Int
 
 Returns the number of isomorphisms found in the specified `Search`
+
+# Arguments
+- `search::Search` a substructure `Search` object
 """
 function nb_isomorphisms(search::Search)::Int
     return sum([size(grp, 1) for grp in search.results])
@@ -37,10 +57,13 @@ end
 
 
 @doc raw"""
-`nb_locations(search::Search) -> Int`
+    nb_locations(search::Search) -> Int`
 
 Returns the number of unique locations (collections of atoms) at which the
 specified `Search` results contain isomorphisms.
+
+# Arguments
+- `search::Search` a substructure `Search` object
 """
 function nb_locations(search::Search)::Int
     return length([size(grp, 1) for grp in search.results])
@@ -48,11 +71,14 @@ end
 
 
 @doc raw"""
-`nb_configs_at_loc(search::Search) -> Array{Int}`
+    nb_configs_at_loc(search::Search) -> Array{Int}
 
 Returns a array containing the number of isomorphic configurations at a given
 location (collection of atoms) for which the specified `Search` results
 contain isomorphisms.
+
+# Arguments
+- `search::Search` a substructure `Search` object
 """
 function nb_configs_at_loc(search::Search)::Array{Int}
     return [size(grp, 1) for grp in search.results]
@@ -268,10 +294,17 @@ end
 
 ## Search function (exposed)
 @doc raw"""
-`substructure_search(s_moty::Crystal, xtal::Crystal) -> Search`
+    substructure_search(s_moty, xtal)
 
-Searches for a substructure within a `Crystal` and returns a
-`Search` struct containing all identified subgraph isomorphisms.
+Searches for a substructure within a `Crystal` and returns a `Search` struct
+containing all identified subgraph isomorphisms.  Matches are made on the basis
+of atomic species and chemical bonding networks, including bonds across unit cell
+periodic boundaries.  The search moiety may optionally contain markup for
+designating atoms to replace with other moieties.
+
+# Arguments
+- `s_moty::Crystal` the search moiety
+- `xtal::Crystal` the parent structure
 """
 function substructure_search(s_moty::Crystal, xtal::Crystal)::Search
     # Make a copy w/o R tags for searching
@@ -338,9 +371,21 @@ end
 
 ## Find/replace function (exposed)
 @doc raw"""
-find_replace(search, r_moty, kwargs) -> Crystal
+    find_replace(search, r_moty, nb_loc=2)
 
-Inserts `r_moty` into a parent structure according to `search` and `kwargs`
+Inserts `r_moty` into a parent structure according to `search` and `kwargs`.
+A valid replacement scheme must be selected by assigning one or more of the optional
+`kwargs`.  Returns a new `Crystal` with the specified modifications (returns
+`search.query.parent` if no replacements are made)
+
+# Arguments
+- `search::Search` the `Search` for a substructure moiety in the parent crystal
+- `r_moty::Crystal` the moiety to use for replacement of the searched substructure
+- `rand_all::Bool` set `true` to select random replacement at all matched locations
+- `nb_loc::Int` assign a value to select random replacement at `nb_loc` random locations
+- `loc::Array{Int}` assign value(s) to select specific locations for replacement.  If `ori` is not specified, replacement orientation is random.
+- `ori::Array{Int}` assign value(s) when `loc` is assigned to specify exact configurations for replacement.
+- `name::String` assign to give the generated `Crystal` a name ("new_xtal" by default)
 """
 function find_replace(search::Search, r_moty::Crystal; rand_all::Bool=false,
         nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[],
