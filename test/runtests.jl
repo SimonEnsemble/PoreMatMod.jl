@@ -8,7 +8,6 @@ testfiles = [
 
 ## dependencies and logging
 using Logging, Test, Xtals
-#using LightGraphs, LinearAlgebra
 global_logger(ConsoleLogger(stdout, Logging.Info))
 if !TRAVIS
     using Revise
