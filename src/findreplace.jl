@@ -116,7 +116,7 @@ geometric_center(xtal::Crystal)::Array{Float64} = geometric_center(xtal.atoms)
 
 
 # Helper for making .xyz's
-write_xyz(xtal::Crystal, name::String) = write_xyz(Cart(xtal.atoms, xtal.box), name)
+write_xyz(xtal::Crystal, name::String) = Xtals.write_xyz(Cart(xtal.atoms, xtal.box), name)
 
 
 # Translates all atoms in xtal such that xtal[1] is in its original position

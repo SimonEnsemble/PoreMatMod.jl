@@ -17,13 +17,15 @@ using MOFun
 # ╔═╡ d7b64d70-2c40-11eb-05c4-3d88c0c676cc
 begin
 	using PlutoUI, Bio3DView
+	mofun_home = joinpath(homedir(), ".mofun")
 	function viz_xtal(xtal::Crystal)
-		write_xyz(xtal, joinpath(homedir(), ".mofun/temp/xyz.xyz"))
-		write_vtk(xtal.box, joinpath(homedir(), ".mofun/temp/vtk.vtk"))
-		viewfile(".mofun/temp/xyz.xyz", style=Style("stick"),
-			vtkcell=".mofun/temp/vtk.vtk", axes=Axes(5, 0.25))
+		xyzpath = joinpath(mofun_home, "temp/xyz.xyz")
+		vtkpath = joinpath(mofun_home, "temp/vtk.vtk")
+		write_xyz(xtal, xyzpath)
+		write_vtk(xtal.box, vtkpath)
+		viewfile(xyzpath, style=Style("stick"),	vtkcell=vtkpath, axes=Axes(5, 0.25))
 	end
-end
+end;
 
 # ╔═╡ a459dfc0-2c3e-11eb-1105-4d5377338a17
 md"""
@@ -124,7 +126,10 @@ Make a set number of random replacements:
 """
 
 # ╔═╡ 987748ae-2c42-11eb-1cc0-b9df36b427c1
-xtal2 = find_replace(IRMOF1_pphen, a_pphen, nb_loc=6)
+begin
+	xtal2 = find_replace(IRMOF1_pphen, a_pphen, nb_loc=6)
+	viz_xtal(xtal2)
+end
 
 # ╔═╡ 98b1b9a0-2c42-11eb-0202-17777eb4fa4a
 md"""
@@ -132,7 +137,10 @@ Make a random replacement at selected locations:
 """
 
 # ╔═╡ 99024aa0-2c42-11eb-17db-a12f2bb36d2d
-xtal3 = find_replace(IRMOF1_pphen, a_pphen, loc=[2, 3, 5, 7])
+begin
+	xtal3 = find_replace(IRMOF1_pphen, a_pphen, loc=[2, 3, 5, 7])
+	viz_xtal(xtal3)
+end
 
 # ╔═╡ 76c78e7e-2c44-11eb-0001-dd272ff02dd2
 md"""
@@ -140,7 +148,10 @@ Make a specific series of replacements:
 """
 
 # ╔═╡ 78618f70-2c44-11eb-2a2c-6581ac41c0de
-xtal4 = find_replace(IRMOF1_pphen, a_pphen, loc=[4, 9, 16], ori=[1, 1, 1])
+begin
+	xtal4 = find_replace(IRMOF1_pphen, a_pphen, loc=[4, 9, 16], ori=[1, 1, 1])
+	viz_xtal(xtal4)
+end
 
 # ╔═╡ 78764ff0-2c44-11eb-21a8-a3e5e4944892
 
