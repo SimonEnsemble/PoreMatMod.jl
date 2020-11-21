@@ -22,7 +22,7 @@ Example: repairing, activating, and functionalizing an experimental structure.
 
 ```julia
 using MOFun
-xtal = Crystal("guest&disorder.cif", infer_bonds=true)
+xtal = Crystal("EMEHUB.cif", infer_bonds=true)
 repaired = (moiety("disordered!") => moiety("discrete")) ∈ xtal
 active = (moiety("solvent") => moiety(nothing)) ∈ repaired
 novel = (moiety("2-!-p-phenylene") => moiety("2-Me-p-phenylene")) ∈ active
