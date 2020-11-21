@@ -5,5 +5,9 @@
 [![Docs Badge](https://img.shields.io/badge/docs-latest-blue.svg)](https://SimonEnsemble.github.io/MOFun.jl/latest)
 
 A pure-[Julia](https://julialang.org/) software package for manipulating chemical
-structures of porous crystals.  Part of the
-[PorousMaterials](https://github.com/SimonEnsemble/PorousMaterials.jl) software.
+structures of porous crystals.  Built on the Simon Ensemble
+[Xtals](https://github.com/SimonEnsemble/Xtals.jl) software to clean experimental
+and calculated data and provide novel hypothetical structural inputs to
+[PorousMaterials](https://github.com/SimonEnsemble/PorousMaterials.jl).  It is
+intended primarily for MOFs and other porous crystalline materials, but works
+with discrete molecular structures and simulated ensembles as well.

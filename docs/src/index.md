@@ -1,15 +1,27 @@
 # MOFun.jl
 
 A pure-[Julia](https://julialang.org/) software package for manipulating chemical
-structures based on an open-source substructure find-and-replace algorithm.
+structures .
+
+A pure-[Julia](https://julialang.org/) software package for manipulating chemical
+structures of porous crystals.  Built on the Simon Ensemble
+[Xtals](https://github.com/SimonEnsemble/Xtals.jl) software to clean experimental
+and calculated data and provide novel hypothetical structural inputs to
+[PorousMaterials](https://github.com/SimonEnsemble/PorousMaterials.jl).  It is
+intended primarily for MOFs and other porous crystalline materials, but works
+with discrete molecular structures and simulated ensembles as well.
 
 ![logo]()
 
 `MOFun.jl` can identify chemical substructures, create hypothetical structure
-libraries, and repair common defects in experimental data.  For example, it can
-clean and derivatize
+libraries, and repair common defects in experimental data, using an implementation
+of Ullmann's algorithm for substructure isomorphism and the orthogonal Procrustes
+algorithm for point cloud alignment.
+
+Example: repairing, activating, and functionalizing an experimental structure.
 
 ![example case: disordered w/ guest -> activated derivative]()
+(link to pub for CCDC EMEHUB)
 
 ```julia
 using MOFun
