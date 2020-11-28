@@ -14,7 +14,7 @@ include("findreplace.jl")
 
 
 """
-	set_path_to_moieties("../moieties")
+    set_path_to_moieties("../moieties")
 
 Assigns the path for locating .xyz moiety input files.
 
@@ -23,14 +23,14 @@ Assigns the path for locating .xyz moiety input files.
 - `print::Bool` set true to print the `Xtals` and `MOFun` data path variables
 """
 function set_path_to_moieties(path::String; print::Bool=false)
-	global PATH_TO_MOIETIES = path
-	if print
-		print_file_paths()
-	end
+    global PATH_TO_MOIETIES = path
+    if print
+        print_file_paths()
+    end
 end
 
 """
-	set_path_to_data("../data")
+    set_path_to_data("../data")
 
 Assigns the path for locating general data.
 
@@ -42,28 +42,28 @@ Assigns the path for locating general data.
 - `print::Bool` set true to print the `Xtals` and `MOFun` data path variables
 """
 function set_path_to_data(path::String; relpath_xtals::Bool=false,
-		relpath_motys::Bool=false, print::Bool=false, relpaths::Bool=false)
-	if relpaths
-		relpath_xtals = true
-		relpath_motys = true
-	end
-	Xtals.set_path_to_data(path, relpath_xtals=relpath_xtals)
-	if relpath_motys
-		set_path_to_moieties(joinpath(Xtals.PATH_TO_DATA, "moieties"))
-	end
-	if print
-		print_file_paths()
-	end
+        relpath_motys::Bool=false, print::Bool=false, relpaths::Bool=false)
+    if relpaths
+        relpath_xtals = true
+        relpath_motys = true
+    end
+    Xtals.set_path_to_data(path, relpath_xtals=relpath_xtals)
+    if relpath_motys
+        set_path_to_moieties(joinpath(Xtals.PATH_TO_DATA, "moieties"))
+    end
+    if print
+        print_file_paths()
+    end
 end
 
 """
-	print_file_paths()
+    print_file_paths()
 
 Prints the `Xtals` and `MOFun` data path variables.
 """
 function print_file_paths()
-	Xtals.print_file_paths()
-	println("moieties (.xyz): ", PATH_TO_MOIETIES)
+    Xtals.print_file_paths()
+    println("moieties (.xyz): ", PATH_TO_MOIETIES)
 end
 
 export print_file_paths, set_path_to_data, set_path_to_moieties
