@@ -2,11 +2,20 @@ module MOFun
 
 using LightGraphs
 using LinearAlgebra
-#using Printf
 using DataFrames
 
 using Xtals
-export Crystal, write_xyz, write_vtk, write_cif
+export
+    # Xtals.jl
+    Crystal, write_xyz, write_vtk, write_cif, infer_bonds!,
+    infer_geometry_based_bonds!, write_bond_information,
+    # MOFun.jl
+    print_file_paths, set_path_to_data, set_path_to_moieties,
+    # findreplace.jl
+    substructure_search, SearchResult, Query, Search, nb_isomorphisms,
+    nb_locations, nb_configs_at_loc, find_replace,
+    # moiety.jl
+    moiety
 
 include("Ullmann.jl")
 include("moiety.jl")
@@ -65,7 +74,5 @@ function print_file_paths()
     Xtals.print_file_paths()
     println("moieties (.xyz): ", PATH_TO_MOIETIES)
 end
-
-export print_file_paths, set_path_to_data, set_path_to_moieties
 
 end
