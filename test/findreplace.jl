@@ -33,7 +33,7 @@ search3 = p_phenylene_w_R_grp ∈ timil125
 s_moty = moiety("test/!-S-bromochlorofluoromethane")
 parent = moiety("test/S-bromochlorofluoromethane")
 search = s_moty ∈ parent
-@test search.results[1].isomorphism[1] == [1, 3, 4, 5, 2]
+@test search.results[1].isomorphism[1] == [1, 4, 2, 3, 5]
 @test parent.atoms.species[search.results[1].isomorphism[1]][1:4] ==
     s_moty.atoms.species[1:4] &&
     s_moty.atoms.species[5] == :H! &&
