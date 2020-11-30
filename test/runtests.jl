@@ -7,10 +7,10 @@ testfiles = [
 ]
 
 ## dependencies and logging
-using Logging, Test, Xtals
-global_logger(ConsoleLogger(stdout, Logging.Info))
+using Test, Xtals
 if !TRAVIS
-    using Revise
+    using Logging, Revise
+    global_logger(ConsoleLogger(stdout, Logging.Info))
 end
 
 ## banner
