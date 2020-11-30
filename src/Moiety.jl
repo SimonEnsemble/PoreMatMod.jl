@@ -1,4 +1,3 @@
-export moiety
 PATH_TO_MOIETIES = joinpath(pwd(), "data/moieties")
 R_GROUP_TAG = '!'
 
@@ -6,7 +5,7 @@ R_GROUP_TAG = '!'
 Returns bonding rules including R-group-tagged atom copies
 """
 function new_bonding_rules()::Array{BondingRule}
-    bondingrules = Xtals.default_bondingrules()
+    bondingrules = Xtals.bondingrules()
     push!(bondingrules, BondingRule(:C, :*, 0.4, 1.9))
     newrules = []
     for i in 1:length(bondingrules)
@@ -98,7 +97,7 @@ function moiety(name::String)::Crystal
     R_group_indices = r_group_indices(moiety)
     # sort by node degree
     bondingrules = new_bonding_rules()
-    infer_bonds!(moiety, false, bondingrules)
+    infer_bonds!(moiety, false, bonding_rules=bondingrules)
     order = sortperm(degree(moiety.bonds), rev=true)
     # ordered atoms
     if length(R_group_indices) > 0
@@ -113,6 +112,6 @@ function moiety(name::String)::Crystal
     atoms = Atoms(moiety.atoms.species[order], moiety.atoms.coords[order])
     # nodes are sorted by bond order, and R group is moved to end & tagged w/ !
     moiety = Crystal(name, box, atoms, charges)
-    infer_bonds!(moiety, false, bondingrules)
+    infer_bonds!(moiety, false, bonding_rules=bondingrules)
     return moiety
 end
