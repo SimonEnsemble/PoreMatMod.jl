@@ -25,6 +25,9 @@ Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 LightGraphs = "093fc24a-ae57-5d10-9952-331d41423f4d"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 
 [targets]
-test = ["Test", "Documenter", "CSV", "DataFrames", "LightGraphs", "LinearAlgebra"]
+test = ["Test", "Documenter", "CSV", "DataFrames", "LightGraphs", "LinearAlgebra",
+  "Printf", "PyCall"]
