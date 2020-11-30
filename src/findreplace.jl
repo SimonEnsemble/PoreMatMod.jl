@@ -1,13 +1,9 @@
 # findreplace.jl
 
-## exposed interface
-export substructure_search, SearchResult, Query, Search,
-    nb_isomorphisms, nb_locations, nb_configs_at_loc, find_replace
-
 
 ## libraries and imports for extension
 using StatsBase, LightGraphs, Xtals
-import Base.(∈)
+import Base.(∈), Base.show
 
 
 ## Structs
@@ -20,6 +16,8 @@ struct Query
     parent::Crystal
     s_moty::Crystal
 end
+
+Base.show(io::IO, q::Query) = print(io, q.s_moty.name, " ∈ ", q.parent.name)
 
 """
     Search(query, results)
@@ -40,10 +38,15 @@ struct Search
     results
 end
 
+Base.show(io::IO, s::Search) = begin
+    println(io, s.query)
+    print(io, nb_isomorphisms(s), " hits in ", nb_locations(s), " locations.")
+end
+
 
 ## Helpers
 @doc raw"""
-    nb_isomorphisms(search::Search) -> Int
+    nb_isomorphisms(search::Search)
 
 Returns the number of isomorphisms found in the specified `Search`
 
@@ -56,7 +59,7 @@ end
 
 
 @doc raw"""
-    nb_locations(search::Search) -> Int`
+    nb_locations(search::Search)
 
 Returns the number of unique locations (collections of atoms) at which the
 specified `Search` results contain isomorphisms.
@@ -70,7 +73,7 @@ end
 
 
 @doc raw"""
-    nb_configs_at_loc(search::Search) -> Array{Int}
+    nb_configs_at_loc(search)
 
 Returns a array containing the number of isomorphic configurations at a given
 location (collection of atoms) for which the specified `Search` results
