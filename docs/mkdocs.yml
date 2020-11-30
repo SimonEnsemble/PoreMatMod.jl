@@ -35,4 +35,6 @@ pages:
   - Loading Data: manual/inputs.md
   - Substructure Search: manual/find.md
   - Sustructure Find/Replace: manual/replace.md
+  - Examples: manual/examples.md
   - MOFunGO: manual/mofungo.md
+  - Collaborate: collab.md

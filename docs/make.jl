@@ -1,9 +1,8 @@
-using Documenter
-using PorousMaterials, MOFun
+using Documenter, MOFun
 
 makedocs(
     root = joinpath(dirname(pathof(MOFun)), "..", "docs"),
-    modules = [PorousMaterials],
+    modules = [MOFun],
     sitename = "MOFun.jl",
     clean = true,
     pages = [
@@ -12,7 +11,9 @@ makedocs(
         "Loading Data" => "manual/inputs.md",
         "Substructure Search" => "manual/find.md",
         "Substructure Find/Replace" => "manual/replace.md",
-        "MOFunGO" => "manual/mofungo.md"
+        "Examples" => "manual/examples.md",
+        "MOFunGO" => "manual/mofungo.md",
+        "Collaborate" => "collab.md"
     ],
     format = Documenter.HTML(assets = ["assets/flux.css"])
 )
