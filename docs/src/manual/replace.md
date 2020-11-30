@@ -1,21 +1,69 @@
 # Find/Replace Operations
 
+In the previous sections, we saw how we can represent structures using the
+[`Xtals`](https://github.com/SimonEnsemble/Xtals.jl) framework, and how we can
+identify substructure matches via Ullmann's algorithm for subgraph isomorphism.
+Next, we will see how to use this to effect a substructure replacement.
+
+## Orthogonal Procrustes
+
+The question of how best to align crystal fragments in space is addressed by the
+["Orthogonal Procrustes"](https://simonensemble.github.io/2018-10/orthogonal-procrustes.html)
+problem. If two point sets $A$ and $B$ have a known 1-to-1 correspondence mapping
+each point in $A$ to a unique point in $B$, and $A$ is a "noisy" rotated copy of
+$B$, we wish to find $R$, the rotation matrix that transforms $A$ to reconstruct
+$B$ with the minimum error. This is accomplished via singular value decomposition
+of $ABᵀ$. In the linked example $A$ and $B$ are two-dimensional for the purpose
+of visualization, but the solution to the problem is the same for point sets in
+any $n$-dimensional space. In `MOFun` the solution is applied three-dimensionally,
+using the subgraph isomorphism identified by Ullmann's algorithm as the 1-to-1 correspondence.
+
+## The Find-Replace Algorithm
+
+With Ullmann's Algorithm (UA) and Orthogonal Procrustes (OP) in mind, we can tackle the
+problem of replacing the BDC linkers of IRMOF-1 with the 2-acetylamido derivative.
+Having performed a search for 2-!-*p*-phenylene and chosen a single isomorphism from
+the results, we have the 1-to-1 correspondence we need to perform OP to align our
+search moiety's notion of Cartesian space with the unit cell of our crystal.  This
+correspondence will be termed $s→p$. We also need OP to align the replacement moiety,
+2-acetylamido-*p*-phenylene, with the search moiety, so we perform a second UA.
+
+The search moiety in this case is the original search moiety minus the subset of
+atoms tagged with `!`. For 2-!-*p*-phenylene, this new search term is
+1,2,4-dehydro-benzene, by deletion of the `:H!` at the 2 position of *p*-phenylene.
+Performing the second UA (seeking 1,2,4-dehydro-benzene in 2-acetylamido-*p*-phenylene)
+affords a second 1-to-1 correspondence, $r→s′$.
+
+OP with $s→p$ and $r→s′$ give two rotation matrices, which transform the replacement
+moiety by sequential multiplication to align it with the coordinates of the parent
+crystal such that it can replace the linker at the chosen location. The transformed
+replacement moiety is added to the crystal, overwriting the original location's atoms.
+
+`MOFun` does all of this in one line of code. Bonds, including any across periodic
+boundaries, are preserved, the unit cell's dimensions are maintained, and the new
+structure can be saved to disk for use in simulations.
+
 ## Inputs
 
 To guide replacement, the `.xyz` file input for the search moiety must be
 altered.  Simply adding `!` after the atomic symbol tags that atom for replacement.
 
-In the example of finding and replacing an *ortho* H of the *p*-phenylene moieties of
-IRMOF-1, the input should have one H atom tagged, like so:
+In the example of finding and replacing the 2 position H of the *p*-phenylene moieties
+of IRMOF-1, the input should have one H atom tagged, like so:
 
 ```
 H!         1.06706        0.70670        1.48683
 ```
 
-Load it in as before.
+Load the new file in like before.
+
+```julia
+s_moty = moiety("2-!-p-phenylene")
+```
+
+The `!` tag does not affect the outcome of [`substructure_search`](@ref).
 
 ```
-s_moty = moiety("2-!-p-phenylene")
 ```
 
 A final additional file input is required: a `.xyz` file containing the replacement
@@ -23,17 +71,18 @@ moiety.  This structure must contain a subgraph isomorphic to the non-tagged ato
 of the search moiety.
 
 To replace *p*-phenylene moieties with 2-acetylamido-*p*-phenylene moieties, provide
-the appropriate data and load the replacement moiety:
+the [appropriate data](assets/2-acetylamido-p-phenylene) in [`PATH_TO_MOIETIES`](manual/inputs)
+and load the replacement moiety:
 
-```
+```julia
 r_moty = moiety("2-acetylamido-p-phenylene")
 ```
 
 ## Replacement Modes
 
-With all three file inputs loaded (parent crystal `xtal`, search moiety `s_moty`
-and replacement moiety `r_moty`) and a substructure search `search` performed,
-replacements can be made.
+With all three file inputs loaded (parent crystal IRMOF-1 as `xtal`, search moiety
+2-!-*p*-phenylene as`s_moty`, and replacement moiety 2-acetylamido-*p*-phenylene as
+`r_moty`) and a substructure search `search` performed, replacements can be made.
 
 `MOFun.jl` has several replacement modes, one of which must be specified.
 
@@ -42,7 +91,7 @@ replacements can be made.
 Random configurations will be chosen for each location in `search.results`, so
 that each occurrence of the search moiety in the parent crystal is replaced.
 
-```
+```julia
 find_replace(search, r_moty, rand_all=true)
 ```
 
@@ -51,7 +100,7 @@ find_replace(search, r_moty, rand_all=true)
 The parent crystal's search moieties will be replaced using random configurations
 at each of $n$ locations.
 
-```
+```julia
 find_replace(search, r_moty, nb_loc=4)
 ```
 
@@ -60,7 +109,7 @@ find_replace(search, r_moty, nb_loc=4)
 The parent crystal is modified using random configurations at a list of specified
 locations.
 
-```
+```julia
 find_replace(search, r_moty, loc=[13, 20])
 ```
 
@@ -68,7 +117,7 @@ find_replace(search, r_moty, loc=[13, 20])
 
 Specific replacements are made.
 
-```
+```julia
 find_replace(search, r_moty, loc=[13, 20], ori=[1, 1])
 ```
 
@@ -83,86 +132,4 @@ end
 
 ```@docs
 find_replace
-```
-
-## Examples
-
-### Generate hypothetical structures
-
-To create novel derivatives of a `Crystal`, search it for one of its substructures
-and replace with a derivatized moiety.
-
-Example: *ortho* substitution with an acetylamido group at one quarter of the
-*p*-phenylene moieties in IRMOF-1.
-
-[[IRMOF-1_clean.cif](../../../assets/IRMOF-1_clean.cif)]
-[[2-!-p-phenylene.xyz](../../../assets/2-!-p-phenylene.xyz)]
-[[2-acetylamido-p-phenylene.xyz](../../../assets/2-acetylamido-p-phenylene.xyz)]
-
-```
-xtal = Crystal("IRMOF-1_clean.cif")
-infer_bonds!(xtal, true)
-s_moty = moiety("2-!-p-phenylene")
-r_moty = moiety("2-acetylamido-p-phenylene")
-search = s_moty ∈ xtal
-new_xtal = find_replace(search, nb_loc=nb_locations(search)/4)
-```
-
-### Remove solvent molecules
-
-To remove moieties from a `Crystal`, use a `.xyz` file with 0 atoms as the
-replacement moiety.
-
-Example: MOF activation.  Remove cyclohexane from an IRMOF-1 unit cell.
-
-[[IRMOF-1_clean.cif](../../../assets/IRMOF-1_clean.cif)]
-[[cyclohexane.xyz](../../../assets/cyclohexane.xyz)]
-[[nothing.xyz](../../../assets/nothing.xyz)]
-
-```
-xtal = Crystal("IRMOF-1_clean.cif")
-infer_bonds!(xtal, true)
-s_moty = moiety("cyclohexane")
-r_moty = moiety("nothing")
-activated_xtal = find_replace(s_moty ∈ xtal, r_moty, rand_all=true)
-```
-
-### Repair disorder
-
-To remove disordered groups of atoms and replace them with ordered moieties,
-extract the disordered atoms' coordinates to use as the search moiety, and a
-manually corrected or *de novo* structure as the replacement moiety.
-
-Example: Correct the rotational disorder of DABCO linkers in the MOF
-ZmID.
-
-[[ZmID.cif](../../../assets/ZmID.cif)]
-[[disordered_dabco.xyz](../../../assets/disordered_dabco.xyz)]
-[[dabco.xyz](../../../assets/dabco.xyz)]
-
-```
-# need to set check_overlap due to disordered dabco
-xtal = Crystal("ZmID.cif", check_overlap=false)
-infer_bonds!(xtal, true)
-s_moty = moiety("disordered_dabco")
-r_moty = moiety("dabco")
-repaired_xtal = find_replace(s_moty ∈ xtal, r_moty, rand_all=true)
-```
-
-### Insert missing hydrogens
-
-To correct defects like missing atoms, use the affected substructure as the search
-moiety and a manually corrected copy as the replacement moiety.
-
-Example: Insert missing H atoms in IRMOF-1
-
-[[IRMOF-1_noH.cif](../../../assets/IRMOF-1_noH.cif)]
-[[p-phenylene_noH.xyz](../../../assets/p-phenylene_noH.xyz)]
-[[p-phenylene](../../../assets/p-phenylene.xyz)]
-
-```
-xtal = Crystal("IRMOF-1_noH.cif")
-s_moty = moiety("p-phenylene_noH")
-r_moty = moiety("p-phenylene")
-repaired_xtal = find_replace(s_moty ∈ xtal, r_moty, rand_all=true)
 ```
