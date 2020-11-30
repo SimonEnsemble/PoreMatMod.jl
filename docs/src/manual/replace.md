@@ -64,6 +64,9 @@ s_moty = moiety("2-!-p-phenylene")
 The `!` tag does not affect the outcome of [`substructure_search`](@ref).
 
 ```
+julia> substructure_search(moiety("2-p-phenylene"), xtal) ==
+    substructure_search(moiety("2-!-p-phenylene"), xtal)
+true
 ```
 
 A final additional file input is required: a `.xyz` file containing the replacement

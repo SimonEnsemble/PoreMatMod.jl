@@ -21,9 +21,7 @@ julia> Pluto.run()
 Load `MOFunGO.jl` by copying and pasting the URL below into the "Open from file"
 box on the `Pluto` main page.
 
-```
 [https://github.com/eahenle/MOFunGO/blob/main/MOFunGO.jl](https://github.com/eahenle/MOFunGO/blob/main/MOFunGO.jl)
-```
 
 Prepare file inputs per the [manual](../../build/manual/inputs) and load them into
 `MOFunGO` using the graphical interface.  All [replacement](manual/replace) modes
