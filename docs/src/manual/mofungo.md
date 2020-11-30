@@ -26,6 +26,6 @@ box on the `Pluto` main page.
 ```
 
 Prepare file inputs per the [manual](../../build/manual/inputs) and load them into
-`MOFunGO` using the graphical interface.  All replacement modes are available with
-interactive visual previews and downloadable outputs in `.cif`, `.xyz`, and `.vtk`
-formats.
+`MOFunGO` using the graphical interface.  All [replacement](manual/replace) modes
+are available with interactive visual previews and downloadable outputs in `.cif`,
+`.xyz`, and `.vtk` file formats.
