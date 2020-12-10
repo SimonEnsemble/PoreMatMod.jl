@@ -20,8 +20,6 @@ structure.  [This structure](https://dx.doi.org/10.5517/ccdc.csd.cc1ldj8s), of
 a MOF called [SIFSIX-1-Cu](https://dx.doi.org/10.1126/science.aaf2458), contains
 disordered PyC2 linkers and acetylene guest molecules.
 
-![example]()
-
 Loading the data, resolving the disorder, removing the guest molecules, replacing
 the linkers, and saving the result can be done with a very short script:
 
