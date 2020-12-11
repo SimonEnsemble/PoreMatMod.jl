@@ -1,9 +1,6 @@
 module Moiety_Test
 
-using Test, Revise
-using Xtals, LightGraphs, MOFun
-include("../src/moiety.jl")
-
+using Test, LightGraphs, MOFun
 
 # function for a specific test case. NOT a generally useful function!
 # frag and moty inputs are expected to be permuted sets of atoms with unique species
@@ -27,8 +24,8 @@ end
 
 
 @testset "Moiety Tests" begin
-    moiety_bcfm = moiety("test/S-bromochlorofluoromethane")
-    moiety_2!bcfm = moiety("test/!-S-bromochlorofluoromethane")
+    moiety_bcfm = moiety("S-bromochlorofluoromethane")
+    moiety_2!bcfm = moiety("!-S-bromochlorofluoromethane")
     @test moiety_bcfm.atoms.species == [:C, :F, :Br, :Cl, :H]
     @test moiety_2!bcfm.atoms.species == [:C, :Cl, :F, :Br, :H!]
 end

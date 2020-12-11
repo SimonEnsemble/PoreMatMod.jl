@@ -7,7 +7,7 @@ testfiles = [
 ]
 
 ## dependencies and logging
-using Test, Xtals
+using Test
 if !TRAVIS
     using Logging, Revise
     global_logger(ConsoleLogger(stdout, Logging.Info))
@@ -19,10 +19,17 @@ end
 ## race condition -> workers think modules not loaded. solution: just load again.
 for _ in 1:2
     try
-        using PorousMaterials, MOFun
+        using MOFun
     catch
     end
 end
+
+if !TRAVIS
+    dirs = ["test", "data"]
+else
+    dirs = ["data"]
+end
+set_path_to_data(joinpath(pwd(), dirs...), relpaths=true, print=true)
 
 ## gives timing data for tests, plus some formatting
 function runtest(testfile::String)
