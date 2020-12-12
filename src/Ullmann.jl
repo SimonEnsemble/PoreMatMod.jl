@@ -1,6 +1,6 @@
 module Ullmann
 export find_subgraph_isomorphisms
-using PorousMaterials, LightGraphs
+using Xtals, LightGraphs, MetaGraphs
 
 
 # "compatibility matrix"
@@ -8,8 +8,8 @@ using PorousMaterials, LightGraphs
 #     deg(β ∈ graph) ≥ deg(α ∈ subgraph)
 #      and
 #     species(α ∈ subgraph) == species(β ∈ graph)
-function compatibility_matrix(subgraph::SimpleGraph, subgraph_species::Array{Symbol, 1},
-                              graph::SimpleGraph,    graph_species::Array{Symbol, 1})::Array{Bool, 2}
+function compatibility_matrix(subgraph::MetaGraph, subgraph_species::Array{Symbol, 1},
+                              graph::MetaGraph,    graph_species::Array{Symbol, 1})::Array{Bool, 2}
     @debug "Finding M₀..."
     # allocate M. rows correspond to subgraph nodes, columns to graph nodes.
     M₀ = zeros(Bool, nv(subgraph), nv(graph))
@@ -85,7 +85,7 @@ function possibly_contains_isomorphism(M::Array{Bool, 2})::Bool
 end
 
 
-function prune!(M::Array{Bool, 2}, subgraph::SimpleGraph, graph::SimpleGraph)
+function prune!(M::Array{Bool, 2}, subgraph::MetaGraph, graph::MetaGraph)
     pruned = true # to enter while loop
     while pruned
         pruned = false
@@ -118,7 +118,7 @@ end
 
 # soln:
 #    soln[α ∈ subgraph] = β ∈ graph where α corresponds to β
-function depth_first_search!(α::Int, subgraph::SimpleGraph, graph::SimpleGraph,
+function depth_first_search!(α::Int, subgraph::MetaGraph, graph::MetaGraph,
                             M::Array{Bool, 2}, soln::Array{Int, 1},
                             β_mapped::Array{Bool, 1}, solns::Array{Array{Int, 1}, 1})
     # if reached here from previous solution, exit.
@@ -168,8 +168,8 @@ end
 @doc raw"""
 returns an array of arrays, each containing one unique subgraph isomorphism
 """
-function find_subgraph_isomorphisms(subgraph::SimpleGraph, subgraph_species::Array{Symbol, 1},
-                                    graph::SimpleGraph,    graph_species::Array{Symbol, 1})
+function find_subgraph_isomorphisms(subgraph::MetaGraph, subgraph_species::Array{Symbol, 1},
+                                    graph::MetaGraph,    graph_species::Array{Symbol, 1})
     # store list of solutions here
     solns = Array{Array{Int, 1}, 1}()
     # encodes an isomorhism. maps α ∈ subgraph --> β ∈ graph

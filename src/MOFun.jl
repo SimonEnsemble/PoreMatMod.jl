@@ -1,10 +1,6 @@
 module MOFun
 
-using LightGraphs
-using LinearAlgebra
-using DataFrames
-
-using Xtals
+using LightGraphs, MetaGraphs, LinearAlgebra, DataFrames, Xtals
 export
     # Xtals.jl
     Crystal, write_xyz, write_vtk, write_cif, infer_bonds!,

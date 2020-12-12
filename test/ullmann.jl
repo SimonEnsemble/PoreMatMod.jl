@@ -1,6 +1,6 @@
 module Ullmann_Test
 
-using Test, LightGraphs, MOFun, Ullmann, PorousMaterials
+using Test, LightGraphs, MOFun, Ullmann, Xtals, MetaGraphs
 
 
 # add a list of edges to a graph
@@ -13,7 +13,7 @@ end
 
 # make a graph with the listed labels and edges
 function build_graph(labels, edges)
-    g = SimpleGraph()
+    g = MetaGraph()
     add_vertices!(g, length(labels))
     add_edges!(g, edges)
     return g, labels

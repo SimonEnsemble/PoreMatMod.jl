@@ -2,7 +2,7 @@
 
 
 ## libraries and imports for extension
-using StatsBase, LightGraphs, Xtals
+using StatsBase, LightGraphs, Xtals, MetaGraphs
 import Base.(∈), Base.show
 
 
