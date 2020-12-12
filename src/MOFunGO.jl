@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.15
+# v0.12.17
 
 using Markdown
 using InteractiveUtils
@@ -13,13 +13,14 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 90696d20-10b7-11eb-20b5-6174faeaf613
+# ╔═╡ 6c1969e0-02f5-11eb-3fa2-09931a63b1ac
 begin
     push!(LOAD_PATH, joinpath(homedir(), ".julia/dev/MOFfun.jl/src"))
     push!(LOAD_PATH, joinpath(homedir(), ".julia/dev/Xtals.jl/src"))
-    using MOFun, PlutoUI, Bio3DView
+    using MOFun, PlutoUI, Bio3DView, Xtals
     HOME = joinpath(homedir(), ".mofungo")
-    set_path_to_data(joinpath(HOME, "data"), relpaths=true)
+    MOFun.set_path_to_data(joinpath(HOME, "data"), relpaths=true)
+	set_path_to_moieties(joinpath(HOME, "temp"))
     dirs = ["", "temp", "data"]
     for dir in dirs
         dir = joinpath(HOME, dir)
@@ -28,19 +29,24 @@ begin
         end
     end
     cd(HOME)
-    @bind load_inputs Button("Reset")
-end
-
-# ╔═╡ 6c1969e0-02f5-11eb-3fa2-09931a63b1ac
 md"""
 # [💠 MOFunGO 🍌](https://en.wikipedia.org/wiki/Mofongo)
 
 This notebook interactively substitutes moieties within a `Crystal` using a modified implementation of Ullmann's algorithm to perform substructure searches and applying singular value decomposition to align fragments of the generated materials. Read the docs [here](https://github.com/SimonEnsemble/MOFunGO.jl).
 
 See the original publication on MOFun.jl here: [(article)](http://localhost:1234) [(GitHub)](https://github.com/SimonEnsemble/MOFun.jl)
-
-
 """
+end
+
+# ╔═╡ 5dc43a20-10b8-11eb-26dc-7fb98e9aeb1a
+md"""
+Adrian Henle, [Simon Ensemble](http://simonensemble.github.io), 2020
+
+$(Resource("https://simonensemble.github.io/osu_logo.jpg", :width => 250))
+"""
+
+# ╔═╡ 90696d20-10b7-11eb-20b5-6174faeaf613
+@bind load_inputs Button("Reset")
 
 # ╔═╡ 50269ffe-02ef-11eb-0614-f11975d991fe
 begin load_inputs
@@ -64,20 +70,20 @@ begin
     # r_moty loader
     if replace_moiety["data"] != UInt8[]
         write("$HOME/temp/r_moty.xyz", replace_moiety["data"])
-        r_moty = moiety("temp/r_moty")
+        r_moty = moiety("r_moty")
         isloaded[:r_moty] = true
     end
     # s_moty loader
     if search_moiety["data"] != UInt8[]
         write("$HOME/temp/s_moty.xyz", search_moiety["data"])
-        s_moty = moiety("temp/s_moty")
+        s_moty = moiety("s_moty")
         isloaded[:s_moty] = true
     end
     # xtal loader
     if parent_crystal["data"] != UInt8[]
         write("$HOME/temp/parent.cif", parent_crystal["data"])
         xtal = Crystal("$HOME/temp/parent.cif", check_overlap=false)
-        strip_numbers_from_atom_labels!(xtal)
+        Xtals.strip_numbers_from_atom_labels!(xtal)
         infer_bonds!(xtal, true)
         isloaded[:parent] = true
     end
@@ -167,10 +173,11 @@ end
 begin
     if new_xtal_flag
         write_cif(new_xtal, "$HOME/temp/cif.cif")
-        write_xyz(new_xtal, "$HOME/temp/xyz.xyz")
+        Xtals.write_xyz(new_xtal, "$HOME/temp/xyz.xyz")
         write_vtk(new_xtal.box, "$HOME/temp/box.vtk")
         write_bond_information(new_xtal, "$HOME/temp/bonds.vtk")
-        viewfile("temp/xyz.xyz", "xyz", vtkcell="temp/box.vtk", axes=Axes(4, 0.25))
+		Xtals.write_mol2(new_xtal, filename="$HOME/temp/mol2.mol2")
+        viewfile("temp/mol2.mol2", "mol2", vtkcell="temp/box.vtk", axes=Axes(4, 0.25))
     end
 end
 
@@ -180,21 +187,14 @@ if new_xtal_flag
     download_box = DownloadButton(read("temp/box.vtk"), "unit_cell.vtk")
     download_xyz = DownloadButton(read("temp/xyz.xyz"), "atoms.xyz")
     download_bonds = DownloadButton(read("temp/bonds.vtk"), "bonds.vtk")
-    md"""
-    ### Output Files
-    $download_cif
-    $download_box
-    $download_xyz
-    $download_bonds
-    """
-end
-
-# ╔═╡ 5dc43a20-10b8-11eb-26dc-7fb98e9aeb1a
+	download_mol2 = DownloadButton(read("temp/mol2.mol2"), "crystal.mol2")
 md"""
-Adrian Henle, [Simon Ensemble](http://simonensemble.github.io), 2020
-
-$(Resource("https://simonensemble.github.io/osu_logo.jpg", :width => 250))
+### Output Files
+Complete Crystal $download_mol2 $download_cif
+	
+Components $download_xyz $download_bonds $download_box
 """
+end
 
 # ╔═╡ Cell order:
 # ╟─6c1969e0-02f5-11eb-3fa2-09931a63b1ac
