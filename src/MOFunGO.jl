@@ -176,8 +176,11 @@ begin
         Xtals.write_xyz(new_xtal, "$HOME/temp/xyz.xyz")
         write_vtk(new_xtal.box, "$HOME/temp/box.vtk")
         write_bond_information(new_xtal, "$HOME/temp/bonds.vtk")
+		no_pb = deepcopy(new_xtal)
+		Xtals.drop_cross_pb_bonds!(no_pb)
 		Xtals.write_mol2(new_xtal, filename="$HOME/temp/mol2.mol2")
-        viewfile("temp/mol2.mol2", "mol2", vtkcell="temp/box.vtk", axes=Axes(4, 0.25))
+		Xtals.write_mol2(no_pb, filename="$HOME/temp/view.mol2")
+        viewfile("temp/view.mol2", "mol2", vtkcell="temp/box.vtk", axes=Axes(4, 0.25))
     end
 end
 
