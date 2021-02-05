@@ -359,14 +359,20 @@ function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
     # append temporary crystals to parent
     xtal = Crystal(new_xtal_name, parent.box,
         parent.atoms + sum([xrm.atoms for xrm in xrms]), Charges{Frac}(0))
-    # create bonds from dictionary
-    for (p, r) in bonds
-        add_edge!(xtal.bonds, p, r)
+    # create bonds from tuple array
+    for (i, j) in bonds
+        add_edge!(xtal.bonds, i, j)
     end
     # correct for periodic boundaries
     wrap!(xtal)
-    # delete atoms from array and return result
+    # slice to final atoms/bonds
     new_xtal = xtal[[x for x in 1:xtal.atoms.n if !(x ∈ del_atoms)]]
+    # calculate bond attributes
+    for bond ∈ edges(new_xtal.bonds)
+        dist = distance(new_xtal.atoms, new_xtal.box, src(bond), dst(bond), true)
+        cross_pb = dist == distance(new_xtal.atoms, new_xtal.box, src(bond), dst(bond), false)
+        set_props!(new_xtal.bonds, bond, Dict(:distance => dist, :cross_boundary => cross_pb))
+    end
     return new_xtal
 end
 

@@ -26,7 +26,7 @@ end
 @testset "Moiety Tests" begin
     moiety_bcfm = moiety("S-bromochlorofluoromethane")
     moiety_2!bcfm = moiety("!-S-bromochlorofluoromethane")
-    @test moiety_bcfm.atoms.species == [:C, :F, :Br, :Cl, :H]
+    @test moiety_bcfm.atoms.species == [:C, :Cl, :F, :Br, :H]
     @test moiety_2!bcfm.atoms.species == [:C, :Cl, :F, :Br, :H!]
 end
 
