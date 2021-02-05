@@ -86,11 +86,16 @@ Bonds are inferred within the local unit cell only (no bonds across periodic bou
 # Arguments
 - `name::String` the moiety name (input file name without the .xyz extension).
 """
-function moiety(name::String)::Crystal
+function moiety(name::Union{String,Nothing})::Crystal
     @debug "Getting moiety: $name"
     # generate Crystal from moiety XYZ coords
     box = unit_cube()
-    fx = Frac(read_xyz(joinpath(pwd(), "$PATH_TO_MOIETIES/$name.xyz")), box)
+    if !isnothing(name)
+        fx = Frac(read_xyz(joinpath(pwd(), "$PATH_TO_MOIETIES/$name.xyz")), box)
+    else
+        name = "nothing"
+        fx = Atoms{Frac}(0)
+    end
     charges = Charges{Frac}(0)
     moiety = Crystal(name, box, fx, charges)
     # ID R group
