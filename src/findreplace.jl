@@ -276,10 +276,28 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
         center_on_self!.([parent_subset, s_moty])
         # orthog. Procrustes for s_moty-to-parent and mask-to-replacement alignments
         rot_s2p = s2p_op(s_moty, parent_subset)
-        rot_r2m = r2m_op(r_moty, s_moty, m2r_isom, mask.atoms)
-        # transform r_moty by rot_r2m, rot_s2p, and xtal_subset_center, align
-        # to parent (this is now a crystal to add)
-        xrm = xform_r_moty(r_moty, rot_r2m, rot_s2p, parent_subset_center, parent)
+        if nb_isomorphisms(s′_in_r) == 0
+            continue
+        else
+            # choose best r2m by evaluating MAE for all possibilities
+            rot_r2m_err = Inf
+            xrm = nothing
+            m2r_isom = nothing
+            for m2r_isom′ ∈ [s′_in_r.results[i].isomorphism[1] for i ∈ 1:nb_locations(s′_in_r)]
+                # shift all r_moty nodes according to center of isomorphic subset
+                r_moty′ = deepcopy(r_moty)
+                r_moty′.atoms.coords.xf .-= geometric_center(r_moty[m2r_isom′])
+                rot_r2m = r2m_op(r_moty, s_moty, m2r_isom′, mask.atoms)
+                # transform r_moty by rot_r2m, rot_s2p, and xtal_subset_center, align
+                # to parent (this is now a crystal to add)
+                xrm = xform_r_moty(r_moty′, rot_r2m, rot_s2p, parent_subset_center, parent)
+                rot_r2m_err′ = rmsd(xrm.atoms.coords.xf[:, m2r_isom′], mask.atoms.coords.xf[:, :])
+                if rot_r2m_err′ < rot_r2m_err
+                    m2r_isom = m2r_isom′
+                    rot_r2m_err = rot_r2m_err′
+                end
+            end
+        end
         push!(xrms, xrm)
         # push obsolete atoms to array
         for x in s2p_isom
