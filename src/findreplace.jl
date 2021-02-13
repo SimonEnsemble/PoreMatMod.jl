@@ -276,6 +276,7 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
         center_on_self!.([parent_subset, s_moty])
         # orthog. Procrustes for s_moty-to-parent and mask-to-replacement alignments
         rot_s2p = s2p_op(s_moty, parent_subset)
+        s′_in_r = mask ∈ r_moty
         if nb_isomorphisms(s′_in_r) == 0
             continue
         else
