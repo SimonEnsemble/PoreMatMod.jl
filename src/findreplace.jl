@@ -225,6 +225,10 @@ function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int},
     # bonds between new fragments and parent
     # loop over s2p_isom
     for (s, p) in enumerate(s2p_isom)
+        # in case the replacement moiety is smaller than the search moiety
+        if s > length(m2r_isom)
+            break
+        end
         # find neighbors of parent_subset atoms
         n = LightGraphs.neighbors(parent.bonds, p)
         # loop over neighbors
@@ -263,6 +267,7 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
     end
     # generate transformed replace moiety (xrm), ID which atoms to delete,
     # and accumulate list of bonds for each replacement configuration
+    s′_in_r = mask ∈ r_moty
     for config in configs
         # find isomorphism
         s2p_isom = search.results[config[1]].isomorphism[config[2]]
@@ -276,7 +281,6 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
         center_on_self!.([parent_subset, s_moty])
         # orthog. Procrustes for s_moty-to-parent and mask-to-replacement alignments
         rot_s2p = s2p_op(s_moty, parent_subset)
-        s′_in_r = mask ∈ r_moty
         if nb_isomorphisms(s′_in_r) == 0
             continue
         else
@@ -377,15 +381,16 @@ function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
         r_moty, m2r_isom, mask)
     # append temporary crystals to parent
     xtal = Crystal(new_xtal_name, parent.box,
-        parent.atoms + sum([xrm.atoms for xrm in xrms]), Charges{Frac}(0))
+        parent.atoms + sum([xrm.atoms for xrm ∈ xrms]),
+        Charges{Frac}(0))
     # create bonds from tuple array
-    for (i, j) in bonds
+    for (i, j) ∈ bonds
         add_edge!(xtal.bonds, i, j)
     end
     # correct for periodic boundaries
     wrap!(xtal)
     # slice to final atoms/bonds
-    new_xtal = xtal[[x for x in 1:xtal.atoms.n if !(x ∈ del_atoms)]]
+    new_xtal = xtal[[x for x ∈ 1:xtal.atoms.n if !(x ∈ del_atoms)]]
     # calculate bond attributes
     for bond ∈ edges(new_xtal.bonds)
         dist = distance(new_xtal.atoms, new_xtal.box, src(bond), dst(bond), true)
