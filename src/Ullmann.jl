@@ -9,7 +9,8 @@ using Xtals, LightGraphs, MetaGraphs
 #      and
 #     species(α ∈ subgraph) == species(β ∈ graph)
 function compatibility_matrix(subgraph::MetaGraph, subgraph_species::Array{Symbol, 1},
-                              graph::MetaGraph,    graph_species::Array{Symbol, 1})::Array{Bool, 2}
+                              graph::MetaGraph, graph_species::Array{Symbol, 1},
+                              exact::Bool)::Array{Bool, 2}
     @debug "Finding M₀..."
     # allocate M. rows correspond to subgraph nodes, columns to graph nodes.
     M₀ = zeros(Bool, nv(subgraph), nv(graph))
@@ -23,10 +24,20 @@ function compatibility_matrix(subgraph::MetaGraph, subgraph_species::Array{Symbo
     path4_G = deg_G^2
     path8_S = path4_S^2
     path8_G = path4_G^2
-    @inbounds for α ∈ 1:nv(subgraph) # Loop over rows (subgraph nodes)
-        @inbounds for β ∈ 1:nv(graph) # Loop over columns (graph nodes)
-            # Record Bool for each (i,j): true if atom species match, graph node degree is sufficient, and 4 and 8 length self-paths are sufficient.
-            M₀[α, β] = subgraph_species[α] == graph_species[β] && deg_G[β, β] ≥ deg_S[α, α] && path4_G[β, β] ≥ path4_S[α, α] && path8_G[β, β] ≥ path8_S[α, α]
+
+    if !exact # search for substructures
+        @inbounds for α ∈ 1:nv(subgraph) # Loop over rows (subgraph nodes)
+            @inbounds for β ∈ 1:nv(graph) # Loop over columns (graph nodes)
+                # Record Bool for each (i,j): true if atom species match, graph node degree is sufficient, and 4 and 8 length self-paths are sufficient.
+                M₀[α, β] = subgraph_species[α] == graph_species[β] && deg_G[β, β] ≥ deg_S[α, α] && path4_G[β, β] ≥ path4_S[α, α] && path8_G[β, β] ≥ path8_S[α, α]
+            end
+        end
+    else # search only for exact, isolated matches (no substructures)
+        @inbounds for α ∈ 1:nv(subgraph) # Loop over rows (subgraph nodes)
+            @inbounds for β ∈ 1:nv(graph) # Loop over columns (graph nodes)
+                # Record Bool for each (i,j): true if atom species match, and graph node degree matches.
+                M₀[α, β] = subgraph_species[α] == graph_species[β] && deg_G[β, β] == deg_S[α, α]
+            end
         end
     end
     return M₀
@@ -169,7 +180,7 @@ end
 returns an array of arrays, each containing one unique subgraph isomorphism
 """
 function find_subgraph_isomorphisms(subgraph::MetaGraph, subgraph_species::Array{Symbol, 1},
-                                    graph::MetaGraph,    graph_species::Array{Symbol, 1})
+                                    graph::MetaGraph, graph_species::Array{Symbol, 1}, exact::Bool)
     # store list of solutions here
     solns = Array{Array{Int, 1}, 1}()
     # encodes an isomorhism. maps α ∈ subgraph --> β ∈ graph
@@ -178,7 +189,7 @@ function find_subgraph_isomorphisms(subgraph::MetaGraph, subgraph_species::Array
     #   entry β true iff β mapped
     β_mapped = [false for i = 1:nv(graph)]
     # initial compatability matrix based on degrees of nodes and species
-    M₀ = compatibility_matrix(subgraph, subgraph_species, graph, graph_species)
+    M₀ = compatibility_matrix(subgraph, subgraph_species, graph, graph_species, exact)
     depth_first_search!(1, subgraph, graph, M₀, soln, β_mapped, solns)
     return solns
 end

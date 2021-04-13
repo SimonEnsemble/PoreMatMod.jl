@@ -217,9 +217,9 @@ end
 # tracks which bonds need to be made between the parent and array
 # of transformed r_moty's (xrms) along with the new fragments
 function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, s2p_isom::Array{Int},
-        parent::Crystal, m2r_isom::Array{Int}, xrm::Crystal, count_xrms::Int)
+        parent::Crystal, m2r_isom::Union{Array{Int},Nothing}, xrm::Union{Crystal,Nothing}, count_xrms::Int)
     # skip bond accumulation for null replacement
-    if m2r_isom == Int[]
+    if m2r_isom == Int[] || isnothing(m2r_isom)
         return
     end
     # bonds between new fragments and parent
@@ -281,13 +281,11 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
         center_on_self!.([parent_subset, s_moty])
         # orthog. Procrustes for s_moty-to-parent and mask-to-replacement alignments
         rot_s2p = s2p_op(s_moty, parent_subset)
-        if nb_isomorphisms(s′_in_r) == 0
-            continue
-        else
+        xrm = nothing
+        m2r_isom = nothing
+        if nb_isomorphisms(s′_in_r) ≠ 0
             # choose best r2m by evaluating MAE for all possibilities
             rot_r2m_err = Inf
-            xrm = nothing
-            m2r_isom = nothing
             for m2r_isom′ ∈ [s′_in_r.results[i].isomorphism[1] for i ∈ 1:nb_locations(s′_in_r)]
                 # shift all r_moty nodes according to center of isomorphic subset
                 r_moty′ = deepcopy(r_moty)
@@ -302,8 +300,8 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
                     rot_r2m_err = rot_r2m_err′
                 end
             end
+            push!(xrms, xrm)
         end
-        push!(xrms, xrm)
         # push obsolete atoms to array
         for x in s2p_isom
             push!(del_atoms, x) # this can create duplicates; remove them later
@@ -319,7 +317,7 @@ end
 
 ## Search function (exposed)
 @doc raw"""
-    substructure_search(s_moty, xtal)
+    substructure_search(s_moty, xtal; exact=false)
 
 Searches for a substructure within a `Crystal` and returns a `Search` struct
 containing all identified subgraph isomorphisms.  Matches are made on the basis
@@ -330,14 +328,15 @@ designating atoms to replace with other moieties.
 # Arguments
 - `s_moty::Crystal` the search moiety
 - `xtal::Crystal` the parent structure
+- `exact::Bool=false` if true, disables substructure searching and performs only exact matching
 """
-function substructure_search(s_moty::Crystal, xtal::Crystal)::Search
+function substructure_search(s_moty::Crystal, xtal::Crystal; exact::Bool=false)::Search
     # Make a copy w/o R tags for searching
     moty = deepcopy(s_moty)
     untag_r_group!(moty)
     # Get array of configuration arrays
     configs = Ullmann.find_subgraph_isomorphisms(moty.bonds,
-        moty.atoms.species, xtal.bonds,    xtal.atoms.species)
+        moty.atoms.species, xtal.bonds, xtal.atoms.species, exact)
     df = DataFrame(p_subset=[sort(c) for c in configs], isomorphism=configs)
     locs = Int[]
     isoms = Array{Int}[]
@@ -380,9 +379,8 @@ function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
     xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, s_moty,
         r_moty, m2r_isom, mask)
     # append temporary crystals to parent
-    xtal = Crystal(new_xtal_name, parent.box,
-        parent.atoms + sum([xrm.atoms for xrm ∈ xrms]),
-        Charges{Frac}(0))
+    atoms = xrms == Crystal[] ? parent.atoms : parent.atoms + sum([xrm.atoms for xrm ∈ xrms if xrm.atoms.n > 0])
+    xtal = Crystal(new_xtal_name, parent.box, atoms, Charges{Frac}(0))
     # create bonds from tuple array
     for (i, j) ∈ bonds
         add_edge!(xtal.bonds, i, j)
