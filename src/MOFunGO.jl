@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.17
+# v0.14.3
 
 using Markdown
 using InteractiveUtils
@@ -15,8 +15,7 @@ end
 
 # ╔═╡ 6c1969e0-02f5-11eb-3fa2-09931a63b1ac
 begin
-    push!(LOAD_PATH, joinpath(homedir(), ".julia/dev/MOFfun.jl/src"))
-    push!(LOAD_PATH, joinpath(homedir(), ".julia/dev/Xtals.jl/src"))
+    push!(LOAD_PATH, pwd())
     using MOFun, PlutoUI, Bio3DView, Xtals
     HOME = joinpath(homedir(), ".mofungo")
     MOFun.set_path_to_data(joinpath(HOME, "data"), relpaths=true)
@@ -30,9 +29,9 @@ begin
     end
     cd(HOME)
 md"""
-# [💠 MOFunGO 🍌](https://en.wikipedia.org/wiki/Mofongo)
+# 💠 PoreMatModGO 🚀
 
-This notebook interactively substitutes moieties within a `Crystal` using a modified implementation of Ullmann's algorithm to perform substructure searches and applying singular value decomposition to align fragments of the generated materials. Read the docs [here](https://github.com/SimonEnsemble/MOFunGO.jl).
+This notebook interactively substitutes moieties within a crystal using a modified implementation of Ullmann's algorithm to perform substructure searches and applying singular value decomposition to align fragments of the generated materials. Read the docs [here](https://github.com/SimonEnsemble/MOFunGO.jl).
 
 See the original publication on MOFun.jl here: [(article)](http://localhost:1234) [(GitHub)](https://github.com/SimonEnsemble/MOFun.jl)
 """
@@ -206,7 +205,7 @@ end
 # ╟─415e9210-0f71-11eb-15c8-e7484b5be309
 # ╟─3997c4d0-0f75-11eb-2976-c161879b8d0c
 # ╟─69edca20-0f94-11eb-13ba-334438ca2406
-# ╠═5918f770-103d-11eb-0537-81036bd3e675
+# ╟─5918f770-103d-11eb-0537-81036bd3e675
 # ╟─31832e30-1054-11eb-24ed-219fd3e236a1
 # ╟─5dc43a20-10b8-11eb-26dc-7fb98e9aeb1a
 # ╟─90696d20-10b7-11eb-20b5-6174faeaf613
