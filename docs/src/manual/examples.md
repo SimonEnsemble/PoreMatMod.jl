@@ -19,7 +19,7 @@ xtal = Crystal("IRMOF-1.cif", infer_bonds=:cordero, periodic_boundaries=true)
 s_moty = moiety("2-!-p-phenylene")
 r_moty = moiety("2-acetylamido-p-phenylene")
 search = s_moty ∈ xtal
-new_xtal = find_replace(search, nb_loc=nb_locations(search)/4)
+new_xtal = replace(search, nb_loc=nb_locations(search)/4)
 ```
 
 ### Remove solvent molecules
@@ -36,7 +36,7 @@ xtal = Crystal("IRMOF-1_clean.cif")
 infer_bonds!(xtal, true)
 s_moty = moiety("cyclohexane")
 r_moty = moiety(nothing)
-activated_xtal = find_replace(s_moty ∈ xtal, r_moty, rand_all=true)
+activated_xtal = replace(s_moty ∈ xtal, r_moty, rand_all=true)
 ```
 
 ### Repair disorder
@@ -56,7 +56,7 @@ xtal = Crystal("ZmID.cif", check_overlap=false)
 infer_bonds!(xtal, true)
 s_moty = moiety("disordered_dabco")
 r_moty = moiety("dabco")
-repaired_xtal = find_replace(s_moty ∈ xtal, r_moty, rand_all=true)
+repaired_xtal = replace(s_moty ∈ xtal, r_moty, rand_all=true)
 ```
 
 ### Insert missing hydrogens
@@ -74,7 +74,7 @@ Example: Insert missing H atoms in IRMOF-1
 xtal = Crystal("IRMOF-1_noH.cif")
 s_moty = moiety("p-phenylene_noH")
 r_moty = moiety("p-phenylene")
-repaired_xtal = find_replace(s_moty ∈ xtal, r_moty, rand_all=true)
+repaired_xtal = replace(s_moty ∈ xtal, r_moty, rand_all=true)
 ```
 
 ### Multiple Transformations

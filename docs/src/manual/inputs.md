@@ -64,7 +64,7 @@ By default, for use with `MOFun.jl`, `.xyz` data must have clean atom labels,
 meaning only plain atomic symbols. Exceptions are specifying carbon atom
 hybridizations, e.g. `C_sp3`, and manganese/iron/cobalt atom spin states,
 e.g. `Mn_lo`; and the use of `!` for indicating atoms which will be altered in
-a [`find_replace` operation](manual/replace). For substructure searches using
+a [`replace` operation](manual/replace). For substructure searches using
 [`substructure_search`](@ref), any `!` tags are ignored (the atoms are treated as
 normal).
 

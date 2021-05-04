@@ -79,7 +79,7 @@ Generates a moiety (`Crystal`) from an .xyz file found in `PATH_TO_MOIETIES`
 
 Use `set_path_to_moieties` or `set_path_to_data` to change the input path.
 
-Atoms appended with '!' are tagged for replacement via `find_replace`.
+Atoms appended with '!' are tagged for replacement via `replace`.
 
 Bonds are inferred within the local unit cell only (no bonds across periodic boundaries).
 

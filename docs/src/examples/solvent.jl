@@ -53,7 +53,7 @@ md"""
 """
 
 # ╔═╡ 7a6a17c0-3daa-11eb-2155-bbc7fdc88a08
-activated_xtal = find_replace(s_moty ∈ xtal, r_moty, rand_all=true)
+activated_xtal = replace(s_moty ∈ xtal, r_moty, rand_all=true)
 
 # ╔═╡ 007d4bd0-3dd2-11eb-382b-d5529fe3bdf4
 begin

@@ -109,13 +109,13 @@ geometric_center(xtal::Crystal)::Array{Float64} = geometric_center(xtal.atoms)
 # and some more like that for doing find-replace operations in one line
 # these are objectively unnecessary, but fun.
 (∈)(pair::Pair{Crystal, Crystal}, xtal::Crystal) =
-    find_replace((pair[1] ∈ xtal), pair[2], rand_all=true)
+    replace((pair[1] ∈ xtal), pair[2], rand_all=true)
 (∈)(tuple::Tuple{Pair, Int}, xtal::Crystal) =
-    find_replace(tuple[1][1] ∈ xtal, tuple[1][2], nb_loc=tuple[2])
+    replace(tuple[1][1] ∈ xtal, tuple[1][2], nb_loc=tuple[2])
 (∈)(tuple::Tuple{Pair, Array{Int}}, xtal::Crystal) =
-    find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2])
+    replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2])
 (∈)(tuple::Tuple{Pair, Array{Int}, Array{Int}}, xtal::Crystal) =
-    find_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2], ori=tuple[3])
+    replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2], ori=tuple[3])
 
 
 # Helper for making .xyz's
@@ -401,7 +401,7 @@ end
 
 ## Find/replace function (exposed)
 @doc raw"""
-    find_replace(search, r_moty, nb_loc=2)
+    replace(search, r_moty, nb_loc=2)
 
 Inserts `r_moty` into a parent structure according to `search` and `kwargs`.
 A valid replacement scheme must be selected by assigning one or more of the optional
@@ -417,7 +417,7 @@ A valid replacement scheme must be selected by assigning one or more of the opti
 - `ori::Array{Int}` assign value(s) when `loc` is assigned to specify exact configurations for replacement.
 - `name::String` assign to give the generated `Crystal` a name ("new_xtal" by default)
 """
-function find_replace(search::Search, r_moty::Crystal; rand_all::Bool=false,
+function replace(search::Search, r_moty::Crystal; rand_all::Bool=false,
         nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[],
         name::String="new_xtal")::Crystal
     # handle input

@@ -136,14 +136,14 @@ begin
     if all(values(isloaded))
         new_xtal_flag = true
         if replace_mode == "random replacement at each location"
-            new_xtal = find_replace(search, r_moty, rand_all=true)
+            new_xtal = replace(search, r_moty, rand_all=true)
         elseif replace_mode == "random replacement at n random locations" && nb_loc > 0
-            new_xtal = find_replace(search, r_moty, nb_loc=nb_loc)
+            new_xtal = replace(search, r_moty, nb_loc=nb_loc)
         elseif replace_mode == "random replacement at specific locations" && loc ≠ []
-            new_xtal = find_replace(search, r_moty, loc=[parse(Int, x) for x in loc])
+            new_xtal = replace(search, r_moty, loc=[parse(Int, x) for x in loc])
         elseif replace_mode == "specific replacements"
             if loc ≠ [] && ori ≠ "" && length(loc) == length(split(ori, ","))
-                new_xtal = find_replace(search, r_moty,
+                new_xtal = replace(search, r_moty,
                     loc=[parse(Int, x) for x in loc],
                     ori=[parse(Int, x) for x in split(ori, ",")])
             else
@@ -193,7 +193,7 @@ if new_xtal_flag
 md"""
 ### Output Files
 Complete Crystal $download_mol2 $download_cif
-	
+
 Components $download_xyz $download_bonds $download_box
 """
 end

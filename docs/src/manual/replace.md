@@ -95,7 +95,7 @@ Random configurations will be chosen for each location in `search.results`, so
 that each occurrence of the search moiety in the parent crystal is replaced.
 
 ```julia
-find_replace(search, r_moty, rand_all=true)
+replace(search, r_moty, rand_all=true)
 ```
 
 ### Random orientation at n random locations
@@ -104,7 +104,7 @@ The parent crystal's search moieties will be replaced using random configuration
 at each of $n$ locations.
 
 ```julia
-find_replace(search, r_moty, nb_loc=4)
+replace(search, r_moty, nb_loc=4)
 ```
 
 ### Random orientation at specific locations
@@ -113,7 +113,7 @@ The parent crystal is modified using random configurations at a list of specifie
 locations.
 
 ```julia
-find_replace(search, r_moty, loc=[13, 20])
+replace(search, r_moty, loc=[13, 20])
 ```
 
 ### Specific orientations at specific locations
@@ -121,7 +121,7 @@ find_replace(search, r_moty, loc=[13, 20])
 Specific replacements are made.
 
 ```julia
-find_replace(search, r_moty, loc=[13, 20], ori=[1, 1])
+replace(search, r_moty, loc=[13, 20], ori=[1, 1])
 ```
 
 ## Documentation
@@ -134,5 +134,5 @@ end
 ```
 
 ```@docs
-find_replace
+replace
 ```

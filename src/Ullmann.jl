@@ -180,7 +180,7 @@ end
 returns an array of arrays, each containing one unique subgraph isomorphism
 """
 function find_subgraph_isomorphisms(subgraph::MetaGraph, subgraph_species::Array{Symbol, 1},
-                                    graph::MetaGraph, graph_species::Array{Symbol, 1}, exact::Bool)
+                                    graph::MetaGraph, graph_species::Array{Symbol, 1}, exact::Bool=false)
     # store list of solutions here
     solns = Array{Array{Int, 1}, 1}()
     # encodes an isomorhism. maps α ∈ subgraph --> β ∈ graph

@@ -56,7 +56,7 @@ md"""
 """
 
 # ╔═╡ 28be3c72-3dab-11eb-257f-cd33683a6fa3
-repaired_xtal = find_replace(s_moty ∈ xtal, r_moty, rand_all=true)
+repaired_xtal = replace(s_moty ∈ xtal, r_moty, rand_all=true)
 
 # ╔═╡ 6f89cb20-3dd2-11eb-2de0-79aba5d6c6f5
 begin

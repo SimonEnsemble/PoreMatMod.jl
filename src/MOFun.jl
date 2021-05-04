@@ -9,7 +9,7 @@ export
     print_file_paths, set_path_to_data, set_path_to_moieties,
     # findreplace.jl
     substructure_search, SearchResult, Query, Search, nb_isomorphisms,
-    nb_locations, nb_configs_at_loc, find_replace,
+    nb_locations, nb_configs_at_loc, replace,
     # moiety.jl
     moiety
 

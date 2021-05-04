@@ -59,7 +59,7 @@ md"""
 """
 
 # ╔═╡ 56ec13a0-32df-11eb-177f-1b2aa24b5880
-new_xtal = find_replace(search, r_moty, rand_all=true)
+new_xtal = replace(search, r_moty, rand_all=true)
 
 # ╔═╡ dc157de2-3dd0-11eb-04f2-574ab1453792
 begin

@@ -2,7 +2,7 @@ TRAVIS=false # set false for better UX in local testing. must set true for CI!
 
 testfiles = [
     "moiety.jl"
-    "Ullmann.jl"
+    "ullmann.jl"
     "findreplace.jl"
 ]
 

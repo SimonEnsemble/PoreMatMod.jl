@@ -41,7 +41,7 @@ begin
 	infer_bonds!(xtal, true)
 	s_moty = moiety("disordered_dabco")
 	r_moty = moiety("dabco")
-	
+
 end
 
 # ╔═╡ f14b43d0-3da2-11eb-06a7-e579951c7ef1
@@ -58,7 +58,7 @@ md"""
 """
 
 # ╔═╡ f3fcfcb0-3daa-11eb-143e-d3744604602d
-repaired_xtal = find_replace(s_moty ∈ xtal, r_moty, rand_all=true)
+repaired_xtal = replace(s_moty ∈ xtal, r_moty, rand_all=true)
 
 # ╔═╡ 1e77b440-3dd2-11eb-04cc-0daef8c13b8a
 begin
