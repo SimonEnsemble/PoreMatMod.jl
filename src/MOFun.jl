@@ -1,10 +1,8 @@
 module MOFun
 
-using LightGraphs, MetaGraphs, LinearAlgebra, DataFrames, Xtals
+using LightGraphs, MetaGraphs, LinearAlgebra, DataFrames, Reexport
+@reexport using Xtals
 export
-    # Xtals.jl
-    Crystal, write_xyz, write_vtk, write_cif, infer_bonds!,
-    infer_geometry_based_bonds!, write_bond_information,
     # MOFun.jl
     print_file_paths, set_path_to_data, set_path_to_moieties,
     # findreplace.jl
