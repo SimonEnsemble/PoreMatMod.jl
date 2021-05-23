@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.14.1
+# v0.14.4
 
 using Markdown
 using InteractiveUtils
@@ -17,6 +17,7 @@ end
 # ╔═╡ a5044e4c-e9e6-4013-917d-3267e9b510b2
 begin
 	xtal = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true)
+	write_cif(xtal, "$figpath/original.cif")
 	strip_numbers_from_atom_labels!(xtal)
 	infer_bonds!(xtal, true)
 	xtal
