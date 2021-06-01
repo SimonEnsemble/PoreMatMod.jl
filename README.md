@@ -1,4 +1,4 @@
-# MOFun.jl
+![logo.JPG](logo.JPG)
 
 [![Build Status](https://travis-ci.org/SimonEnsemble/MOFun.jl.svg?branch=master)](https://travis-ci.org/SimonEnsemble/MOFun.jl)
 [![Coverage Status](https://coveralls.io/repos/github/SimonEnsemble/MOFun.jl/badge.svg?branch=master)](https://coveralls.io/github/SimonEnsemble/MOFun.jl?branch=master)
