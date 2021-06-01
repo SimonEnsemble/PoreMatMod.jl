@@ -46,7 +46,7 @@ end
 
 # list of nodes β ∈ graph that could possibly correpond with node α ∈ subgraph
 function candidate_list(M::Array{Bool, 2}, α::Int)::Array{Int, 1}
-    return [β for β = 1:size(M, 2) if M[α, β]]
+    return [β for β ∈ 1:size(M, 2) if M[α, β]]
 end
 
 
@@ -184,10 +184,10 @@ function find_subgraph_isomorphisms(subgraph::MetaGraph, subgraph_species::Array
     # store list of solutions here
     solns = Array{Array{Int, 1}, 1}()
     # encodes an isomorhism. maps α ∈ subgraph --> β ∈ graph
-    soln = [0 for i = 1:nv(subgraph)]
+    soln = [0 for _ = 1:nv(subgraph)]
     # tell us which β ∈ graph are mapped already.
     #   entry β true iff β mapped
-    β_mapped = [false for i = 1:nv(graph)]
+    β_mapped = [false for _ = 1:nv(graph)]
     # initial compatability matrix based on degrees of nodes and species
     M₀ = compatibility_matrix(subgraph, subgraph_species, graph, graph_species, exact)
     depth_first_search!(1, subgraph, graph, M₀, soln, β_mapped, solns)

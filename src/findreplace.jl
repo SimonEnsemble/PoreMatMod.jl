@@ -1,11 +1,3 @@
-# findreplace.jl
-
-
-## libraries and imports for extension
-using StatsBase, LightGraphs, Xtals, MetaGraphs
-import Base.(∈), Base.show
-
-
 ## Structs
 """
     Query(xtal, s_moty)
@@ -18,6 +10,7 @@ struct Query
 end
 
 Base.show(io::IO, q::Query) = print(io, q.s_moty.name, " ∈ ", q.parent.name)
+
 
 """
     Search(query, results)
@@ -163,8 +156,7 @@ end
 
 
 # Gets the r_moty-to-s_mask rotation matrix
-function r2m_op(r_moty::Crystal, s_moty::Crystal, m2r_isomorphism::Array{Int},
-        s_mask_atoms::Atoms)::Array{Float64,2}
+function r2m_op(r_moty::Crystal, s_moty::Crystal, m2r_isomorphism::Array{Int}, s_mask_atoms::Atoms)::Array{Float64,2}
     if m2r_isomorphism == Int[]
         return Matrix{Int}(I, 3, 3) # if no actual isom, skip OP and return identity
     end
@@ -178,9 +170,7 @@ end
 
 
 # Transforms r_moty according to two rotation matrices and a translational offset
-function xform_r_moty(r_moty::Crystal, rot_r2m::Array{Float64,2},
-        rot_s2p::Array{Float64,2}, xtal_offset::Array{Float64},
-        xtal::Crystal)::Crystal
+function xform_r_moty(r_moty::Crystal, rot_r2m::Array{Float64,2}, rot_s2p::Array{Float64,2}, xtal_offset::Array{Float64}, xtal::Crystal)::Crystal
     # put r_moty into cartesian space
     atoms = Atoms{Cart}(length(r_moty.atoms.species), r_moty.atoms.species,
         Cart(r_moty.atoms.coords, r_moty.box))
@@ -256,8 +246,7 @@ end
 
 # generates data for effecting a series of replacements
 function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
-        parent::Crystal, s_moty::Crystal, r_moty::Crystal, m2r_isom::Array{Int},
-        mask::Crystal)::Tuple{Array{Crystal},Array{Int},Array{Tuple{Int,Int}}}
+        parent::Crystal, s_moty::Crystal, r_moty::Crystal, mask::Crystal, s′_in_r::Search)::Tuple{Array{Crystal},Array{Int},Array{Tuple{Int,Int}}}
     xrms = Crystal[]
     del_atoms = Int[]
     bonds = Tuple{Int,Int}[] # tuple (i,j) encodes a parent[i] -> xrms[k][j] bond
@@ -267,7 +256,6 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
     end
     # generate transformed replace moiety (xrm), ID which atoms to delete,
     # and accumulate list of bonds for each replacement configuration
-    s′_in_r = mask ∈ r_moty
     for config in configs
         # find isomorphism
         s2p_isom = search.results[config[1]].isomorphism[config[2]]
@@ -372,12 +360,9 @@ function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
         m2r_isom = s′_in_r.results[1].isomorphism[1]
         # shift all r_moty nodes according to center of isomorphic subset
         r_moty.atoms.coords.xf .-= geometric_center(r_moty[m2r_isom])
-    else
-        m2r_isom = Int[]
     end
     # loop over configs to build replacement data
-    xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, s_moty,
-        r_moty, m2r_isom, mask)
+    xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, s_moty, r_moty, mask, s′_in_r)
     # append temporary crystals to parent
     atoms = xrms == Crystal[] ? parent.atoms : parent.atoms + sum([xrm.atoms for xrm ∈ xrms if xrm.atoms.n > 0])
     xtal = Crystal(new_xtal_name, parent.box, atoms, Charges{Frac}(0))
