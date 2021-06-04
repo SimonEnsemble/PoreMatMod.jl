@@ -6,7 +6,7 @@ backgrounds, an express graphical interface, `MOFunGO`, is provided.  The
 chemical substructure find/replace operations with minimal setup and no code
 provided by the user.
 
-Follow the steps in [Getting Started](../../build/manual/start).
+Follow the steps in [Getting Started](../start).
 
 Add the required libraries and launch `Pluto`:
 
@@ -23,7 +23,7 @@ box on the `Pluto` main page.
 
 [https://github.com/eahenle/MOFunGO/blob/main/MOFunGO.jl](https://github.com/eahenle/MOFunGO/blob/main/MOFunGO.jl)
 
-Prepare file inputs per the [manual](../../build/manual/inputs) and load them into
-`MOFunGO` using the graphical interface.  All [replacement](manual/replace) modes
+Prepare file inputs per the [manual](../inputs) and load them into
+`MOFunGO` using the graphical interface.  All [replacement](../replace) modes
 are available with interactive visual previews and downloadable outputs in `.cif`,
 `.xyz`, and `.vtk` file formats.

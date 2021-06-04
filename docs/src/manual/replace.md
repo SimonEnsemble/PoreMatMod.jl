@@ -1,7 +1,8 @@
 ```@meta
-CurrentModule = MOFun
 DocTestSetup = quote
     using MOFun
+    xtal = Crystal("IRMOF-1.cif")
+    infer_bonds!(xtal, true)
 end
 ```
 
@@ -64,15 +65,24 @@ H!         1.06706        0.70670        1.48683
 
 Load the new file in like before.
 
-```julia
+```jldoctest replace_md; output=false
 s_moty = moiety("2-!-p-phenylene")
+search = s_moty in xtal
+# output
+2-!-p-phenylene ∈ IRMOF-1.cif
+96 hits in 24 locations.
 ```
 
-The `!` tag does not affect the outcome of [`substructure_search`](@ref).
+The `!` tag does not affect the outcome of [`substructure_search`].
 
-```
-julia> substructure_search(moiety("2-p-phenylene"), xtal) ==
-    substructure_search(moiety("2-!-p-phenylene"), xtal)
+```jldoctest
+s1 = substructure_search(moiety("p-phenylene"), xtal) 
+s2 = substructure_search(moiety("2-!-p-phenylene"), xtal)
+
+nb_isomorphisms(s1) == nb_isomorphisms(s2) &&
+nb_locations(s1) == nb_locations(s2) &&
+isequal(nb_configs_at_loc(s1), nb_configs_at_loc(s2))
+# output
 true
 ```
 
@@ -80,12 +90,25 @@ A final additional file input is required: a `.xyz` file containing the replacem
 moiety.  This structure must contain a subgraph isomorphic to the non-tagged atoms
 of the search moiety.
 
-To replace *p*-phenylene moieties with 2-acetylamido-*p*-phenylene moieties, provide
-the [appropriate data](assets/2-acetylamido-p-phenylene) in [`rc[:paths][:moieties]`](manual/inputs)
-and load the replacement moiety:
+To replace *p*-phenylene moieties with 2-acetylamido-*p*-phenylene moieties, provide the 
+[appropriate data](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/2-acetylamido-p-phenylene.xyz?token=AD3TMGB324GXBKAMLKQWNL3AYMP4Q) 
+in [`rc[:paths][:moieties]`](../../inputs) and load the replacement moiety:
 
-```julia
+```jldoctest replace_md
 r_moty = moiety("2-acetylamido-p-phenylene")
+# output
+Name: 2-acetylamido-p-phenylene
+Bravais unit cell of a crystal.
+	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
+	Unit cell dimensions a = 1.000000 Å. b = 1.000000 Å, c = 1.000000 Å
+	Volume of unit cell: 1.000000 Å³
+
+	# atoms = 17
+	# charges = 0
+	chemical formula: Dict(:N => 1, :H => 7, :O => 1, :C => 8)
+	space Group: P1
+	symmetry Operations:
+		'x, y, z'
 ```
 
 ## Replacement Modes
@@ -101,8 +124,21 @@ With all three file inputs loaded (parent crystal IRMOF-1 as `xtal`, search moie
 Random configurations will be chosen for each location in `search.results`, so
 that each occurrence of the search moiety in the parent crystal is replaced.
 
-```julia
-replace(search, r_moty, rand_all=true)
+```jldoctest replace_md
+substructure_replace(search, r_moty, rand_all=true)
+# output
+Name: new_xtal
+Bravais unit cell of a crystal.
+	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
+	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
+	Volume of unit cell: 17237.492730 Å³
+
+	# atoms = 592
+	# charges = 0
+	chemical formula: Dict(:N => 3, :Zn => 4, :H => 21, :O => 16, :C => 30)
+	space Group: P1
+	symmetry Operations:
+		'x, y, z'
 ```
 
 ### Random orientation at n random locations
@@ -110,8 +146,21 @@ replace(search, r_moty, rand_all=true)
 The parent crystal's search moieties will be replaced using random configurations
 at each of $n$ locations.
 
-```julia
-replace(search, r_moty, nb_loc=4)
+```jldoctest replace_md
+substructure_replace(search, r_moty, nb_loc=4)
+# output
+Name: new_xtal
+Bravais unit cell of a crystal.
+	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
+	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
+	Volume of unit cell: 17237.492730 Å³
+
+	# atoms = 452
+	# charges = 0
+	chemical formula: Dict(:N => 1, :Zn => 8, :H => 27, :O => 27, :C => 50)
+	space Group: P1
+	symmetry Operations:
+		'x, y, z'
 ```
 
 ### Random orientation at specific locations
@@ -119,20 +168,46 @@ replace(search, r_moty, nb_loc=4)
 The parent crystal is modified using random configurations at a list of specified
 locations.
 
-```julia
-replace(search, r_moty, loc=[13, 20])
+```jldoctest replace_md
+substructure_replace(search, r_moty, loc=[13, 20])
+# output
+Name: new_xtal
+Bravais unit cell of a crystal.
+	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
+	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
+	Volume of unit cell: 17237.492730 Å³
+
+	# atoms = 438
+	# charges = 0
+	chemical formula: Dict(:N => 1, :Zn => 16, :H => 51, :O => 53, :C => 98)
+	space Group: P1
+	symmetry Operations:
+		'x, y, z'
 ```
 
 ### Specific orientations at specific locations
 
 Specific replacements are made.
 
-```julia
-replace(search, r_moty, loc=[13, 20], ori=[1, 1])
+```jldoctest replace_md
+substructure_replace(search, r_moty, loc=[13, 20], ori=[1, 1])
+# output
+Name: new_xtal
+Bravais unit cell of a crystal.
+	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
+	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
+	Volume of unit cell: 17237.492730 Å³
+
+	# atoms = 438
+	# charges = 0
+	chemical formula: Dict(:N => 1, :Zn => 16, :H => 51, :O => 53, :C => 98)
+	space Group: P1
+	symmetry Operations:
+		'x, y, z'
 ```
 
 ## Documentation
 
 ```@docs
-replace
+substructure_replace
 ```

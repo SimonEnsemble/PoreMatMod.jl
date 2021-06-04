@@ -1,10 +1,7 @@
-using Documenter, Revise
-for _ in 1:2
-    try
-        using MOFun
-    catch
-    end
-end
+using Documenter, MOFun
+
+rc[:paths][:crystals] = joinpath(pwd(), "test/data/crystals")
+rc[:paths][:moieties] = joinpath(pwd(), "test/data/moieties")
 
 makedocs(
     root = joinpath(dirname(pathof(MOFun)), "..", "docs"),
