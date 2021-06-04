@@ -4,10 +4,13 @@ testfiles = [
     "findreplace.jl"
 ]
 
-using Test
-using MOFun
+using Test, Documenter
 
 @info "\n\n\t\tMOFun\n\n "
+
+using MOFun
+
+doctest(MOFun)
 
 for testfile ∈ testfiles
     @info "Running test/$testfile"

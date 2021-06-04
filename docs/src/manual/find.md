@@ -1,7 +1,9 @@
 ```@meta
-CurrentModule = MOFun
 DocTestSetup = quote
     using MOFun
+    xtal = Crystal("IRMOF-1.cif")
+    infer_bonds!(xtal, true)
+    s_moty = moiety("p-phenylene")
 end
 ```
 
@@ -17,10 +19,10 @@ the *p*-phenylene moiety in IRMOF-1, a variation of Ullmann's algorithm is appli
 is the basis of the substructure search in `MOFun`. The algorithm is a depth-first
 search of the permutation tree for all possible one-to-one correspondences between the
 nodes of one graph (the search graph) and any subset of nodes of another graph (the
-parent graph). The search tree is reduced in size by only considering nodes to possibly
-correspond if the degree of the search graph node is no greater than that of the parent
-node. At each branch of the search tree, additional pruning further reduces the search
-space by comparing the immediate neighborhoods of potentially-corresponding nodes.
+parent graph). The search tree is greatly reduced in size by imposing several constraints
+on possible node-to-node correspondences. At each branch of the search tree, additional 
+pruning further reduces the search space by comparing the immediate neighborhoods of 
+potentially-corresponding nodes.
 
 `MOFun` augments Ullmann's algorithm to include the requirement that potentially-
 corresponding nodes be of the same atomic species, as required by the chemical
@@ -33,35 +35,44 @@ the graph representation of structures in `Xtals`.
 
 With a parent crystal and search moiety loaded, execute a search:
 
-```julia
+```jldoctest
 search = substructure_search(s_moty, xtal)
+# output
+p-phenylene ∈ IRMOF-1.cif
+96 hits in 24 locations.
 ```
 
 The `∈` (`in`) infix operator will also perform the search:
 
-```julia
+```jldoctest find
 search = s_moty ∈ xtal
+# output
+p-phenylene ∈ IRMOF-1.cif
+96 hits in 24 locations.
 ```
 
 This returns a `Search` object.  Its `query` attribute stores the `Crystal` data
 for the search and parent structures, and its `results` attribute is a
 `GroupedDataFrame` listing the subgraph isomorphisms grouped by location.
 
+```jldoctest find
+search.query
+# output
+p-phenylene ∈ IRMOF-1.cif
 ```
-julia> search = s_moty ∈ xtal
-p-phenylene ∈ IRMOF-1.cif
-96 hits in 24 locations.
-
-julia> search.query
-p-phenylene ∈ IRMOF-1.cif
-
-julia> typeof(search.query.parent)
+```jldoctest find
+typeof(search.query.parent)
+# output
 Crystal
-
-julia> search.query.s_moty.name
+```
+```jldoctest find
+search.query.s_moty.name
+# output
 "p-phenylene"
-
-julia> search.results
+```
+```jldoctest find
+search.results
+# output
 GroupedDataFrame with 24 groups based on key: location
 First Group (4 rows): location = 1
 │ Row │ location │ isomorphism                                        │
@@ -83,13 +94,22 @@ Last Group (4 rows): location = 24
 ```
 
 In the chosen example, the search moiety (*p*-phenylene) occurs 24 times in the
-unit cell of the parent crystal (IRMOF-1), with 4 symmetry-equivalent search
+provided structure of the parent crystal (IRMOF-1), with 4 symmetry-equivalent search
 hits at each site, for a total of 96 subgraph isomorphisms.
 
-```julia
-nb_locations(search) # 24
-nb_configs_at_loc(search) # [4, 4, 4, ..., 4]
-nb_isomorphisms(search) # 96
+```jldoctest find
+nb_locations(search) 
+# output
+24
+```jldoctest find
+nb_configs_at_loc(search) 
+# output
+[4, 4, 4, ..., 4]
+```
+```jldoctest find
+nb_isomorphisms(search) 
+# output
+96
 ```
 
 ## Symmetry and Rotational Freedom
@@ -105,13 +125,17 @@ independently rotatable carboxyl groups, the total number of isomorphisms is
 multiplied by a factor of 4.  The number of locations at which the isomorphisms
 are found is unchanged.
 
-```julia
-xtal = Crystal("IRMOF-1_clean.cif")
-infer_bonds!(xtal, true)
+```jldoctest find
 s_moty = moiety("p-terephthalate")
 search = s_moty ∈ xtal
-nb_isomorphisms(search) # 384
-nb_locations(search) # 24
+nb_isomorphisms(search) 
+# output
+384
+```
+```jldoctest find
+nb_locations(search) 
+# output
+24
 ```
 
 ## Documentation

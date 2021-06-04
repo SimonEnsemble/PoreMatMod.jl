@@ -1,5 +1,4 @@
 ```@meta
-CurrentModule = MOFun
 DocTestSetup = quote
     using MOFun
 end
@@ -46,10 +45,13 @@ search for the [`*p*-phenylene`](assets/p-phenylene.xyz) moiety that is the core
 
 ## Loading Files
 
-Load the [parent crystal](../../../assets/IRMOF-1.cif):
+Load the [parent crystal](../../../assets/IRMOF-1.cif) and build the bonding network:
 
-```julia
-xtal = Crystal("IRMOF-1.cif", infer_bonds=:cordero, periodic_boundaries=true)
+```jldoctest
+xtal = Crystal("IRMOF-1.cif")
+infer_bonds!(xtal, true)
+# output
+true
 ```
 
 [`Crystal`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal) is inherited and re-exported from `Xtals.jl`.
@@ -57,15 +59,17 @@ See the [`docs`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Cry
 
 Load the [search moiety](../../../assets/p-phenylene.xyz):
 
-```julia
+```jldoctest
 s_moty = moiety("p-phenylene")
+# output
+
 ```
+
+Both `xtal` and `s_moty` are `Crystal` objects.
 
 ## Documentation
 
 ```@docs
-set_path_to_data
-set_path_to_moieties
-print_file_paths
+Crystal
 moiety
 ```

@@ -102,13 +102,13 @@ geometric_center(xtal::Crystal)::Array{Float64} = geometric_center(xtal.atoms)
 # and some more like that for doing find-replace operations in one line
 # these are objectively unnecessary, but fun.
 (∈)(pair::Pair{Crystal, Crystal}, xtal::Crystal) =
-    replace((pair[1] ∈ xtal), pair[2], rand_all=true)
+    substructure_replace((pair[1] ∈ xtal), pair[2], rand_all=true)
 (∈)(tuple::Tuple{Pair, Int}, xtal::Crystal) =
-    replace(tuple[1][1] ∈ xtal, tuple[1][2], nb_loc=tuple[2])
+    substructure_replace(tuple[1][1] ∈ xtal, tuple[1][2], nb_loc=tuple[2])
 (∈)(tuple::Tuple{Pair, Array{Int}}, xtal::Crystal) =
-    replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2])
+    substructure_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2])
 (∈)(tuple::Tuple{Pair, Array{Int}, Array{Int}}, xtal::Crystal) =
-    replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2], ori=tuple[3])
+    substructure_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2], ori=tuple[3])
 
 
 # Helper for making .xyz's
@@ -339,7 +339,7 @@ end
 
 
 ## Internal method for performing substructure replacements
-function substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
+function _substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
         search::Search, configs::Array{Tuple{Int,Int}},
         new_xtal_name::String)::Crystal
     # configs must all be unique
@@ -385,7 +385,7 @@ end
 
 ## Find/replace function (exposed)
 @doc raw"""
-    replace(search, r_moty, nb_loc=2)
+    substructure_replace(search, r_moty, nb_loc=2)
 
 Inserts `r_moty` into a parent structure according to `search` and `kwargs`.
 A valid replacement scheme must be selected by assigning one or more of the optional
@@ -401,7 +401,7 @@ A valid replacement scheme must be selected by assigning one or more of the opti
 - `ori::Array{Int}` assign value(s) when `loc` is assigned to specify exact configurations for replacement.
 - `name::String` assign to give the generated `Crystal` a name ("new_xtal" by default)
 """
-function replace(search::Search, r_moty::Crystal; rand_all::Bool=false,
+function substructure_replace(search::Search, r_moty::Crystal; rand_all::Bool=false,
         nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[],
         name::String="new_xtal")::Crystal
     # handle input
@@ -425,6 +425,6 @@ function replace(search::Search, r_moty::Crystal; rand_all::Bool=false,
     # generate configuration tuples (location, orientation)
     configs = Tuple{Int,Int}[(loc[i], ori[i]) for i in 1:nb_loc]
     # process replacements
-    return substructure_replace(search.query.s_moty, r_moty, search.query.parent,
+    return _substructure_replace(search.query.s_moty, r_moty, search.query.parent,
         search, configs, name)
 end
