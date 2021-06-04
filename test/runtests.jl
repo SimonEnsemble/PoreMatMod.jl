@@ -4,13 +4,10 @@ testfiles = [
     "findreplace.jl"
 ]
 
-## dependencies and logging
 using Test
-
-## banner
-@info "\n\n\t\tMOFun\n\n "
-
 using MOFun
+
+@info "\n\n\t\tMOFun\n\n "
 
 for testfile ∈ testfiles
     @info "Running test/$testfile"

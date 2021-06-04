@@ -1,6 +1,6 @@
 module Ullmann_Test
 
-using Test, LightGraphs, MOFun, Ullmann, Xtals, MetaGraphs
+using Test, LightGraphs, MetaGraphs, MOFun
 
 
 # add a list of edges to a graph
@@ -31,12 +31,12 @@ end
     (s6, l6) = build_graph([:A, :A], [])
     (s7, l7) = build_graph([:A, :A, :B], [(1,2),(2,3)])
 
-    @test find_subgraph_isomorphisms(g, lg, g, lg) == [[1, 2, 3, 4, 5, 6]]
-    @test find_subgraph_isomorphisms(s1, l1, g, lg) == [[2, 4], [3, 4]]
-    @test find_subgraph_isomorphisms(s2, l2, g, lg)== [[1, 2], [5, 3]]
-    @test find_subgraph_isomorphisms(s3, l3, g, lg) == [[2, 3, 4], [3, 2, 4]]
-    @test find_subgraph_isomorphisms(s4, l4, g, lg) == []
-    @test find_subgraph_isomorphisms(s5, l5, g, lg) == []
-    @test find_subgraph_isomorphisms(s7, l7, g, lg) == [[6, 5, 3]]
+    @test MOFun.find_subgraph_isomorphisms(g, lg, g, lg) == [[1, 2, 3, 4, 5, 6]]
+    @test MOFun.find_subgraph_isomorphisms(s1, l1, g, lg) == [[2, 4], [3, 4]]
+    @test MOFun.find_subgraph_isomorphisms(s2, l2, g, lg)== [[1, 2], [5, 3]]
+    @test MOFun.find_subgraph_isomorphisms(s3, l3, g, lg) == [[2, 3, 4], [3, 2, 4]]
+    @test MOFun.find_subgraph_isomorphisms(s4, l4, g, lg) == []
+    @test MOFun.find_subgraph_isomorphisms(s5, l5, g, lg) == []
+    @test MOFun.find_subgraph_isomorphisms(s7, l7, g, lg) == [[6, 5, 3]]
 end
 end

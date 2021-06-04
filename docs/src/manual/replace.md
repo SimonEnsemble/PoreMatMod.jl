@@ -1,3 +1,10 @@
+```@meta
+CurrentModule = MOFun
+DocTestSetup = quote
+    using MOFun
+end
+```
+
 # Find/Replace Operations
 
 In the previous sections, we saw how we can represent structures using the
@@ -39,7 +46,7 @@ moiety by sequential multiplication to align it with the coordinates of the pare
 crystal such that it can replace the linker at the chosen location. The transformed
 replacement moiety is added to the crystal, overwriting the original location's atoms.
 
-`MOFun` does all of this in one line of code. Bonds, including any across periodic
+`MOFun` does all of this in one line of user code. Bonds, including any across periodic
 boundaries, are preserved, the unit cell's dimensions are maintained, and the new
 structure can be saved to disk for use in simulations.
 
@@ -74,7 +81,7 @@ moiety.  This structure must contain a subgraph isomorphic to the non-tagged ato
 of the search moiety.
 
 To replace *p*-phenylene moieties with 2-acetylamido-*p*-phenylene moieties, provide
-the [appropriate data](assets/2-acetylamido-p-phenylene) in [`PATH_TO_MOIETIES`](manual/inputs)
+the [appropriate data](assets/2-acetylamido-p-phenylene) in [`rc[:paths][:moieties]`](manual/inputs)
 and load the replacement moiety:
 
 ```julia
@@ -125,13 +132,6 @@ replace(search, r_moty, loc=[13, 20], ori=[1, 1])
 ```
 
 ## Documentation
-
-```@meta
-CurrentModule = MOFun
-DocTestSetup = quote
-    using MOFun
-end
-```
 
 ```@docs
 replace
