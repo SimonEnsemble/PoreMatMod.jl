@@ -62,7 +62,18 @@ Load the [search moiety](../../../assets/p-phenylene.xyz):
 ```jldoctest
 s_moty = moiety("p-phenylene")
 # output
+Name: p-phenylene
+Bravais unit cell of a crystal.
+	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
+	Unit cell dimensions a = 1.000000 Å. b = 1.000000 Å, c = 1.000000 Å
+	Volume of unit cell: 1.000000 Å³
 
+	# atoms = 10
+	# charges = 0
+	chemical formula: Dict(:H => 2, :C => 3)
+	space Group: P1
+	symmetry Operations:
+		'x, y, z'
 ```
 
 Both `xtal` and `s_moty` are `Crystal` objects.

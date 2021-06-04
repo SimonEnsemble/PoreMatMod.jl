@@ -10,7 +10,7 @@ using Test, Documenter
 
 using MOFun
 
-doctest(MOFun)
+doctest(MOFun, fix=true)
 
 for testfile ∈ testfiles
     @info "Running test/$testfile"

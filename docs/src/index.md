@@ -40,5 +40,12 @@ novel = (moiety("2-H!-4-pyridyl") => moiety("2-Cl-4-pyridyl")) ∈ active
 # Save the result
 write_cif(novel, "2-Cl-SIFSIX-1-Cu")
 # output
-
+┌ Info: Crystal EMEHUB_C2H2.cif has I 4/m m m space group. I am converting it to P1 symmetry.
+└         To afrain from this, pass `convert_to_p1=false` to the `Crystal` constructor.
+┌ Warning: carbon atom 1 in EMEHUB_C2H2.cif is bonded to more than four atoms!
+└ @ Xtals ~/.julia/dev/Xtals/src/bonds.jl:403
+┌ Warning: carbon atom 6 in disordered_ligand! is bonded to more than four atoms!
+└ @ Xtals ~/.julia/dev/Xtals/src/bonds.jl:403
+┌ Warning: carbon atom 1 in disordered_ligand! is bonded to more than four atoms!
+└ @ Xtals ~/.julia/dev/Xtals/src/bonds.jl:403
 ```
