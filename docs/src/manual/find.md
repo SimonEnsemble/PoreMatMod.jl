@@ -102,10 +102,30 @@ nb_locations(search)
 # output
 24
 ```
-```jldoctest find
-nb_configs_at_loc(search) 
+```jldoctest find; output=false
+nb_configs_at_loc(search)  # 24-element Vector{Int64}: [4, 4, 4, ..., 4]
 # output
-[4, 4, 4, ..., 4]
+24-element Vector{Int64}:
+ 4
+ 4
+ 4
+ 4
+ 4
+ 4
+ 4
+ 4
+ 4
+ 4
+ ⋮
+ 4
+ 4
+ 4
+ 4
+ 4
+ 4
+ 4
+ 4
+ 4
 ```
 ```jldoctest find
 nb_isomorphisms(search) 

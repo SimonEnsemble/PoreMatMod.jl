@@ -4,9 +4,9 @@ testfiles = [
     "findreplace.jl"
 ]
 
-using Test, Documenter
+using Test, Documenter, FIGlet
 
-@info "\n\n\t\tMOFun\n\n "
+FIGlet.render("PoreMatMod.jl", FIGlet.availablefonts()[35])
 
 using MOFun
 
@@ -15,6 +15,6 @@ for testfile ∈ testfiles
     @time include(testfile)
 end
 
-doctest(MOFun)
+@time doctest(MOFun)
 
 @info "Done."
