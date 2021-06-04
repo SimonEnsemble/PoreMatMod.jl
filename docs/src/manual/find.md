@@ -101,6 +101,7 @@ hits at each site, for a total of 96 subgraph isomorphisms.
 nb_locations(search) 
 # output
 24
+```
 ```jldoctest find
 nb_configs_at_loc(search) 
 # output
@@ -119,7 +120,8 @@ may yield "extra" search results corresponding to different rotamers.  In some
 applications this may be advantageous, but in most cases it is advisable to search
 using the most minimal structure which uniquely matches the targeted parent moiety.
 
-An example is searching for [*p*-terephthalate](../../../assets/p-terephthalate.xyz)
+An example is searching for 
+[*p*-terephthalate](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/p-terephthalate.xyz?token=AD3TMGDLHHV5ETQQPDKDVCLAYMPX6)
 in IRMOF-1 instead of the more minimal *p*-phenylene.  Thanks to the two
 independently rotatable carboxyl groups, the total number of isomorphisms is
 multiplied by a factor of 4.  The number of locations at which the isomorphisms

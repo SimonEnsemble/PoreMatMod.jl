@@ -25,8 +25,11 @@ These paths are set at module load time, and default to `./data/crystals` and `.
 atomic coordinates and unit cell information.
 
 The file must be located in `rc[:paths][:crystals]` as described above. In the case of our guiding example, the 
-functionalization of IRMOF-1, this means we need to either put [`IRMOF-1.cif`](assets/IRMOF-1.cif) into `./data/crystals` 
-or set `rc[:paths][:crystals]` to point `MOFun` to where [`IRMOF-1.cif`](assets/IRMOF-1.cif) is located.
+functionalization of IRMOF-1, this means we need to either put 
+[`IRMOF-1.cif`](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1.cif?token=AD3TMGFZCE4WX3J4TDH2BSDAYMO2K) 
+into `./data/crystals` or set `rc[:paths][:crystals]` to point `MOFun` to where 
+[`IRMOF-1.cif`](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1.cif?token=AD3TMGFZCE4WX3J4TDH2BSDAYMO2K) 
+is located.
 
 ### Fragments
 
@@ -36,16 +39,20 @@ and each subsequent input line consists of the atom label in the first space-del
 for the atom's Cartesian coordinates in Ångströms.
 
 By default, for use with `MOFun.jl`, `.xyz` data must have clean atom labels, meaning only plain atomic symbols. The 
-exception is the use of `!` for indicating atoms which will be altered in a [`replace` operation](manual/replace). 
-For [substructure searches](manual/find) using [`substructure_search`](@ref), any `!` tags are ignored (the atoms are 
+exception is the use of `!` for indicating atoms which will be altered in a [`replace` operation](../../replace). 
+For [substructure searches](../../find) using [`substructure_search`], any `!` tags are ignored (the atoms are 
 treated as normal).
 
 The `.xyz` file must be located at `rc[:paths][:moieties]`. For what we want to do with IRMOF-1, the best choice is to 
-search for the [`*p*-phenylene`](assets/p-phenylene.xyz) moiety that is the core of the BDC linker.
+search for the 
+[`*p*-phenylene`](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/p-phenylene.xyz?token=AD3TMGFBEFHHR3NUT4UAP3TAYMPLI) 
+moiety that is the core of the BDC linker.
 
 ## Loading Files
 
-Load the [parent crystal](../../../assets/IRMOF-1.cif) and build the bonding network:
+Load the 
+[parent crystal](../https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1.cif?token=AD3TMGFZCE4WX3J4TDH2BSDAYMO2K) 
+and build the bonding network:
 
 ```jldoctest
 xtal = Crystal("IRMOF-1.cif")
@@ -57,7 +64,9 @@ true
 [`Crystal`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal) is inherited and re-exported from `Xtals.jl`.
 See the [`docs`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal) for more information.
 
-Load the [search moiety](../../../assets/p-phenylene.xyz):
+Load the 
+[search moiety](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/p-phenylene.xyz?token=AD3TMGFBEFHHR3NUT4UAP3TAYMPLI)
+:
 
 ```jldoctest
 s_moty = moiety("p-phenylene")
@@ -81,6 +90,5 @@ Both `xtal` and `s_moty` are `Crystal` objects.
 ## Documentation
 
 ```@docs
-Crystal
 moiety
 ```

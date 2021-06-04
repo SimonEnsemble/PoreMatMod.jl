@@ -10,11 +10,11 @@ using Test, Documenter
 
 using MOFun
 
-doctest(MOFun, fix=true)
-
 for testfile ∈ testfiles
     @info "Running test/$testfile"
     @time include(testfile)
 end
+
+doctest(MOFun)
 
 @info "Done."

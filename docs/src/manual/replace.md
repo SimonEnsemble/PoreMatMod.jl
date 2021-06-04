@@ -73,7 +73,7 @@ search = s_moty in xtal
 96 hits in 24 locations.
 ```
 
-The `!` tag does not affect the outcome of [`substructure_search`](@ref).
+The `!` tag does not affect the outcome of [`substructure_search`].
 
 ```jldoctest
 s1 = substructure_search(moiety("p-phenylene"), xtal) 
@@ -90,9 +90,9 @@ A final additional file input is required: a `.xyz` file containing the replacem
 moiety.  This structure must contain a subgraph isomorphic to the non-tagged atoms
 of the search moiety.
 
-To replace *p*-phenylene moieties with 2-acetylamido-*p*-phenylene moieties, provide
-the [appropriate data](assets/2-acetylamido-p-phenylene) in [`rc[:paths][:moieties]`](manual/inputs)
-and load the replacement moiety:
+To replace *p*-phenylene moieties with 2-acetylamido-*p*-phenylene moieties, provide the 
+[appropriate data](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/2-acetylamido-p-phenylene.xyz?token=AD3TMGB324GXBKAMLKQWNL3AYMP4Q) 
+in [`rc[:paths][:moieties]`](../../inputs) and load the replacement moiety:
 
 ```jldoctest replace_md
 r_moty = moiety("2-acetylamido-p-phenylene")
@@ -170,6 +170,7 @@ locations.
 
 ```jldoctest replace_md
 substructure_replace(search, r_moty, loc=[13, 20])
+# output
 Name: new_xtal
 Bravais unit cell of a crystal.
 	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
@@ -182,8 +183,6 @@ Bravais unit cell of a crystal.
 	space Group: P1
 	symmetry Operations:
 		'x, y, z'
-# output
-
 ```
 
 ### Specific orientations at specific locations
@@ -210,5 +209,5 @@ Bravais unit cell of a crystal.
 ## Documentation
 
 ```@docs
-replace
+substructure_replace
 ```

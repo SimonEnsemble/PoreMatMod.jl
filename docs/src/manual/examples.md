@@ -11,8 +11,7 @@ and is linked to a more detailed Pluto notebook tutorial.
 
 ### Generate hypothetical structures
 
-[![example 1](../../../assets/IRMOF1example.png)
-Pluto Notebook](../../../examples/IRMOF1.jl)
+![example 1](../../../assets/IRMOF1example.png)
 
 Create novel derivatives of a `Crystal`, search for one of its substructures,
 and replace with a derivatized moiety.
@@ -44,14 +43,12 @@ Bravais unit cell of a crystal.
 
 ### Insert missing hydrogens
 
-[![example 4](../../../assets/missingHexample.png)
-Pluto Notebook](../../../examples/missingH.jl)
+![example 2](../../../assets/missingHexample.png)
 
 To correct defects like missing atoms, use the affected substructure as the search
 moiety and a manually corrected copy as the replacement moiety.
 
 Example: Insert missing H atoms in IRMOF-1
-
 
 ```jldoctest
 xtal = Crystal("IRMOF-1_noH.cif")
@@ -76,15 +73,13 @@ Bravais unit cell of a crystal.
 
 ### Repair Disorder and Remove Adsorbates
 
-[![example 5](../../../assets/landingpageexample.png)
-Pluto Notebook](../../../examples/landingpage.jl)
+![example 3](../../../assets/landingpageexample.png)
 
-The example on the [landing page](../../../index.md): repair, activate, and functionalize.
+The example on the landing page: repair, activate, and functionalize.
 
 Note the use of the `(s_moty => r_moty) in xtal` syntactic sugar.
 
 ```jldoctest
-using MOFun
 xtal = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
 infer_bonds!(xtal, true)
 repaired = (moiety("disordered_ligand!") => moiety("4-pyridyl")) ∈ xtal

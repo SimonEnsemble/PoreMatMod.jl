@@ -1,4 +1,4 @@
-![logo.JPG](logo.JPG)
+![logo.JPG](assets/logo.JPG)
 
 A pure-[Julia](https://julialang.org/) software package for manipulating chemical
 structures of porous crystals.  `MOFun` is built on the
