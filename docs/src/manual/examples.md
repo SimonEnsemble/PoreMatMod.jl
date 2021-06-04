@@ -1,3 +1,10 @@
+```@meta
+CurrentModule = MOFun
+DocTestSetup = quote
+    using MOFun
+end
+```
+
 ## Examples
 
 Each example case below gives a description, illustration, and code snippet,

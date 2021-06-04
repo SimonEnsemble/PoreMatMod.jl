@@ -1,7 +1,6 @@
 module MOFun_Test
 
-using LightGraphs, Test, Revise
-using Xtals, MOFun
+using Test, LightGraphs, MOFun
 
 @testset "substructure_search" begin
 irmof1 = Crystal("IRMOF-1.cif")

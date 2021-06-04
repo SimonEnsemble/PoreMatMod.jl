@@ -1,8 +1,3 @@
-module Ullmann
-export find_subgraph_isomorphisms
-using Xtals, LightGraphs, MetaGraphs
-
-
 # "compatibility matrix"
 # M₀[α, β] = 1 if any only if:
 #     deg(β ∈ graph) ≥ deg(α ∈ subgraph)
@@ -193,5 +188,3 @@ function find_subgraph_isomorphisms(subgraph::MetaGraph, subgraph_species::Array
     depth_first_search!(1, subgraph, graph, M₀, soln, β_mapped, solns)
     return solns
 end
-
-end # module

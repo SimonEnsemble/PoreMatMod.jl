@@ -1,17 +1,17 @@
 # Getting Started
 
-## Installation and Use
+## Installation
 
 Download and install the [Julia programming language](https://julialang.org/),
-v1.5 or higher.
+v1.6 or higher, and set up [Xtals.jl](https://simonensemble.github.io/Xtals.jl/dev/).
 
-In the Julia REPL, open the package manager (using `]`) and enter:
+Then, n the Julia REPL, open the package manager (using `]`) and enter:
 
 ```julia
 pkg> add MOFun
 ```
 
-Next, load `MOFun` into the namespace:
+Finally, load `MOFun` into the namespace:
 
 ```julia
 julia> using MOFun # That's it!
@@ -22,23 +22,8 @@ julia> using MOFun # That's it!
 `MOFun` is built on [`Xtals.jl`](https://github.com/SimonEnsemble/Xtals.jl), which
 provides the framework for representing and manipulating crystal structures. It
 is recommended that the user be familiar with some of its key functions, which
-are re-exported by `MOFun`:
+are re-exported by `MOFun`, particularly [`Crystal`](@ref) and [`infer_bonds!`](@ref).
 
-- [`Xtals.set_path_to_data`](@ref)
-
-- [`Xtals.Crystal`](@ref)
-
-- [`Xtals.infer_bonds!`](@ref)
-
-- [`Xtals.infer_geometry_based_bonds!`](@ref)
-
-- [`Xtals.write_cif`](@ref)
-
-- [`Xtals.write_vtk`](@ref)
-
-- [`Xtals.write_xyz`](@ref)
-
-- [`Xtals.write_bond_information`](@ref)
 
 ## A Guiding Example
 

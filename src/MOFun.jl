@@ -14,9 +14,6 @@ end
 
 
 export
-    # Xtals
-    rc,
-
     # findreplace.jl
     substructure_search, SearchResult, Query, Search, nb_isomorphisms,
     nb_locations, nb_configs_at_loc, replace,

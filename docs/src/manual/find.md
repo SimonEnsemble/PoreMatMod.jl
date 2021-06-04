@@ -1,3 +1,10 @@
+```@meta
+CurrentModule = MOFun
+DocTestSetup = quote
+    using MOFun
+end
+```
+
 # Substructure Searches
 
 Having seen how to load inputs to `MOFun`, we can take the next step towards
@@ -108,13 +115,6 @@ nb_locations(search) # 24
 ```
 
 ## Documentation
-
-```@meta
-CurrentModule = MOFun
-DocTestSetup = quote
-    using MOFun
-end
-```
 
 ```@docs
 Search

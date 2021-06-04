@@ -323,8 +323,7 @@ function substructure_search(s_moty::Crystal, xtal::Crystal; exact::Bool=false):
     moty = deepcopy(s_moty)
     untag_r_group!(moty)
     # Get array of configuration arrays
-    configs = Ullmann.find_subgraph_isomorphisms(moty.bonds,
-        moty.atoms.species, xtal.bonds, xtal.atoms.species, exact)
+    configs = find_subgraph_isomorphisms(moty.bonds, moty.atoms.species, xtal.bonds, xtal.atoms.species, exact)
     df = DataFrame(p_subset=[sort(c) for c in configs], isomorphism=configs)
     locs = Int[]
     isoms = Array{Int}[]
