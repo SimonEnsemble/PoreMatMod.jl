@@ -12,7 +12,7 @@ loading of data into `MOFun`.
 ## Data Directories
 
 `MOFun` draws its basic working data (atomic masses, covalent radii, etc.) from
-[`Xtals.jl`](https://SimonEnsemble.github.io/Xtals.jl/).
+[`Xtals.jl`](https://github.com/SimonEnsemble/Xtals.jl/).
 
 Structural data are drawn from `rc[:paths][:crystals]` and `rc[:paths][:moieties]`.
 These paths are set at module load time, and default to `./data/crystals` and `./data/moieties`, respectively.
@@ -51,7 +51,7 @@ moiety that is the core of the BDC linker.
 ## Loading Files
 
 Load the 
-[parent crystal](../https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1.cif?token=AD3TMGFZCE4WX3J4TDH2BSDAYMO2K) 
+[parent crystal](/https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1.cif?token=AD3TMGFZCE4WX3J4TDH2BSDAYMO2K) 
 and build the bonding network:
 
 ```jldoctest

@@ -73,7 +73,7 @@ search = s_moty in xtal
 96 hits in 24 locations.
 ```
 
-The `!` tag does not affect the outcome of [`substructure_search`].
+The `!` tag does not affect the outcome of `substructure_search`.
 
 ```jldoctest
 s1 = substructure_search(moiety("p-phenylene"), xtal) 

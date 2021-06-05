@@ -1,7 +1,7 @@
 ![logo.JPG](assets/logo.JPG)
 
 A pure-[Julia](https://julialang.org/) software package for manipulating chemical
-structures of porous crystals.  `MOFun` is built on the
+structures of porous crystals.  [`MOFun`](https://github.com/SimonEnsemble/MOFun.jl) is built on the
 [@SimonEnsemble](https://SimonEnsemble.github.io) software
 [Xtals.jl](https://github.com/SimonEnsemble/Xtals.jl) to clean experimental and
 calculated data and provide novel hypothetical structural inputs to
@@ -17,7 +17,7 @@ automatically, and the unit cell is preserved in transformations.
 
 **Example**: repairing, activating, and functionalizing an experimental
 structure.  [This structure](https://dx.doi.org/10.5517/ccdc.csd.cc1ldj8s), of
-a MOF called [SIFSIX-1-Cu](https://dx.doi.org/10.1126/science.aaf2458), contains
+a MOF called [SIFSIX-2-Cu](https://dx.doi.org/10.1126/science.aaf2458), contains
 disordered PyC2 linkers and acetylene guest molecules.
 
 Loading the data, resolving the disorder, removing the guest molecules, replacing
@@ -49,3 +49,5 @@ write_cif(novel, "2-Cl-SIFSIX-1-Cu")
 ┌ Warning: carbon atom 1 in disordered_ligand! is bonded to more than four atoms!
 └ @ Xtals ~/.julia/dev/Xtals/src/bonds.jl:403
 ```
+
+![messy to novel](LINK)
