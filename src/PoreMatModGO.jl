@@ -16,9 +16,9 @@ end
 # ╔═╡ 6c1969e0-02f5-11eb-3fa2-09931a63b1ac
 begin
     push!(LOAD_PATH, pwd())
-    using MOFun, PlutoUI, Bio3DView, Xtals
-    HOME = joinpath(homedir(), ".mofungo")
-    MOFun.set_path_to_data(joinpath(HOME, "data"), relpaths=true)
+    using PoreMatMod, PlutoUI, Bio3DView, Xtals
+    HOME = joinpath(homedir(), ".PoreMatModgo")
+    PoreMatMod.set_path_to_data(joinpath(HOME, "data"), relpaths=true)
 	set_path_to_moieties(joinpath(HOME, "temp"))
     dirs = ["", "temp", "data"]
     for dir in dirs
@@ -31,9 +31,9 @@ begin
 md"""
 # 💠 PoreMatModGO 🚀
 
-This notebook interactively substitutes moieties within a crystal using a modified implementation of Ullmann's algorithm to perform substructure searches and applying singular value decomposition to align fragments of the generated materials. Read the docs [here](https://github.com/SimonEnsemble/MOFunGO.jl).
+This notebook interactively substitutes moieties within a crystal using a modified implementation of Ullmann's algorithm to perform substructure searches and applying singular value decomposition to align fragments of the generated materials. Read the docs [here](https://github.com/SimonEnsemble/PoreMatModGO.jl).
 
-See the original publication on MOFun.jl here: [(article)](http://localhost:1234) [(GitHub)](https://github.com/SimonEnsemble/MOFun.jl)
+See the original publication on PoreMatMod.jl here: [(article)](http://localhost:1234) [(GitHub)](https://github.com/SimonEnsemble/PoreMatMod.jl)
 """
 end
 

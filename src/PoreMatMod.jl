@@ -1,4 +1,4 @@
-module MOFun
+module PoreMatMod
 
 using StatsBase, LightGraphs, MetaGraphs, LinearAlgebra, DataFrames, Reexport
 @reexport using Xtals

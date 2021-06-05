@@ -1,17 +1,17 @@
 ```@meta
 DocTestSetup = quote
-    using MOFun
+    using PoreMatMod
 end
 ```
 
 # Input Files
 
 This section details the handling of data paths, formatting of input files, and
-loading of data into `MOFun`.
+loading of data into `PoreMatMod`.
 
 ## Data Directories
 
-`MOFun` draws its basic working data (atomic masses, covalent radii, etc.) from
+`PoreMatMod` draws its basic working data (atomic masses, covalent radii, etc.) from
 [`Xtals.jl`](https://github.com/SimonEnsemble/Xtals.jl/).
 
 Structural data are drawn from `rc[:paths][:crystals]` and `rc[:paths][:moieties]`.
@@ -21,14 +21,14 @@ These paths are set at module load time, and default to `./data/crystals` and `.
 
 ### Crystals
 
-`MOFun` requires chemical structural data as input.  The first necessary input is a `.cif` or `.cssr` file containing 
+`PoreMatMod` requires chemical structural data as input.  The first necessary input is a `.cif` or `.cssr` file containing 
 atomic coordinates and unit cell information.
 
 The file must be located in `rc[:paths][:crystals]` as described above. In the case of our guiding example, the 
 functionalization of IRMOF-1, this means we need to either put 
-[`IRMOF-1.cif`](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1.cif?token=AD3TMGFZCE4WX3J4TDH2BSDAYMO2K) 
-into `./data/crystals` or set `rc[:paths][:crystals]` to point `MOFun` to where 
-[`IRMOF-1.cif`](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1.cif?token=AD3TMGFZCE4WX3J4TDH2BSDAYMO2K) 
+[`IRMOF-1.cif`](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/crystals/IRMOF-1.cif?token=AD3TMGFZCE4WX3J4TDH2BSDAYMO2K) 
+into `./data/crystals` or set `rc[:paths][:crystals]` to point `PoreMatMod` to where 
+[`IRMOF-1.cif`](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/crystals/IRMOF-1.cif?token=AD3TMGFZCE4WX3J4TDH2BSDAYMO2K) 
 is located.
 
 ### Fragments
@@ -38,20 +38,20 @@ to identify in the crystal.  The `.xyz` format is simple: the first line gives t
 and each subsequent input line consists of the atom label in the first space-delimited column, followed by 3 columns 
 for the atom's Cartesian coordinates in Ångströms.
 
-By default, for use with `MOFun.jl`, `.xyz` data must have clean atom labels, meaning only plain atomic symbols. The 
+By default, for use with `PoreMatMod.jl`, `.xyz` data must have clean atom labels, meaning only plain atomic symbols. The 
 exception is the use of `!` for indicating atoms which will be altered in a [`replace` operation](../../replace). 
 For [substructure searches](../../find) using [`substructure_search`], any `!` tags are ignored (the atoms are 
 treated as normal).
 
 The `.xyz` file must be located at `rc[:paths][:moieties]`. For what we want to do with IRMOF-1, the best choice is to 
 search for the 
-[`*p*-phenylene`](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/p-phenylene.xyz?token=AD3TMGFBEFHHR3NUT4UAP3TAYMPLI) 
+[`*p*-phenylene`](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/p-phenylene.xyz?token=AD3TMGFBEFHHR3NUT4UAP3TAYMPLI) 
 moiety that is the core of the BDC linker.
 
 ## Loading Files
 
 Load the 
-[parent crystal](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1.cif?token=AD3TMGFZCE4WX3J4TDH2BSDAYMO2K) 
+[parent crystal](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/crystals/IRMOF-1.cif?token=AD3TMGFZCE4WX3J4TDH2BSDAYMO2K) 
 and build the bonding network:
 
 ```jldoctest
@@ -65,7 +65,7 @@ true
 See the [`docs`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal) for more information.
 
 Load the 
-[search moiety](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/p-phenylene.xyz?token=AD3TMGFBEFHHR3NUT4UAP3TAYMPLI)
+[search moiety](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/p-phenylene.xyz?token=AD3TMGFBEFHHR3NUT4UAP3TAYMPLI)
 :
 
 ```jldoctest

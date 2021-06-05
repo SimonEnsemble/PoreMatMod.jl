@@ -11,7 +11,7 @@ addons:
     - libhdf5-serial-dev
 
 script:
-    - julia --project --check-bounds=yes -e 'import Pkg; Pkg.build(); Pkg.test("MOFun")'
+    - julia --project --check-bounds=yes -e 'import Pkg; Pkg.build(); Pkg.test("PoreMatMod")'
 
 after_success:
     - julia --project -e 'import Pkg; Pkg.add("Documenter"); Pkg.add("Coverage")'

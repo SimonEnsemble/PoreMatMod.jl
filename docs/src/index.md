@@ -1,7 +1,7 @@
 ![logo.JPG](assets/logo.JPG)
 
 A pure-[Julia](https://julialang.org/) software package for manipulating chemical
-structures of porous crystals.  [`MOFun`](https://github.com/SimonEnsemble/MOFun.jl) is built on the
+structures of porous crystals.  [`PoreMatMod`](https://github.com/SimonEnsemble/PoreMatMod.jl) is built on the
 [@SimonEnsemble](https://SimonEnsemble.github.io) software
 [Xtals.jl](https://github.com/SimonEnsemble/Xtals.jl) to clean experimental and
 calculated data and provide novel hypothetical structural inputs to
@@ -9,7 +9,7 @@ calculated data and provide novel hypothetical structural inputs to
 intended primarily for MOFs and other porous crystalline materials, but can work
 with other periodic structures, ensembles, and discrete molecules as well.
 
-`MOFun` can identify chemical substructures, create hypothetical structure
+`PoreMatMod` can identify chemical substructures, create hypothetical structure
 libraries, and correct disorder in experimental data, using an implementation
 of Ullmann's algorithm for substructure isomorphism and the orthogonal Procrustes
 algorithm for point cloud alignment.  Periodic cell boundaries are treated
@@ -25,7 +25,7 @@ the linkers, and saving the result can be done with a very short script:
 
 ```jldoctest; output=false
 # Import the module
-using MOFun
+using PoreMatMod
 # Load some messy data
 xtal = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
 infer_bonds!(xtal, true)

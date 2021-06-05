@@ -1,6 +1,6 @@
 ```@meta
 DocTestSetup = quote
-    using MOFun
+    using PoreMatMod
     xtal = Crystal("IRMOF-1.cif")
     infer_bonds!(xtal, true)
 end
@@ -23,7 +23,7 @@ $B$, we wish to find $R$, the rotation matrix that transforms $A$ to reconstruct
 $B$ with the minimum error. This is accomplished via singular value decomposition
 of $ABᵀ$. In the linked example $A$ and $B$ are two-dimensional for the purpose
 of visualization, but the solution to the problem is the same for point sets in
-any $n$-dimensional space. In `MOFun` the solution is applied three-dimensionally,
+any $n$-dimensional space. In `PoreMatMod` the solution is applied three-dimensionally,
 using the subgraph isomorphism identified by Ullmann's algorithm as the 1-to-1 correspondence.
 
 ## The Find-Replace Algorithm
@@ -47,7 +47,7 @@ moiety by sequential multiplication to align it with the coordinates of the pare
 crystal such that it can replace the linker at the chosen location. The transformed
 replacement moiety is added to the crystal, overwriting the original location's atoms.
 
-`MOFun` does all of this in one line of user code. Bonds, including any across periodic
+`PoreMatMod` does all of this in one line of user code. Bonds, including any across periodic
 boundaries, are preserved, the unit cell's dimensions are maintained, and the new
 structure can be saved to disk for use in simulations.
 
@@ -91,7 +91,7 @@ moiety.  This structure must contain a subgraph isomorphic to the non-tagged ato
 of the search moiety.
 
 To replace *p*-phenylene moieties with 2-acetylamido-*p*-phenylene moieties, provide the 
-[appropriate data](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/2-acetylamido-p-phenylene.xyz?token=AD3TMGB324GXBKAMLKQWNL3AYMP4Q) 
+[appropriate data](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/2-acetylamido-p-phenylene.xyz?token=AD3TMGB324GXBKAMLKQWNL3AYMP4Q) 
 in [`rc[:paths][:moieties]`](../../inputs) and load the replacement moiety:
 
 ```jldoctest replace_md
@@ -117,7 +117,7 @@ With all three file inputs loaded (parent crystal IRMOF-1 as `xtal`, search moie
 2-!-*p*-phenylene as`s_moty`, and replacement moiety 2-acetylamido-*p*-phenylene as
 `r_moty`) and a substructure search `search` performed, replacements can be made.
 
-`MOFun.jl` has several replacement modes, one of which must be specified.
+`PoreMatMod.jl` has several replacement modes, one of which must be specified.
 
 ### Random orientation at each location
 

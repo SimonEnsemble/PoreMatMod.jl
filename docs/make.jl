@@ -1,18 +1,18 @@
-using Documenter, MOFun
+using Documenter, PoreMatMod
 
 makedocs(
-    root = joinpath(dirname(pathof(MOFun)), "..", "docs"),
-    modules = [MOFun],
-    sitename = "MOFun.jl",
+    root = joinpath(dirname(pathof(PoreMatMod)), "..", "docs"),
+    modules = [PoreMatMod],
+    sitename = "PoreMatMod.jl",
     clean = true,
     pages = [
-        "MOFun" => "index.md",
+        "PoreMatMod" => "index.md",
         "Getting Started" => "manual/start.md",
         "Loading Data" => "manual/inputs.md",
         "Substructure Search" => "manual/find.md",
         "Substructure Find/Replace" => "manual/replace.md",
         "Examples" => "manual/examples.md",
-        "MOFunGO" => "manual/mofungo.md",
+        "PoreMatModGO" => "manual/PoreMatModGO.md",
         "Collaborate" => "collab.md"
     ],
     format = Documenter.HTML(assets = ["assets/flux.css"])

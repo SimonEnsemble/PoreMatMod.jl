@@ -1,6 +1,6 @@
 ```@meta
 DocTestSetup = quote
-    using MOFun
+    using PoreMatMod
 end
 ```
 
@@ -17,9 +17,9 @@ and replace with a derivatized moiety.
 Example: *ortho* substitution with an acetylamido group at one quarter of the
 *p*-phenylene moieties in IRMOF-1.
 
-[search moiety](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/2-!-p-phenylene.xyz)
-[replacement moiety](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/2-acetylamido-p-phenylene.xyz)
-[parent structure](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1.cif)
+[search moiety](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/2-!-p-phenylene.xyz)
+[replacement moiety](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/2-acetylamido-p-phenylene.xyz)
+[parent structure](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/crystals/IRMOF-1.cif)
 
 ```jldoctest; output=false
 xtal = Crystal("IRMOF-1.cif")
@@ -52,9 +52,9 @@ moiety and a manually corrected copy as the replacement moiety.
 
 Example: Insert missing H atoms in IRMOF-1
 
-[search moiety](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/1,4-C-phenylene_noH.xyz)
-[replacement moiety](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/1,4-C-phenylene.xyz)
-[parent structure](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1_noH.cif)
+[search moiety](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/1,4-C-phenylene_noH.xyz)
+[replacement moiety](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/1,4-C-phenylene.xyz)
+[parent structure](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/crystals/IRMOF-1_noH.cif)
 
 ```jldoctest; output=false
 xtal = Crystal("IRMOF-1_noH.cif")
@@ -83,10 +83,10 @@ Bravais unit cell of a crystal.
 
 Note the use of the `(s_moty => r_moty) in xtal` syntactic sugar.
 
-[search moiety 1](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/disordered_ligand!.xyz)
-[search moiety 2](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/acetylene.xyz)
-[replacement moiety](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/4-pyridyl.xyz)
-[parent structure](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/EMEHUB_C2H2.cif)
+[search moiety 1](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/disordered_ligand!.xyz)
+[search moiety 2](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/acetylene.xyz)
+[replacement moiety](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/4-pyridyl.xyz)
+[parent structure](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/crystals/EMEHUB_C2H2.cif)
 
 ```jldoctest; output=false
 xtal = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
