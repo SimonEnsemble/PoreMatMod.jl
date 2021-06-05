@@ -6,7 +6,7 @@ body {
 
 nav.toc {
   padding-top: 0;
-  background: rgb(240, 240, 240);
+  background: lightsteelblue;
   line-height: 2em;
   cursor: default;
   user-select: none;
@@ -21,17 +21,17 @@ nav.toc > h1 {
   margin-top: 0;
   padding-top: 0.4em;
   padding-bottom: 0.5em;
-  border-bottom: 5px solid white;
+  border-bottom: 5px solid slategray;
   box-shadow: 0px -2px 5px rgb(60,60,60);
   margin-bottom: 0.5em;
-  background: rgb(60, 150, 60);
+  background: rgb(15, 110, 187);
 
   font-style: italic;
   font-weight: normal;
   font-size: 50pt;
   text-transform: lowercase;
   text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-  color: white;
+  color: grey;
 }
 
 /* Reduce ToC font size */
@@ -41,21 +41,21 @@ nav.toc > h1 {
 
 /* Fade out non-clickable ToC headers */
 nav.toc ul span.toctext {
-  color: rgb(180, 180, 180);
+  color: rgb(44, 123, 187);
 }
 
 nav.toc ul .toctext {
-  color: rgb(100, 100, 100);
+  color: rgb(108, 151, 185);
 }
 
 nav.toc ul a.toctext:hover {
   color: inherit;
-  background: rgb(220, 220, 220);
+  background: rgb(8, 5, 5);
   cursor: default;
 }
 
 nav.toc li.current > .toctext {
-  background: linear-gradient(90deg, rgb(245,245,245) 0%, white 90%);
+  background: linear-gradient(90deg, rgb(34, 4, 201) 0%, white 90%);
   font-weight: normal;
 }
 
@@ -72,14 +72,14 @@ article > p, article > ul {
 }
 
 /* Links */
-a, a:visited { color: rgb(0, 120, 0); }
-article p a { border-bottom: 1px solid rgb(200, 230, 200); }
-a:hover, a:visited:hover { color: rgb(0, 80, 0); }
+a, a:visited { color: rgb(18, 0, 120); }
+article p a { border-bottom: 1px solid rgb(55, 39, 148); }
+a:hover, a:visited:hover { color: rgb(142, 128, 223); }
 
 /* Article Links */
-article p a { border-bottom: 1px solid rgb(200, 230, 200); }
-article p a:hover, article a:visited:hover { color: rgb(0, 120, 0); }
-article p a:hover { border-bottom: 1px solid rgb(150, 200, 150); }
+article p a { border-bottom: 1px solid rgb(55, 39, 148); }
+article p a:hover, article a:visited:hover { color: rgb(142, 128, 223); }
+article p a:hover { border-bottom: 1px solid rgb(18, 0, 120); }
 
 /* Doctstrings */
 article section.docstring {
@@ -92,7 +92,7 @@ article section.docstring {
 /* Code */
 
 article pre, article p > code {
-  background: rgb(245, 250, 245);
+  background: rgb(178, 218, 243);
 }
 
 article pre {

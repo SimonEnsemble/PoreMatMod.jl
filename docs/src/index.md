@@ -36,9 +36,9 @@ active = substructure_replace(
     substructure_search(moiety("acetylene"), repaired, exact=true), 
     moiety(nothing), rand_all=true)
 # Add a functional group
-novel = (moiety("2-H!-4-pyridyl") => moiety("2-Cl-4-pyridyl")) ∈ active
+novel = (moiety("3-H!-4-pyridyl") => moiety("3-F-4-pyridyl")) ∈ active
 # Save the result
-write_cif(novel, "2-Cl-SIFSIX-1-Cu")
+write_cif(novel, "3,3'-F2-SIFSIX-2-Cu")
 # output
 ┌ Info: Crystal EMEHUB_C2H2.cif has I 4/m m m space group. I am converting it to P1 symmetry.
 └         To afrain from this, pass `convert_to_p1=false` to the `Crystal` constructor.
@@ -50,4 +50,4 @@ write_cif(novel, "2-Cl-SIFSIX-1-Cu")
 └ @ Xtals ~/.julia/dev/Xtals/src/bonds.jl:403
 ```
 
-![messy to novel](LINK)
+![messy to novel](assets/index.png)

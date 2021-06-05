@@ -11,8 +11,6 @@ and is linked to a more detailed Pluto notebook tutorial.
 
 ### Generate hypothetical structures
 
-![example 1](../../../assets/IRMOF1example.png)
-
 Create novel derivatives of a `Crystal`, search for one of its substructures,
 and replace with a derivatized moiety.
 
@@ -23,7 +21,7 @@ Example: *ortho* substitution with an acetylamido group at one quarter of the
 [replacement moiety](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/2-acetylamido-p-phenylene.xyz)
 [parent structure](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1.cif)
 
-```jldoctest
+```jldoctest; output=false
 xtal = Crystal("IRMOF-1.cif")
 infer_bonds!(xtal, true)
 s_moty = moiety("2-!-p-phenylene")
@@ -45,24 +43,24 @@ Bravais unit cell of a crystal.
 		'x, y, z'
 ```
 
-### Insert missing hydrogens
+![example 1](../../assets/IRMOF1example.png)
 
-![example 2](../../../assets/missingHexample.png)
+### Insert missing hydrogens
 
 To correct defects like missing atoms, use the affected substructure as the search
 moiety and a manually corrected copy as the replacement moiety.
 
 Example: Insert missing H atoms in IRMOF-1
 
-[search moiety](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/p-phenylene_noH.xyz)
-[replacement moiety](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/p-phenylene.xyz)
+[search moiety](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/1,4-C-phenylene_noH.xyz)
+[replacement moiety](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/1,4-C-phenylene.xyz)
 [parent structure](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1_noH.cif)
 
-```jldoctest
+```jldoctest; output=false
 xtal = Crystal("IRMOF-1_noH.cif")
 infer_bonds!(xtal, true)
-s_moty = moiety("p-phenylene_noH")
-r_moty = moiety("p-phenylene")
+s_moty = moiety("1,4-C-phenylene_noH")
+r_moty = moiety("1,4-C-phenylene")
 repaired_xtal = substructure_replace(s_moty ∈ xtal, r_moty, rand_all=true)
 # output
 Name: new_xtal
@@ -79,9 +77,9 @@ Bravais unit cell of a crystal.
 		'x, y, z'
 ```
 
-### Repair Disorder and Remove Adsorbates
+![example 2](../../assets/missingHexample.png)
 
-![example 3](../../../assets/landingpageexample.png)
+### Repair Disorder and Remove Adsorbates
 
 Note the use of the `(s_moty => r_moty) in xtal` syntactic sugar.
 
@@ -90,7 +88,7 @@ Note the use of the `(s_moty => r_moty) in xtal` syntactic sugar.
 [replacement moiety](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/4-pyridyl.xyz)
 [parent structure](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/EMEHUB_C2H2.cif)
 
-```jldoctest
+```jldoctest; output=false
 xtal = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
 infer_bonds!(xtal, true)
 repaired = (moiety("disordered_ligand!") => moiety("4-pyridyl")) ∈ xtal
@@ -119,3 +117,5 @@ Bravais unit cell of a crystal.
 	symmetry Operations:
 		'x, y, z'
 ```
+
+![example 3](../../assets/mof-fix.png)

@@ -51,7 +51,7 @@ moiety that is the core of the BDC linker.
 ## Loading Files
 
 Load the 
-[parent crystal](/https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1.cif?token=AD3TMGFZCE4WX3J4TDH2BSDAYMO2K) 
+[parent crystal](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/crystals/IRMOF-1.cif?token=AD3TMGFZCE4WX3J4TDH2BSDAYMO2K) 
 and build the bonding network:
 
 ```jldoctest
