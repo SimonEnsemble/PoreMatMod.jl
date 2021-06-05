@@ -1,6 +1,6 @@
 ```@meta
 DocTestSetup = quote
-    using MOFun
+    using PoreMatMod
     xtal = Crystal("IRMOF-1.cif")
     infer_bonds!(xtal, true)
     s_moty = moiety("p-phenylene")
@@ -9,14 +9,14 @@ end
 
 # Substructure Searches
 
-Having seen how to load inputs to `MOFun`, we can take the next step towards
+Having seen how to load inputs to `PoreMatMod`, we can take the next step towards
 accomplishing our example task of functionalizing IRMOF-1. In order to identify
 the *p*-phenylene moiety in IRMOF-1, a variation of Ullmann's algorithm is applied.
 
 ## Ullmann's Algorithm
 
 [Ullmann's algorithm for subgraph isomorphism](https://doi.org/10.1145/321921.321925)
-is the basis of the substructure search in `MOFun`. The algorithm is a depth-first
+is the basis of the substructure search in `PoreMatMod`. The algorithm is a depth-first
 search of the permutation tree for all possible one-to-one correspondences between the
 nodes of one graph (the search graph) and any subset of nodes of another graph (the
 parent graph). The search tree is greatly reduced in size by imposing several constraints
@@ -24,14 +24,14 @@ on possible node-to-node correspondences. At each branch of the search tree, add
 pruning further reduces the search space by comparing the immediate neighborhoods of 
 potentially-corresponding nodes.
 
-`MOFun` augments Ullmann's algorithm to include the requirement that potentially-
+`PoreMatMod` augments Ullmann's algorithm to include the requirement that potentially-
 corresponding nodes be of the same atomic species, as required by the chemical
 structure application. Additionally, the number of initial potential matches is
 reduced by further examination of each atom's local bonding neighborhood.  Bonds
 across the unit cell boundaries of periodic materials are handled innately by
 the graph representation of structures in `Xtals`.
 
-## Searching with `MOFun`
+## Searching with `PoreMatMod`
 
 With a parent crystal and search moiety loaded, execute a search:
 
@@ -141,7 +141,7 @@ applications this may be advantageous, but in most cases it is advisable to sear
 using the most minimal structure which uniquely matches the targeted parent moiety.
 
 An example is searching for 
-[*p*-terephthalate](https://raw.githubusercontent.com/SimonEnsemble/MOFun.jl/master/test/data/moieties/p-terephthalate.xyz?token=AD3TMGDLHHV5ETQQPDKDVCLAYMPX6)
+[*p*-terephthalate](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/p-terephthalate.xyz?token=AD3TMGDLHHV5ETQQPDKDVCLAYMPX6)
 in IRMOF-1 instead of the more minimal *p*-phenylene.  Thanks to the two
 independently rotatable carboxyl groups, the total number of isomorphisms is
 multiplied by a factor of 4.  The number of locations at which the isomorphisms

@@ -8,13 +8,13 @@ using Test, Documenter, FIGlet
 
 FIGlet.render("PoreMatMod.jl", FIGlet.availablefonts()[35])
 
-using MOFun
+using PoreMatMod
 
 for testfile ∈ testfiles
     @info "Running test/$testfile"
     @time include(testfile)
 end
 
-@time doctest(MOFun)
+@time doctest(PoreMatMod)
 
 @info "Done."

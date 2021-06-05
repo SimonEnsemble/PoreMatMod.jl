@@ -1,6 +1,6 @@
 module Moiety_Test
 
-using Test, MOFun
+using Test, PoreMatMod
 
 # function for a specific test case. NOT a generally useful function!
 # frag and moty inputs are expected to be permuted sets of atoms with unique species

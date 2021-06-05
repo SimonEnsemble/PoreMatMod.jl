@@ -1,6 +1,6 @@
-module MOFun_Test
+module PoreMatMod_Test
 
-using Test, LightGraphs, MOFun
+using Test, LightGraphs, PoreMatMod
 
 @testset "substructure_search" begin
 irmof1 = Crystal("IRMOF-1.cif")

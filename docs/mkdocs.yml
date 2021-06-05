@@ -1,6 +1,6 @@
 site_name:        ""
 repo_url:         https://github.com/SimonEnsemble/MOFfun.jl
-site_description: Documentation for the julia package MOFun.jl
+site_description: Documentation for the julia package PoreMatMod.jl
 site_author:      eahenle
 
 theme: windmill
@@ -27,11 +27,11 @@ extra:
 docs_dir: 'build'
 
 pages:
-  - MOfun: index.md
+  - PoreMatMod: index.md
   - Getting Started: manual/start.md
   - Loading Data: manual/inputs.md
   - Substructure Search: manual/find.md
   - Sustructure Find/Replace: manual/replace.md
   - Examples: manual/examples.md
-  - MOFunGO: manual/mofungo.md
+  - PoreMatModGO: manual/PoreMatModGO.md
   - Collaborate: collab.md
