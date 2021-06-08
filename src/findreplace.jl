@@ -376,7 +376,7 @@ function _substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal
     # calculate bond attributes
     for bond ∈ edges(new_xtal.bonds)
         dist = distance(new_xtal.atoms, new_xtal.box, src(bond), dst(bond), true)
-        cross_pb = dist == distance(new_xtal.atoms, new_xtal.box, src(bond), dst(bond), false)
+        cross_pb = dist != distance(new_xtal.atoms, new_xtal.box, src(bond), dst(bond), false)
         set_props!(new_xtal.bonds, bond, Dict(:distance => dist, :cross_boundary => cross_pb))
     end
     return new_xtal

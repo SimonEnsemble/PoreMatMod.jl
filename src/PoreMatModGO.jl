@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.14.3
+# v0.14.7
 
 using Markdown
 using InteractiveUtils
@@ -13,21 +13,24 @@ macro bind(def, element)
     end
 end
 
+# ╔═╡ e45926b6-1437-49c7-a073-ac5bd7bfaff9
+# hacks for pre-registration dev work
+begin
+	cd("..")
+	import Pkg
+	Pkg.activate(".")
+end
+
 # ╔═╡ 6c1969e0-02f5-11eb-3fa2-09931a63b1ac
 begin
-    push!(LOAD_PATH, pwd())
-    using PoreMatMod, PlutoUI, Bio3DView, Xtals
-    HOME = joinpath(homedir(), ".PoreMatModgo")
-    PoreMatMod.set_path_to_data(joinpath(HOME, "data"), relpaths=true)
-	set_path_to_moieties(joinpath(HOME, "temp"))
-    dirs = ["", "temp", "data"]
-    for dir in dirs
-        dir = joinpath(HOME, dir)
-        if !isdir(dir)
-            mkdir(dir)
-        end
-    end
-    cd(HOME)
+    using PoreMatMod, PlutoUI, Bio3DView
+    HOME = joinpath(homedir(), ".PoreMatModGO")
+	rc[:paths][:crystals] = HOME
+	rc[:paths][:moieties] = HOME
+	if !isdir(HOME)
+		mkdir(HOME)
+	end
+	cd(HOME)
 md"""
 # 💠 PoreMatModGO 🚀
 
@@ -68,20 +71,20 @@ begin
     isloaded = Dict([:r_moty => false, :s_moty => false, :parent => false])
     # r_moty loader
     if replace_moiety["data"] != UInt8[]
-        write("$HOME/temp/r_moty.xyz", replace_moiety["data"])
+        write("r_moty.xyz", replace_moiety["data"])
         r_moty = moiety("r_moty")
         isloaded[:r_moty] = true
     end
     # s_moty loader
     if search_moiety["data"] != UInt8[]
-        write("$HOME/temp/s_moty.xyz", search_moiety["data"])
+        write("s_moty.xyz", search_moiety["data"])
         s_moty = moiety("s_moty")
         isloaded[:s_moty] = true
     end
     # xtal loader
     if parent_crystal["data"] != UInt8[]
-        write("$HOME/temp/parent.cif", parent_crystal["data"])
-        xtal = Crystal("$HOME/temp/parent.cif", check_overlap=false)
+        write("parent.cif", parent_crystal["data"])
+        xtal = Crystal("parent.cif", check_overlap=false)
         Xtals.strip_numbers_from_atom_labels!(xtal)
         infer_bonds!(xtal, true)
         isloaded[:parent] = true
@@ -107,89 +110,80 @@ end
 
 # ╔═╡ 3997c4d0-0f75-11eb-2976-c161879b8d0c
 # options populated w/ conditional logic based on mode selection
-begin
-    local output = nothing
-    if all(values(isloaded))
-        x = ["$(x)" for x in 1:nb_locations(search)]
-        if replace_mode == "random replacement at each location"
-            output = nothing
-        elseif replace_mode == "random replacement at n random locations"
-            output = md"Number of locations $(@bind nb_loc Slider(1:nb_locations(search)))"
-        elseif replace_mode == "random replacement at specific locations"
-            output = md"Locations $(@bind loc MultiSelect(x))"
-        elseif replace_mode == "specific replacements"
-            output = md"""
-        Locations $(@bind loc MultiSelect(x))
+if all(values(isloaded))
+	local output = nothing
+	x = ["$(x)" for x in 1:nb_locations(search)]
+	if replace_mode == "random replacement at each location"
+		output = nothing
+	elseif replace_mode == "random replacement at n random locations"
+		output = md"Number of locations $(@bind nb_loc Slider(1:nb_locations(search)))"
+	elseif replace_mode == "random replacement at specific locations"
+		output = md"Locations $(@bind loc MultiSelect(x))"
+	elseif replace_mode == "specific replacements"
+		output = md"""
+	Locations $(@bind loc MultiSelect(x))
 
-        Orientations $(@bind ori TextField())
-        """
-        else
-            output = nothing
-        end
-        output
-    end
+	Orientations $(@bind ori TextField())
+	"""
+	end
+	output
 end
 
 # ╔═╡ 69edca20-0f94-11eb-13ba-334438ca2406
-begin
-    new_xtal_flag = false
-    if all(values(isloaded))
-        new_xtal_flag = true
-        if replace_mode == "random replacement at each location"
-            new_xtal = replace(search, r_moty, rand_all=true)
-        elseif replace_mode == "random replacement at n random locations" && nb_loc > 0
-            new_xtal = replace(search, r_moty, nb_loc=nb_loc)
-        elseif replace_mode == "random replacement at specific locations" && loc ≠ []
-            new_xtal = replace(search, r_moty, loc=[parse(Int, x) for x in loc])
-        elseif replace_mode == "specific replacements"
-            if loc ≠ [] && ori ≠ "" && length(loc) == length(split(ori, ","))
-                new_xtal = replace(search, r_moty,
-                    loc=[parse(Int, x) for x in loc],
-                    ori=[parse(Int, x) for x in split(ori, ",")])
-            else
-                new_xtal_flag = false
-            end
-        else
-            new_xtal_flag = false
-        end
-        if new_xtal_flag
-            with_terminal() do
-                if replace_mode == "random replacement at each location"
-                    @info replace_mode new_xtal
-                elseif replace_mode == "random replacement at n random locations"
-                    @info replace_mode nb_loc new_xtal
-                elseif replace_mode == "random replacement at specific locations"
-                    @info replace_mode loc new_xtal
-                elseif replace_mode == "specific replacements"
-                    @info replace_mode loc ori new_xtal
-                end
-            end
-        end
-    end
+if all(values(isloaded))
+	new_xtal_flag = true
+	if replace_mode == "random replacement at each location"
+		new_xtal = substructure_replace(search, r_moty, rand_all=true)
+	elseif replace_mode == "random replacement at n random locations" && nb_loc > 0
+		new_xtal = substructure_replace(search, r_moty, nb_loc=nb_loc)
+	elseif replace_mode == "random replacement at specific locations" && loc ≠ []
+		new_xtal = substructure_replace(search, r_moty, loc=[parse(Int, x) for x in loc])
+	elseif replace_mode == "specific replacements"
+		if loc ≠ [] && ori ≠ "" && length(loc) == length(split(ori, ","))
+			new_xtal = substructure_replace(search, r_moty,
+				loc=[parse(Int, x) for x in loc],
+				ori=[parse(Int, x) for x in split(ori, ",")])
+		else
+			new_xtal_flag = false
+		end
+	else
+		new_xtal_flag = false
+	end
+	if new_xtal_flag
+		with_terminal() do
+			if replace_mode == "random replacement at each location"
+				@info replace_mode new_xtal
+			elseif replace_mode == "random replacement at n random locations"
+				@info replace_mode nb_loc new_xtal
+			elseif replace_mode == "random replacement at specific locations"
+				@info replace_mode loc new_xtal
+			elseif replace_mode == "specific replacements"
+				@info replace_mode loc ori new_xtal
+			end
+		end
+	end
 end
 
 # ╔═╡ 5918f770-103d-11eb-0537-81036bd3e675
-begin
-    if new_xtal_flag
-        write_cif(new_xtal, "$HOME/temp/cif.cif")
-        Xtals.write_xyz(new_xtal, "$HOME/temp/xyz.xyz")
-        write_vtk(new_xtal.box, "$HOME/temp/box.vtk")
-        write_bond_information(new_xtal, "$HOME/temp/bonds.vtk")
-		no_pb = deepcopy(new_xtal)
-		Xtals.drop_cross_pb_bonds!(no_pb)
-		Xtals.write_mol2(new_xtal, filename="$HOME/temp/mol2.mol2")
-		Xtals.write_mol2(no_pb, filename="$HOME/temp/view.mol2")
-        viewfile("temp/view.mol2", "mol2", vtkcell="temp/box.vtk", axes=Axes(4, 0.25))
-    end
+if all(values(isloaded)) && new_xtal_flag
+	write_cif(new_xtal, "crystal.cif")
+	write_xyz(new_xtal, "atoms.xyz")
+	write_vtk(new_xtal.box, "unit_cell.vtk")
+	write_bond_information(new_xtal, "bonds.vtk")
+	no_pb = deepcopy(new_xtal)
+	drop_cross_pb_bonds!(no_pb)
+	write_mol2(new_xtal, filename="crystal.mol2")
+	write_mol2(no_pb, filename="view.mol2")
+	viewfile("view.mol2", "mol2", vtkcell="unit_cell.vtk", axes=Axes(4, 0.25))
 end
 
 # ╔═╡ 31832e30-1054-11eb-24ed-219fd3e236a1
-if new_xtal_flag
-    download_cif = DownloadButton(read("temp/cif.cif"), "crystal.cif")
-    download_box = DownloadButton(read("temp/box.vtk"), "unit_cell.vtk")
-    download_xyz = DownloadButton(read("temp/xyz.xyz"), "atoms.xyz")
-    download_bonds = DownloadButton(read("temp/bonds.vtk"), "bonds.vtk")
-	download_mol2 = DownloadButton(read("temp/mol2.mol2"), "crystal.mol2")
+if all(values(isloaded)) && new_xtal_flag
+    download_cif = DownloadButton(read("crystal.cif"), "crystal.cif")
+    download_box = DownloadButton(read("unit_cell.vtk"), "unit_cell.vtk")
+    download_xyz = DownloadButton(read("atoms.xyz"), "atoms.xyz")
+    download_bonds = DownloadButton(read("bonds.vtk"), "bonds.vtk")
+	download_mol2 = DownloadButton(read("crystal.mol2"), "crystal.mol2")
 md"""
 ### Output Files
 Complete Crystal $download_mol2 $download_cif
@@ -199,11 +193,12 @@ Components $download_xyz $download_bonds $download_box
 end
 
 # ╔═╡ Cell order:
+# ╠═e45926b6-1437-49c7-a073-ac5bd7bfaff9
 # ╟─6c1969e0-02f5-11eb-3fa2-09931a63b1ac
 # ╟─50269ffe-02ef-11eb-0614-f11975d991fe
 # ╟─33b1fb50-0f73-11eb-2ab2-9d2cb6c5a533
 # ╟─415e9210-0f71-11eb-15c8-e7484b5be309
-# ╟─3997c4d0-0f75-11eb-2976-c161879b8d0c
+# ╠═3997c4d0-0f75-11eb-2976-c161879b8d0c
 # ╟─69edca20-0f94-11eb-13ba-334438ca2406
 # ╟─5918f770-103d-11eb-0537-81036bd3e675
 # ╟─31832e30-1054-11eb-24ed-219fd3e236a1
