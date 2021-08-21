@@ -5,7 +5,7 @@
 #     species(α ∈ subgraph) == species(β ∈ graph)
 function compatibility_matrix(subgraph::MetaGraph, subgraph_species::Array{Symbol, 1},
                               graph::MetaGraph, graph_species::Array{Symbol, 1},
-                              exact::Bool)::Array{Bool, 2}
+                              disconnected_component::Bool)::Array{Bool, 2}
     # allocate M. rows correspond to subgraph nodes, columns to graph nodes.
     M₀ = zeros(Bool, nv(subgraph), nv(graph))
 
@@ -19,7 +19,7 @@ function compatibility_matrix(subgraph::MetaGraph, subgraph_species::Array{Symbo
     path8_S = path4_S^2
     path8_G = path4_G^2
 
-    if !exact # search for substructures
+    if !disconnected_component # search for substructures
         @inbounds for α ∈ 1:nv(subgraph) # Loop over rows (subgraph nodes)
             @inbounds for β ∈ 1:nv(graph) # Loop over columns (graph nodes)
                 # Record Bool for each (i,j): true if atom species match, graph node degree is sufficient, and 4 and 8 length self-paths are sufficient.
@@ -173,7 +173,7 @@ end
 returns an array of arrays, each containing one unique subgraph isomorphism
 """
 function find_subgraph_isomorphisms(subgraph::MetaGraph, subgraph_species::Array{Symbol, 1},
-                                    graph::MetaGraph, graph_species::Array{Symbol, 1}, exact::Bool=false)
+                                    graph::MetaGraph, graph_species::Array{Symbol, 1}, disconnected_component::Bool=false)
     # store list of solutions here
     solns = Array{Array{Int, 1}, 1}()
     # encodes an isomorhism. maps α ∈ subgraph --> β ∈ graph
@@ -182,7 +182,7 @@ function find_subgraph_isomorphisms(subgraph::MetaGraph, subgraph_species::Array
     #   entry β true iff β mapped
     β_mapped = [false for _ = 1:nv(graph)]
     # initial compatability matrix based on degrees of nodes and species
-    M₀ = compatibility_matrix(subgraph, subgraph_species, graph, graph_species, exact)
+    M₀ = compatibility_matrix(subgraph, subgraph_species, graph, graph_species, disconnected_component)
     depth_first_search!(1, subgraph, graph, M₀, soln, β_mapped, solns)
     return solns
 end
