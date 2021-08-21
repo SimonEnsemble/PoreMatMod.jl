@@ -18,7 +18,6 @@ end
 Returns R group indices (whichever atoms have species symbols appended by '!')
 """
 function r_group_indices(xtal::Crystal)::Array{Int}
-    @debug "Filtering R group" rc[:r_tag]
     R = []
     for (idx, label) in enumerate(xtal.atoms.species) # loop over crystal atoms to find tags
         # if String representation of label Symbol ends in !, atom is in R
@@ -35,7 +34,6 @@ end
 Un-tags R group atoms (removes '!' suffix)
 """
 function untag_r_group!(xtal::Crystal)
-    @debug "Un-tagging R group in $(xtal.name)" rc[:r_tag]
     r = r_group_indices(xtal) # get indices of R group
     for i ∈ r
         xtal.atoms.species[i] = Symbol(split("$(xtal.atoms.species[i])", rc[:r_tag])[1])
@@ -70,7 +68,6 @@ Bonds are inferred within the local unit cell only (no bonds across periodic bou
 - `name::String` the moiety name (input file name without the .xyz extension).
 """
 function moiety(name::Union{String,Nothing})::Crystal
-    @debug "Getting moiety: $name"
     # generate Crystal from moiety XYZ coords
     box = unit_cube()
     if !isnothing(name)

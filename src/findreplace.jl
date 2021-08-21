@@ -428,3 +428,5 @@ function substructure_replace(search::Search, r_moty::Crystal; rand_all::Bool=fa
     return _substructure_replace(search.query.s_moty, r_moty, search.query.parent,
         search, configs, name)
 end
+
+substructure_replace(search::Search, r_moty::Nothing; kwargs...) = substructure_replace(search, moiety(nothing); kwargs...)

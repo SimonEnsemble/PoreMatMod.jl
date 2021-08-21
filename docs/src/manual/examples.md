@@ -97,13 +97,13 @@ active = substructure_replace(
     moiety(nothing), rand_all=true)
 # output
 ┌ Info: Crystal EMEHUB_C2H2.cif has I 4/m m m space group. I am converting it to P1 symmetry.
-└         To afrain from this, pass `convert_to_p1=false` to the `Crystal` constructor.
+└         To prevent this, pass `convert_to_p1=false` to the `Crystal` constructor.
 ┌ Warning: carbon atom 1 in EMEHUB_C2H2.cif is bonded to more than four atoms!
-└ @ Xtals ~/.julia/dev/Xtals/src/bonds.jl:403
+└ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
 ┌ Warning: carbon atom 6 in disordered_ligand! is bonded to more than four atoms!
-└ @ Xtals ~/.julia/dev/Xtals/src/bonds.jl:403
+└ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
 ┌ Warning: carbon atom 1 in disordered_ligand! is bonded to more than four atoms!
-└ @ Xtals ~/.julia/dev/Xtals/src/bonds.jl:403
+└ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
 Name: new_xtal
 Bravais unit cell of a crystal.
 	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.

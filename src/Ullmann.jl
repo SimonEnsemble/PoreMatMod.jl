@@ -6,7 +6,6 @@
 function compatibility_matrix(subgraph::MetaGraph, subgraph_species::Array{Symbol, 1},
                               graph::MetaGraph, graph_species::Array{Symbol, 1},
                               exact::Bool)::Array{Bool, 2}
-    @debug "Finding M₀..."
     # allocate M. rows correspond to subgraph nodes, columns to graph nodes.
     M₀ = zeros(Bool, nv(subgraph), nv(graph))
 
@@ -81,7 +80,6 @@ end
 #   if any subgraph node α has no possible correspondence w/ a node β in the graph, no point in continuing
 #   return true iff M has no empty candidate lists for subgraph nodes.
 function possibly_contains_isomorphism(M::Array{Bool, 2})::Bool
-    @debug "Validating M: $(M)"
     @inbounds for α ∈ 1:size(M, 1) # loop over subgraph nodes
         if ! has_candidates(M, α)
             return false # subgraph node α cannot be assigned!
