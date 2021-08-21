@@ -3,7 +3,7 @@ DocTestSetup = quote
     using PoreMatMod
     xtal = Crystal("IRMOF-1.cif")
     infer_bonds!(xtal, true)
-    s_moty = moiety("p-phenylene")
+    s_moty = moiety("p-phenylene.xyz")
 end
 ```
 
@@ -38,7 +38,7 @@ With a parent crystal and search moiety loaded, execute a search:
 ```jldoctest
 search = substructure_search(s_moty, xtal)
 # output
-p-phenylene ∈ IRMOF-1.cif
+p-phenylene.xyz ∈ IRMOF-1.cif
 96 hits in 24 locations.
 ```
 
@@ -47,7 +47,7 @@ The `∈` (`in`) infix operator will also perform the search:
 ```jldoctest find
 search = s_moty ∈ xtal
 # output
-p-phenylene ∈ IRMOF-1.cif
+p-phenylene.xyz ∈ IRMOF-1.cif
 96 hits in 24 locations.
 ```
 
@@ -58,7 +58,7 @@ for the search and parent structures, and its `results` attribute is a
 ```jldoctest find
 search.query
 # output
-p-phenylene ∈ IRMOF-1.cif
+p-phenylene.xyz ∈ IRMOF-1.cif
 ```
 ```jldoctest find
 typeof(search.query.parent)
@@ -68,7 +68,7 @@ Crystal
 ```jldoctest find
 search.query.s_moty.name
 # output
-"p-phenylene"
+"p-phenylene.xyz"
 ```
 ```jldoctest find
 search.results
@@ -148,7 +148,7 @@ multiplied by a factor of 4.  The number of locations at which the isomorphisms
 are found is unchanged.
 
 ```jldoctest find
-s_moty = moiety("p-terephthalate")
+s_moty = moiety("p-terephthalate.xyz")
 search = s_moty ∈ xtal
 nb_isomorphisms(search) 
 # output

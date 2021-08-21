@@ -2,3 +2,4 @@ docs/build/*
 Manifest.toml
 docs/*.cif
 data/
+*.jld2

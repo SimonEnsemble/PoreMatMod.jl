@@ -66,18 +66,18 @@ H!         1.06706        0.70670        1.48683
 Load the new file in like before.
 
 ```jldoctest replace_md; output=false
-s_moty = moiety("2-!-p-phenylene")
+s_moty = moiety("2-!-p-phenylene.xyz")
 search = s_moty in xtal
 # output
-2-!-p-phenylene ∈ IRMOF-1.cif
+2-!-p-phenylene.xyz ∈ IRMOF-1.cif
 96 hits in 24 locations.
 ```
 
 The `!` tag does not affect the outcome of `substructure_search`.
 
 ```jldoctest
-s1 = substructure_search(moiety("p-phenylene"), xtal) 
-s2 = substructure_search(moiety("2-!-p-phenylene"), xtal)
+s1 = substructure_search(moiety("p-phenylene.xyz"), xtal) 
+s2 = substructure_search(moiety("2-!-p-phenylene.xyz"), xtal)
 
 nb_isomorphisms(s1) == nb_isomorphisms(s2) &&
 nb_locations(s1) == nb_locations(s2) &&
@@ -95,9 +95,9 @@ To replace *p*-phenylene moieties with 2-acetylamido-*p*-phenylene moieties, pro
 in [`rc[:paths][:moieties]`](../../inputs) and load the replacement moiety:
 
 ```jldoctest replace_md
-r_moty = moiety("2-acetylamido-p-phenylene")
+r_moty = moiety("2-acetylamido-p-phenylene.xyz")
 # output
-Name: 2-acetylamido-p-phenylene
+Name: 2-acetylamido-p-phenylene.xyz
 Bravais unit cell of a crystal.
 	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
 	Unit cell dimensions a = 1.000000 Å. b = 1.000000 Å, c = 1.000000 Å

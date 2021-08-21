@@ -30,15 +30,15 @@ using PoreMatMod
 xtal = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
 infer_bonds!(xtal, true)
 # Repair the disordered linkers
-repaired = (moiety("disordered_ligand!") => moiety("4-pyridyl")) ∈ xtal
+repaired = (moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz")) ∈ xtal
 # Remove the guest molecules
 active = substructure_replace(
     substructure_search(moiety("acetylene"), repaired, exact=true), 
     nothing, rand_all=true)
 # Add a functional group
-novel = (moiety("3-H!-4-pyridyl") => moiety("3-F-4-pyridyl")) ∈ active
+novel = (moiety("3-H!-4-pyridyl.xyz") => moiety("3-F-4-pyridyl.xyz")) ∈ active
 # Save the result
-write_cif(novel, "3,3'-F2-SIFSIX-2-Cu")
+write_cif(novel, "3,3'-F2-SIFSIX-2-Cu.cif")
 # output
 ┌ Info: Crystal EMEHUB_C2H2.cif has I 4/m m m space group. I am converting it to P1 symmetry.
 └         To prevent this, pass `convert_to_p1=false` to the `Crystal` constructor.

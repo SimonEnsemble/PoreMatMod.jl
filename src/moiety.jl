@@ -71,7 +71,7 @@ function moiety(name::Union{String,Nothing})::Crystal
     # generate Crystal from moiety XYZ coords
     box = unit_cube()
     if !isnothing(name)
-        fx = Frac(read_xyz("$(rc[:paths][:moieties])/$name.xyz"), box)
+        fx = Frac(read_xyz("$(rc[:paths][:moieties])/$name"), box)
     else
         name = "nothing"
         fx = Atoms{Frac}(0)
