@@ -100,9 +100,9 @@ active = substructure_replace(
 └         To prevent this, pass `convert_to_p1=false` to the `Crystal` constructor.
 ┌ Warning: carbon atom 1 in EMEHUB_C2H2.cif is bonded to more than four atoms!
 └ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
-┌ Warning: carbon atom 6 in disordered_ligand!.xyz is bonded to more than four atoms!
+┌ Warning: carbon atom 6 in disordered_ligand! is bonded to more than four atoms!
 └ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
-┌ Warning: carbon atom 1 in disordered_ligand!.xyz is bonded to more than four atoms!
+┌ Warning: carbon atom 1 in disordered_ligand! is bonded to more than four atoms!
 └ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
 Name: new_xtal
 Bravais unit cell of a crystal.
