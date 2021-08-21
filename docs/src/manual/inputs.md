@@ -69,9 +69,9 @@ Load the
 :
 
 ```jldoctest
-s_moty = moiety("p-phenylene")
+s_moty = moiety("p-phenylene.xyz")
 # output
-Name: p-phenylene
+Name: p-phenylene.xyz
 Bravais unit cell of a crystal.
 	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
 	Unit cell dimensions a = 1.000000 Å. b = 1.000000 Å, c = 1.000000 Å

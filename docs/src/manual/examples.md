@@ -24,8 +24,8 @@ Example: *ortho* substitution with an acetylamido group at one quarter of the
 ```jldoctest; output=false
 xtal = Crystal("IRMOF-1.cif")
 infer_bonds!(xtal, true)
-s_moty = moiety("2-!-p-phenylene")
-r_moty = moiety("2-acetylamido-p-phenylene")
+s_moty = moiety("2-!-p-phenylene.xyz")
+r_moty = moiety("2-acetylamido-p-phenylene.xyz")
 search = s_moty ∈ xtal
 new_xtal = substructure_replace(search, r_moty, nb_loc=Int(nb_locations(search)/4))
 # output
@@ -59,8 +59,8 @@ Example: Insert missing H atoms in IRMOF-1
 ```jldoctest; output=false
 xtal = Crystal("IRMOF-1_noH.cif")
 infer_bonds!(xtal, true)
-s_moty = moiety("1,4-C-phenylene_noH")
-r_moty = moiety("1,4-C-phenylene")
+s_moty = moiety("1,4-C-phenylene_noH.xyz")
+r_moty = moiety("1,4-C-phenylene.xyz")
 repaired_xtal = substructure_replace(s_moty ∈ xtal, r_moty, rand_all=true)
 # output
 Name: new_xtal
@@ -91,19 +91,19 @@ Note the use of the `(s_moty => r_moty) in xtal` syntactic sugar.
 ```jldoctest; output=false
 xtal = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
 infer_bonds!(xtal, true)
-repaired = (moiety("disordered_ligand!") => moiety("4-pyridyl")) ∈ xtal
+repaired = (moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz")) ∈ xtal
 active = substructure_replace(
-    substructure_search(moiety("acetylene"), repaired, exact=true), 
+    substructure_search(moiety("acetylene.xyz"), repaired, exact=true), 
     moiety(nothing), rand_all=true)
 # output
 ┌ Info: Crystal EMEHUB_C2H2.cif has I 4/m m m space group. I am converting it to P1 symmetry.
-└         To afrain from this, pass `convert_to_p1=false` to the `Crystal` constructor.
+└         To prevent this, pass `convert_to_p1=false` to the `Crystal` constructor.
 ┌ Warning: carbon atom 1 in EMEHUB_C2H2.cif is bonded to more than four atoms!
-└ @ Xtals ~/.julia/dev/Xtals/src/bonds.jl:403
-┌ Warning: carbon atom 6 in disordered_ligand! is bonded to more than four atoms!
-└ @ Xtals ~/.julia/dev/Xtals/src/bonds.jl:403
-┌ Warning: carbon atom 1 in disordered_ligand! is bonded to more than four atoms!
-└ @ Xtals ~/.julia/dev/Xtals/src/bonds.jl:403
+└ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
+┌ Warning: carbon atom 6 in disordered_ligand!.xyz is bonded to more than four atoms!
+└ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
+┌ Warning: carbon atom 1 in disordered_ligand!.xyz is bonded to more than four atoms!
+└ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
 Name: new_xtal
 Bravais unit cell of a crystal.
 	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
