@@ -33,7 +33,7 @@ infer_bonds!(xtal, true)
 repaired = (moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz")) ∈ xtal
 # Remove the guest molecules
 active = substructure_replace(
-    substructure_search(moiety("acetylene"), repaired, exact=true), 
+    substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true), 
     nothing, rand_all=true)
 # Add a functional group
 novel = (moiety("3-H!-4-pyridyl.xyz") => moiety("3-F-4-pyridyl.xyz")) ∈ active
@@ -44,9 +44,9 @@ write_cif(novel, "3,3'-F2-SIFSIX-2-Cu.cif")
 └         To prevent this, pass `convert_to_p1=false` to the `Crystal` constructor.
 ┌ Warning: carbon atom 1 in EMEHUB_C2H2.cif is bonded to more than four atoms!
 └ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
-┌ Warning: carbon atom 6 in disordered_ligand! is bonded to more than four atoms!
+┌ Warning: carbon atom 6 in disordered_ligand!.xyz is bonded to more than four atoms!
 └ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
-┌ Warning: carbon atom 1 in disordered_ligand! is bonded to more than four atoms!
+┌ Warning: carbon atom 1 in disordered_ligand!.xyz is bonded to more than four atoms!
 └ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
 ```
 

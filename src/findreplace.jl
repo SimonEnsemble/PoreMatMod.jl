@@ -305,7 +305,7 @@ end
 
 ## Search function (exposed)
 @doc raw"""
-    substructure_search(s_moty, xtal; exact=false)
+    substructure_search(s_moty, xtal; disconnected_component=false)
 
 Searches for a substructure within a `Crystal` and returns a `Search` struct
 containing all identified subgraph isomorphisms.  Matches are made on the basis
@@ -316,14 +316,14 @@ designating atoms to replace with other moieties.
 # Arguments
 - `s_moty::Crystal` the search moiety
 - `xtal::Crystal` the parent structure
-- `exact::Bool=false` if true, disables substructure searching and performs only exact matching
+- `disconnected_component::Bool=false` if true, disables substructure searching and performs only exact matching
 """
-function substructure_search(s_moty::Crystal, xtal::Crystal; exact::Bool=false)::Search
+function substructure_search(s_moty::Crystal, xtal::Crystal; disconnected_component::Bool=false)::Search
     # Make a copy w/o R tags for searching
     moty = deepcopy(s_moty)
     untag_r_group!(moty)
     # Get array of configuration arrays
-    configs = find_subgraph_isomorphisms(moty.bonds, moty.atoms.species, xtal.bonds, xtal.atoms.species, exact)
+    configs = find_subgraph_isomorphisms(moty.bonds, moty.atoms.species, xtal.bonds, xtal.atoms.species, disconnected_component)
     df = DataFrame(p_subset=[sort(c) for c in configs], isomorphism=configs)
     locs = Int[]
     isoms = Array{Int}[]

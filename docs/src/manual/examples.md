@@ -93,16 +93,16 @@ xtal = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
 infer_bonds!(xtal, true)
 repaired = (moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz")) ∈ xtal
 active = substructure_replace(
-    substructure_search(moiety("acetylene.xyz"), repaired, exact=true), 
+    substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true), 
     moiety(nothing), rand_all=true)
 # output
 ┌ Info: Crystal EMEHUB_C2H2.cif has I 4/m m m space group. I am converting it to P1 symmetry.
 └         To prevent this, pass `convert_to_p1=false` to the `Crystal` constructor.
 ┌ Warning: carbon atom 1 in EMEHUB_C2H2.cif is bonded to more than four atoms!
 └ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
-┌ Warning: carbon atom 6 in disordered_ligand! is bonded to more than four atoms!
+┌ Warning: carbon atom 6 in disordered_ligand!.xyz is bonded to more than four atoms!
 └ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
-┌ Warning: carbon atom 1 in disordered_ligand! is bonded to more than four atoms!
+┌ Warning: carbon atom 1 in disordered_ligand!.xyz is bonded to more than four atoms!
 └ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
 Name: new_xtal
 Bravais unit cell of a crystal.
