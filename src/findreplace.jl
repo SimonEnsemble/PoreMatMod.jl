@@ -94,21 +94,16 @@ geometric_center(xtal::Crystal)::Array{Float64} = geometric_center(xtal.atoms)
 
 # extension of infix `in` operator for expressive searching
 # this allows all of the following:
-#    s ∈ g                    →    find the moiety in the crystal
-#    [s1, s2] .∈ [g]            →    find each moiety in a crystal
-#    s .∈ [g1, g2]            →    find the moiety in each crystal
+#    s ∈ g                   →    find the moiety in the crystal
+#    [s1, s2] .∈ [g]         →    find each moiety in a crystal
+#    s .∈ [g1, g2]           →    find the moiety in each crystal
 #    [s1, s2] .∈ [g1, g2]    →    find each moiety in each crystal
 (∈)(s::Crystal, g::Crystal) = substructure_search(s, g)
-# and some more like that for doing find-replace operations in one line
-# these are objectively unnecessary, but fun.
-(∈)(pair::Pair{Crystal, Crystal}, xtal::Crystal) =
-    substructure_replace((pair[1] ∈ xtal), pair[2], rand_all=true)
-(∈)(tuple::Tuple{Pair, Int}, xtal::Crystal) =
-    substructure_replace(tuple[1][1] ∈ xtal, tuple[1][2], nb_loc=tuple[2])
-(∈)(tuple::Tuple{Pair, Array{Int}}, xtal::Crystal) =
-    substructure_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2])
-(∈)(tuple::Tuple{Pair, Array{Int}, Array{Int}}, xtal::Crystal) =
-    substructure_replace(tuple[1][1] ∈ xtal, tuple[1][2], loc=tuple[2], ori=tuple[3])
+
+
+# extension of Base.replace to allow for simple and syntactically obvious find-replace
+replace(p::Crystal, pair::Pair) = substructure_replace(pair[1] ∈ p, pair[2], rand_all=true)
+replace(p::Crystal, pair::Pair; kwargs...) = substructure_replace(pair[1] ∈ p, pair[2]; kwargs...)
 
 
 # Helper for making .xyz's

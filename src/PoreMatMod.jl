@@ -3,7 +3,7 @@ module PoreMatMod
 using StatsBase, LightGraphs, MetaGraphs, LinearAlgebra, DataFrames, Reexport
 @reexport using Xtals
 
-import Base.(∈), Base.show
+import Base.(∈), Base.show, Base.replace
 
 
 function __init__()
@@ -16,7 +16,7 @@ end
 export
     # findreplace.jl
     substructure_search, SearchResult, Query, Search, nb_isomorphisms,
-    nb_locations, nb_configs_at_loc, substructure_replace,
+    nb_locations, nb_configs_at_loc, substructure_replace, replace,
 
     # moiety.jl
     moiety
