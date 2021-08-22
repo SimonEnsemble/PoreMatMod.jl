@@ -91,10 +91,10 @@ Note the use of the `(s_moty => r_moty) in xtal` syntactic sugar.
 ```jldoctest; output=false
 xtal = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
 infer_bonds!(xtal, true)
-repaired = (moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz")) ∈ xtal
+repaired = replace(xtal, moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz"))
 active = substructure_replace(
     substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true), 
-    moiety(nothing), rand_all=true)
+    nothing, rand_all=true)
 # output
 ┌ Info: Crystal EMEHUB_C2H2.cif has I 4/m m m space group. I am converting it to P1 symmetry.
 └         To prevent this, pass `convert_to_p1=false` to the `Crystal` constructor.
