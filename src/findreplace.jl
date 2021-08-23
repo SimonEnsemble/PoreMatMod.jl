@@ -110,6 +110,19 @@ replace(p::Crystal, pair::Pair; kwargs...) = substructure_replace(pair[1] ∈ p,
 write_xyz(xtal::Crystal, name::String) = Xtals.write_xyz(Cart(xtal.atoms, xtal.box), name)
 
 
+"""
+iso_structs = isomorphic_substructures(s::Search)::Crystal
+
+Returns a crystal consisting of the atoms involved in subgraph isomorphisms in the search `s`
+"""
+function isomorphic_substructures(s::Search)::Crystal
+    p = s.query.parent
+    n = nb_locations(s)
+    r = s.results
+    return sum([p[r[i].isomorphism[1]] for i in 1:n])
+end
+
+
 # Translates all atoms in xtal such that xtal[1] is in its original position
 # and the rest of xtal is in its nearest-image position relative to xtal[1]
 function adjust_for_pb!(xtal::Crystal)
