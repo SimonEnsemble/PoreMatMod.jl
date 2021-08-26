@@ -279,22 +279,26 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
         xrm = nothing
         m2r_isom = nothing
         if nb_isomorphisms(s′_in_r) ≠ 0
-            # choose best r2m by evaluating MAE for all possibilities
+            # choose best r2m by evaluating RMSD for all possibilities
             rot_r2m_err = Inf
             for m2r_isom′ ∈ [s′_in_r.results[i].isomorphism[1] for i ∈ 1:nb_locations(s′_in_r)]
                 # shift all r_moty nodes according to center of isomorphic subset
                 r_moty′ = deepcopy(r_moty)
                 r_moty′.atoms.coords.xf .-= geometric_center(r_moty[m2r_isom′])
+                # get OP rotation matrix to align replacement onto query
                 rot_r2m = r2m_op(r_moty, query, m2r_isom′, mask.atoms)
                 # transform r_moty by rot_r2m, rot_s2p, and parent_subset_center, align
-                # to parent (this is now a crystal to add)
-                xrm = xform_r_moty(r_moty′, rot_r2m, rot_s2p, parent_subset_center, parent)
+                # to parent (this is now a potential crystal to add)
+                xrm′ = xform_r_moty(r_moty′, rot_r2m, rot_s2p, parent_subset_center, parent)
+                # check error and keep xrm & m2r_isom if better than previous best error
                 rot_r2m_err′ = rmsd(xrm.atoms.coords.xf[:, m2r_isom′], mask.atoms.coords.xf[:, :])
                 if rot_r2m_err′ < rot_r2m_err
                     m2r_isom = m2r_isom′
                     rot_r2m_err = rot_r2m_err′
+                    xrm = xrm′
                 end
             end
+            # add optimal xrm to array
             push!(xrms, xrm)
         end
         # push obsolete atoms to array
