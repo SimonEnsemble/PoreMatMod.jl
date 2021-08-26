@@ -56,16 +56,16 @@ end
 @doc raw"""
     moiety(name)
 
-Generates a moiety (`Crystal`) from an .xyz file found in `PATH_TO_MOIETIES`
+Generates a moiety (`Crystal`) from an .xyz file found in `rc[:paths][:moieties]`
 
-Use `set_path_to_moieties` or `set_path_to_data` to change the input path.
+Use `set_path_to_data` or set `rc[:paths][:moieties]` to change the input path.
 
-Atoms appended with '!' are tagged for replacement via `replace`.
+Atoms appended with '!' are tagged for replacement via `substructure_replace`.
 
-Bonds are inferred within the local unit cell only (no bonds across periodic boundaries).
+Bonds are inferred automatically.
 
 # Arguments
-- `name::String` the moiety name (input file name without the .xyz extension).
+- `name::String` the moiety input file name.
 """
 function moiety(name::Union{String,Nothing})::Crystal
     # generate Crystal from moiety XYZ coords
