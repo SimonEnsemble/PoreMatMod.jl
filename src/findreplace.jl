@@ -291,7 +291,7 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
                 # to parent (this is now a potential crystal to add)
                 xrm′ = xform_r_moty(r_moty′, rot_r2m, rot_s2p, parent_subset_center, parent)
                 # check error and keep xrm & m2r_isom if better than previous best error
-                rot_r2m_err′ = rmsd(xrm.atoms.coords.xf[:, m2r_isom′], mask.atoms.coords.xf[:, :])
+                rot_r2m_err′ = rmsd(xrm′.atoms.coords.xf[:, m2r_isom′], mask.atoms.coords.xf[:, :])
                 if rot_r2m_err′ < rot_r2m_err
                     m2r_isom = m2r_isom′
                     rot_r2m_err = rot_r2m_err′
