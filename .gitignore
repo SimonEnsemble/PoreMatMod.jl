@@ -1,5 +1,5 @@
-docs/build/*
 Manifest.toml
+docs/build/
 docs/*.cif
 data/
 *.jld2

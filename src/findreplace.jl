@@ -1,38 +1,38 @@
 ## Structs
 """
-    Query(xtal, s_moty)
+    SearchTerms(parent, query)
 
 Stores the `Crystal` inputs used to generate a `Search`
 """
-struct Query
+struct SearchTerms
     parent::Crystal
-    s_moty::Crystal
+    query::Crystal
 end
 
-Base.show(io::IO, q::Query) = print(io, q.s_moty.name, " ∈ ", q.parent.name)
+Base.show(io::IO, q::SearchTerms) = print(io, q.query.name, " ∈ ", q.parent.name)
 
 
 """
-    Search(query, results)
+    Search(search_terms, results)
 
-Stores the `Query` used for a substructure search, and the results `DataFrame`
+Stores the `SearchTerms` used for a substructure search, and the results `DataFrame`
 returned by carrying out the search.  Results are grouped by location in the
 parent `Crystal` and can be examined using `nb_isomorphisms`, `nb_locations`,
 and `nb_configs_at_loc`.  Subgraph isomorphisms are encoded like
 
     `isom = [7, 21, 9]`
 
-where `isom[i]` is the index of the atom in `search.query.parent` corresponding
-to atom `i` in `search.query.s_moty` for the location and orientation specific
+where `isom[i]` is the index of the atom in `search.search.parent` corresponding
+to atom `i` in `search.search.query` for the location and orientation specific
 to `isom`.
 """
 struct Search
-    query::Query # the search query (s-moty ∈ parent)
+    search::SearchTerms # the search terms (query ∈ parent)
     results
 end
 
 Base.show(io::IO, s::Search) = begin
-    println(io, s.query)
+    println(io, s.search)
     print(io, nb_isomorphisms(s), " hits in ", nb_locations(s), " locations.")
 end
 
@@ -102,7 +102,6 @@ geometric_center(xtal::Crystal)::Array{Float64} = geometric_center(xtal.atoms)
 
 
 # extension of Base.replace to allow for simple and syntactically obvious find-replace
-replace(p::Crystal, pair::Pair) = substructure_replace(pair[1] ∈ p, pair[2], rand_all=true)
 replace(p::Crystal, pair::Pair; kwargs...) = substructure_replace(pair[1] ∈ p, pair[2]; kwargs...)
 
 
@@ -116,10 +115,10 @@ iso_structs = isomorphic_substructures(s::Search)::Crystal
 Returns a crystal consisting of the atoms involved in subgraph isomorphisms in the search `s`
 """
 function isomorphic_substructures(s::Search)::Crystal
-    p = s.query.parent
+    p = s.search.parent
     n = nb_locations(s)
     r = s.results
-    return sum([p[r[i].isomorphism[1]] for i in 1:n])
+    is = sum([p[r[i].isomorphism[1]] for i in 1:n])
 end
 
 
@@ -152,45 +151,45 @@ function orthogonal_procrustes(A::Array{Float64,2},
 end
 
 
-# Gets the s_moty-to-xtal rotation matrix
-function s2p_op(s_moty::Crystal, xtal::Crystal)::Array{Float64,2}
-    # s_moty in Cartesian
-    A = s_moty.box.f_to_c * s_moty.atoms.coords.xf
+# Gets the query-to-parent rotation matrix
+function s2p_op(query::Crystal, parent::Crystal)::Array{Float64,2}
+    # query in Cartesian
+    A = query.box.f_to_c * query.atoms.coords.xf
     # parent subset in Cartesian
-    B = xtal.box.f_to_c * xtal.atoms.coords.xf
+    B = parent.box.f_to_c * parent.atoms.coords.xf
     # get rotation matrix
     return orthogonal_procrustes(A, B)
 end
 
 
 # Gets the r_moty-to-s_mask rotation matrix
-function r2m_op(r_moty::Crystal, s_moty::Crystal, m2r_isomorphism::Array{Int}, s_mask_atoms::Atoms)::Array{Float64,2}
+function r2m_op(r_moty::Crystal, query::Crystal, m2r_isomorphism::Array{Int}, s_mask_atoms::Atoms)::Array{Float64,2}
     if m2r_isomorphism == Int[]
         return Matrix{Int}(I, 3, 3) # if no actual isom, skip OP and return identity
     end
     # r_moty subset in Cartesian
     A = r_moty.box.f_to_c * r_moty.atoms[m2r_isomorphism].coords.xf
     # s_mask in Cartesian
-    B = s_moty.box.f_to_c * s_mask_atoms.coords.xf
+    B = query.box.f_to_c * s_mask_atoms.coords.xf
     # get rotation matrix
     return orthogonal_procrustes(A, B)
 end
 
 
 # Transforms r_moty according to two rotation matrices and a translational offset
-function xform_r_moty(r_moty::Crystal, rot_r2m::Array{Float64,2}, rot_s2p::Array{Float64,2}, xtal_offset::Array{Float64}, xtal::Crystal)::Crystal
+function xform_r_moty(r_moty::Crystal, rot_r2m::Array{Float64,2}, rot_s2p::Array{Float64,2}, parent_offset::Array{Float64}, parent::Crystal)::Crystal
     # put r_moty into cartesian space
     atoms = Atoms{Cart}(length(r_moty.atoms.species), r_moty.atoms.species,
         Cart(r_moty.atoms.coords, r_moty.box))
-    # transformation 1: rotate r_moty to align with s_moty
+    # transformation 1: rotate r_moty to align with query
     atoms.coords.x[:,:] = rot_r2m * atoms.coords.x
-    # transformation 2: rotate to align with xtal_subset
+    # transformation 2: rotate to align with parent_subset
     atoms.coords.x[:,:] = rot_s2p * atoms.coords.x
-    # transformation 3: translate to align with original xtal center
-    atoms.coords.x .+= xtal.box.f_to_c * xtal_offset
+    # transformation 3: translate to align with original parent center
+    atoms.coords.x .+= parent.box.f_to_c * parent_offset
     # cast atoms back to Frac
-    xrm = Crystal(r_moty.name, xtal.box, Atoms{Frac}(length(atoms.species),
-        atoms.species, Frac(atoms.coords, xtal.box)), Charges{Frac}(0))
+    xrm = Crystal(r_moty.name, parent.box, Atoms{Frac}(length(atoms.species),
+        atoms.species, Frac(atoms.coords, parent.box)), Charges{Frac}(0))
     # restore bonding network
     for e in edges(r_moty.bonds)
         add_edge!(xrm.bonds, src(e), dst(e))
@@ -254,7 +253,7 @@ end
 
 # generates data for effecting a series of replacements
 function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
-        parent::Crystal, s_moty::Crystal, r_moty::Crystal, mask::Crystal, s′_in_r::Search)::Tuple{Array{Crystal},Array{Int},Array{Tuple{Int,Int}}}
+        parent::Crystal, query::Crystal, r_moty::Crystal, mask::Crystal, s′_in_r::Search)::Tuple{Array{Crystal},Array{Int},Array{Tuple{Int,Int}}}
     xrms = Crystal[]
     del_atoms = Int[]
     bonds = Tuple{Int,Int}[] # tuple (i,j) encodes a parent[i] -> xrms[k][j] bond
@@ -271,12 +270,12 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
         parent_subset = deepcopy(parent[s2p_isom])
         # adjust coordinates for periodic boundaries
         adjust_for_pb!(parent_subset)
-        # record the center of xtal_subset so we can translate back later
+        # record the center of parent_subset so we can translate back later
         parent_subset_center = geometric_center(parent_subset)
         # shift to align centers at origin
-        center_on_self!.([parent_subset, s_moty])
-        # orthog. Procrustes for s_moty-to-parent and mask-to-replacement alignments
-        rot_s2p = s2p_op(s_moty, parent_subset)
+        center_on_self!.([parent_subset, query])
+        # orthog. Procrustes for query-to-parent and mask-to-replacement alignments
+        rot_s2p = s2p_op(query, parent_subset)
         xrm = nothing
         m2r_isom = nothing
         if nb_isomorphisms(s′_in_r) ≠ 0
@@ -286,8 +285,8 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
                 # shift all r_moty nodes according to center of isomorphic subset
                 r_moty′ = deepcopy(r_moty)
                 r_moty′.atoms.coords.xf .-= geometric_center(r_moty[m2r_isom′])
-                rot_r2m = r2m_op(r_moty, s_moty, m2r_isom′, mask.atoms)
-                # transform r_moty by rot_r2m, rot_s2p, and xtal_subset_center, align
+                rot_r2m = r2m_op(r_moty, query, m2r_isom′, mask.atoms)
+                # transform r_moty by rot_r2m, rot_s2p, and parent_subset_center, align
                 # to parent (this is now a crystal to add)
                 xrm = xform_r_moty(r_moty′, rot_r2m, rot_s2p, parent_subset_center, parent)
                 rot_r2m_err′ = rmsd(xrm.atoms.coords.xf[:, m2r_isom′], mask.atoms.coords.xf[:, :])
@@ -313,7 +312,7 @@ end
 
 ## Search function (exposed)
 @doc raw"""
-    substructure_search(s_moty, xtal; disconnected_component=false)
+    substructure_search(query, parent; disconnected_component=false)
 
 Searches for a substructure within a `Crystal` and returns a `Search` struct
 containing all identified subgraph isomorphisms.  Matches are made on the basis
@@ -322,16 +321,16 @@ periodic boundaries.  The search moiety may optionally contain markup for
 designating atoms to replace with other moieties.
 
 # Arguments
-- `s_moty::Crystal` the search moiety
-- `xtal::Crystal` the parent structure
+- `query::Crystal` the search moiety
+- `parent::Crystal` the parent structure
 - `disconnected_component::Bool=false` if true, disables substructure searching and performs only exact matching
 """
-function substructure_search(s_moty::Crystal, xtal::Crystal; disconnected_component::Bool=false)::Search
+function substructure_search(query::Crystal, parent::Crystal; disconnected_component::Bool=false)::Search
     # Make a copy w/o R tags for searching
-    moty = deepcopy(s_moty)
+    moty = deepcopy(query)
     untag_r_group!(moty)
     # Get array of configuration arrays
-    configs = find_subgraph_isomorphisms(moty.bonds, moty.atoms.species, xtal.bonds, xtal.atoms.species, disconnected_component)
+    configs = find_subgraph_isomorphisms(moty.bonds, moty.atoms.species, parent.bonds, parent.atoms.species, disconnected_component)
     df = DataFrame(p_subset=[sort(c) for c in configs], isomorphism=configs)
     locs = Int[]
     isoms = Array{Int}[]
@@ -342,26 +341,26 @@ function substructure_search(s_moty::Crystal, xtal::Crystal; disconnected_compon
         end
     end
     results = groupby(DataFrame(location=locs, isomorphism=isoms), :location)
-    return Search(Query(xtal, s_moty), results)
+    return Search(SearchTerms(parent, query), results)
 end
 
 
 ## Internal method for performing substructure replacements
-function _substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal,
+function _substructure_replace(query::Crystal, r_moty::Crystal, parent::Crystal,
         search::Search, configs::Array{Tuple{Int,Int}},
         new_xtal_name::String)::Crystal
     # configs must all be unique
     @assert length(configs) == length(unique(configs)) "configs must be unique"
     # mutation guard
-    s_moty, r_moty = deepcopy.([s_moty, r_moty])
+    query, r_moty = deepcopy.([query, r_moty])
     # if there are no replacements to be made, just return the parent
     if nb_isomorphisms(search) == 0
         @warn "No replacements to be made."
         return parent
     end
-    # determine s_mask (which atoms from s_moty are NOT in r_moty?)
-    mask = s_moty[idx_filter(s_moty, r_group_indices(s_moty))]
-    # get isomrphism between s_moty/mask and r_moty
+    # determine s_mask (which atoms from query are NOT in r_moty?)
+    mask = query[idx_filter(query, r_group_indices(query))]
+    # get isomrphism between query/mask and r_moty
     s′_in_r = mask ∈ r_moty
     if nb_isomorphisms(s′_in_r) ≠ 0
         m2r_isom = s′_in_r.results[1].isomorphism[1]
@@ -369,7 +368,7 @@ function _substructure_replace(s_moty::Crystal, r_moty::Crystal, parent::Crystal
         r_moty.atoms.coords.xf .-= geometric_center(r_moty[m2r_isom])
     end
     # loop over configs to build replacement data
-    xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, s_moty, r_moty, mask, s′_in_r)
+    xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, query, r_moty, mask, s′_in_r)
     # append temporary crystals to parent
     atoms = xrms == Crystal[] ? parent.atoms : parent.atoms + sum([xrm.atoms for xrm ∈ xrms if xrm.atoms.n > 0])
     xtal = Crystal(new_xtal_name, parent.box, atoms, Charges{Frac}(0))
@@ -398,7 +397,7 @@ end
 Inserts `r_moty` into a parent structure according to `search` and `kwargs`.
 A valid replacement scheme must be selected by assigning one or more of the optional
 `kwargs`.  Returns a new `Crystal` with the specified modifications (returns
-`search.query.parent` if no replacements are made)
+`search.search.parent` if no replacements are made)
 
 # Arguments
 - `search::Search` the `Search` for a substructure moiety in the parent crystal
@@ -433,7 +432,7 @@ function substructure_replace(search::Search, r_moty::Crystal; rand_all::Bool=fa
     # generate configuration tuples (location, orientation)
     configs = Tuple{Int,Int}[(loc[i], ori[i]) for i in 1:nb_loc]
     # process replacements
-    return _substructure_replace(search.query.s_moty, r_moty, search.query.parent,
+    return _substructure_replace(search.search.query, r_moty, search.search.parent,
         search, configs, name)
 end
 

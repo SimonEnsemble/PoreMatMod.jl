@@ -21,7 +21,7 @@ These paths are set at module load time, and default to `./data/crystals` and `.
 
 `PoreMatMod.jl` requires chemical structural data as input.  The first necessary input is a `.cif` or `.cssr` file containing atomic coordinates and unit cell information.
 
-The file must be located in `rc[:paths][:crystals]` as described above. In the case of our guiding example, the functionalization of IRMOF-1, this means we need to either put [IRMOF-1.cif](../../assets/inputs/IRMOF-1.cif) into `./data/crystals` or set `rc[:paths][:crystals]` to point `PoreMatMod.jl` to where it is located.
+The file must be located in `rc[:paths][:crystals]` as described above. In the case of our guiding example, the functionalization of IRMOF-1, this means we need to either put [IRMOF-1.cif](../../../assets/inputs/IRMOF-1.cif) into `./data/crystals` or set `rc[:paths][:crystals]` to point `PoreMatMod.jl` to where it is located.
 
 ### Fragments
 
@@ -33,15 +33,15 @@ The exception is the use of `!` for indicating atoms which will be altered in a 
 For [substructure searches](../../find) using [`substructure_search`], any `!` tags are ignored (the atoms are treated as normal).
 
 The `.xyz` file must be located at `rc[:paths][:moieties]`.
-For what we want to do with IRMOF-1, the best choice is to search for the [`p-phenylene.xyz`](../../assets/inputs/p-phenylene.xyz) moiety that is the core of the BDC linker.
+For what we want to do with IRMOF-1, the best choice is to search for the [`p-phenylene.xyz`](../../../assets/inputs/p-phenylene.xyz) moiety that is the core of the BDC linker.
 
 ## Loading Files
 
-Load [IRMOF-1.cif](../../assets/inputs/IRMOF-1.cif) and build the bonding network:
+Load [IRMOF-1.cif](../../../assets/inputs/IRMOF-1.cif) and build the bonding network:
 
 ```jldoctest; output=false
 parent = Crystal("IRMOF-1.cif")
-infer_bonds!(xtal, true)
+infer_bonds!(parent, true)
 # output
 true
 ```
@@ -49,7 +49,7 @@ true
 [`Crystal`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal) is inherited and re-exported from `Xtals.jl`.
 See the [`docs`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal) for more information.
 
-Load [`p-phenylene.xyz`](../../assets/inputs/p-phenylene.xyz):
+Load [`p-phenylene.xyz`](../../../assets/inputs/p-phenylene.xyz):
 
 ```jldoctest; output=false
 query = moiety("p-phenylene.xyz")
@@ -68,7 +68,7 @@ Bravais unit cell of a crystal.
 		'x, y, z'
 ```
 
-Both `xtal` and `s_moty` are `Crystal` objects.
+Both `parent` and `query` are `Crystal` objects.
 
 ## Documentation
 

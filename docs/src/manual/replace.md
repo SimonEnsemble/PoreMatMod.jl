@@ -24,7 +24,7 @@ In `PoreMatMod.jl` the solution is applied three-dimensionally, using the subgra
 With Ullmann's Algorithm (UA) and Orthogonal Procrustes (OP) in mind, we can tackle the problem of replacing the BDC linkers of IRMOF-1 with the 2-acetylamido derivative.
 
 First, we perform a search using a `query` with `!`-tagged atom(s), to direct the replacement stage of the algorithm.
-In this case, we should use [2-!-p-phenylene.xyz](../../assets/replace/2-!-p-phenylene.xyz).
+In this case, we should use [2-!-p-phenylene.xyz](../../../assets/replace/2-!-p-phenylene.xyz).
 Having performed a search and chosen one or more isomorphisms from the results, we have the 1-to-1 correspondence(s) we need to perform OP to align the coordinate systems of the `parent` and `query`.  
 Such a correspondence will be termed $q→p′$. 
 We also need to align the `replacement` moiety, 2-acetylamido-*p*-phenylene, with the `query`, so we perform a second UA.
@@ -78,7 +78,7 @@ true
 A final additional file input is required: a `.xyz` file containing the `replacement`.  
 This structure must contain a subgraph isomorphic to the non-tagged atoms of the `query`.
 
-To replace *p*-phenylene moieties with 2-acetylamido-*p*-phenylene moieties, load [2-acetylamido-p-phenylene.xyz](../../assets/replace/2-acetylamido-p-phenylene.xyz):
+To replace *p*-phenylene moieties with 2-acetylamido-*p*-phenylene moieties, load [2-acetylamido-p-phenylene.xyz](../../../assets/replace/2-acetylamido-p-phenylene.xyz):
 
 ```jldoctest replace_md; output=false
 replacement = moiety("2-acetylamido-p-phenylene.xyz")
@@ -194,7 +194,7 @@ The search is usually the slowest step, and it is desirable not to perform it re
 However, for one-shot find-and-replace operations, the `replace` function syntax from standard `Julia` may be used:
 
 ```jldoctest replace_md; output=false
-replace(parent, query => replacement) # assumes the "rand_all=true" option
+replace(parent, query => replacement, rand_all=true)
 # output
 Name: new_xtal
 Bravais unit cell of a crystal.
@@ -210,24 +210,7 @@ Bravais unit cell of a crystal.
 		'x, y, z'
 ```
 
-This is also compatible with the keyword arguments shown above:
-
-```jldoctest replace_md; output=false
-replace(parent, query => replacement; nb_loc=4)
-# output
-Name: new_xtal
-Bravais unit cell of a crystal.
-	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
-	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
-	Volume of unit cell: 17237.492730 Å³
-
-	# atoms = 452
-	# charges = 0
-	chemical formula: Dict(:N => 1, :Zn => 8, :H => 27, :O => 27, :C => 50)
-	space Group: P1
-	symmetry Operations:
-		'x, y, z'
-```
+Note it is still required to specify a replacement style via keyword argument.
 
 ## Documentation
 

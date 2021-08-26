@@ -24,6 +24,6 @@ It is recommended that the user be familiar with some of its key functions, whic
 
 ## A Guiding Example
 
-This manual makes repeated reference to the following task: given the experimental structure of [IRMOF-1](../../assets/start/IRMOF-1.cif), produce the hypothetical structure of an isoreticular MOF where the BDC linker has been replaced with a derivative, 2-acetylamido-BDC.
+This manual makes repeated reference to the following task: given the experimental structure of [IRMOF-1](../../../assets/start/IRMOF-1.cif), produce the hypothetical structure of an isoreticular MOF where the BDC linker has been replaced with a derivative, 2-acetylamido-BDC.
 
-![IRMOF-1_example.png](../../assets/start/IRMOF-1_example.png)
+![IRMOF-1_example](../../assets/start/example1.png)

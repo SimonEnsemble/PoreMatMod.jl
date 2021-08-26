@@ -10,9 +10,7 @@ end
 
 Example: *ortho* substitution with an acetylamido group at one quarter of the *p*-phenylene moieties in IRMOF-1.
 
-[IRMOF-1.cif](../../assets/examples/IRMOF-1.cif)
-[2-!-p-phenylene.xyz](../../assets/examples/2-!-p-phenylene.xyz)
-[2-acetylamido-p-phenylene.xyz](../../assets/examples/2-acetylamido-p-phenylene.xyz)
+[Input Files](../../../assets/examples/example1.zip)
 
 ```jldoctest; output=false
 parent = Crystal("IRMOF-1.cif")
@@ -42,16 +40,14 @@ Bravais unit cell of a crystal.
 
 Example: Insert missing H atoms in IRMOF-1
 
-[IRMOF-1_noH.cif](../../assets/examples/IRMOF-1_noH.cif)
-[1,4-C-phenylene_noH.xyz](../../assets/examples/1,4-C-phenylene_noH.xyz)
-[1,4-C-phenylene.xyz](../../assets/examples/1,4-C-phenylene.xyz)
+[Input Files](../../../assets/examples/example2.zip)
 
 ```jldoctest; output=false
 parent = Crystal("IRMOF-1_noH.cif")
 infer_bonds!(parent, true)
 query = moiety("1,4-C-phenylene_noH.xyz")
 replacement = moiety("1,4-C-phenylene.xyz")
-repaired_xtal = replace(parent, query => replacement)
+repaired_xtal = replace(parent, query => replacement, rand_all=true)
 # output
 Name: new_xtal
 Bravais unit cell of a crystal.
@@ -73,18 +69,17 @@ Bravais unit cell of a crystal.
 
 Example: correct the crystallographic disorder of the PyC-2 ligands and remove guest molecules from the pores.
 
-[EMEHUB_C2H2.cif](../../assets/examples/EMEHUB_C2H2.cif)
-[disordered_ligand!.xyz](../../assets/examples/disordered_ligand!.xyz)
-[acetylene.xyz](../../assets/examples/acetylene.xyz)
-[4-pyridyl.xyz](../../assets/examples/4-pyridyl.xyz)
+[Input Files](../../../assets/examples/example3.zip)
 
 
 ```jldoctest; output=false
 parent = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
 infer_bonds!(parent, true)
-repaired = replace(parent, moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz"))
-acetylene_search = substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true)
-active = substructure_replace(acetylene_search, nothing, rand_all=true)
+q = moiety("disordered_ligand!.xyz")
+p = moiety("4-pyridyl.xyz")
+repaired = replace(parent, q => p, rand_all=true)
+search = substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true)
+active = substructure_replace(search, nothing, rand_all=true)
 # output
 ┌ Info: Crystal EMEHUB_C2H2.cif has I 4/m m m space group. I am converting it to P1 symmetry.
 └         To prevent this, pass `convert_to_p1=false` to the `Crystal` constructor.
@@ -109,3 +104,32 @@ Bravais unit cell of a crystal.
 ```
 
 ![example 3](../../assets/examples/example3.png)
+
+### Generate Missing-Linker Defect
+
+Example: create a new channel in UiO-66 via missing-linker defects and formate ion capping.
+
+[Input Files](../../../assets/examples/example4.zip)
+
+```jldoctest; output=false
+parent = Crystal("UiO-66.cif")
+infer_bonds!(parent, true)
+query = moiety("BDC.xyz")
+replacement = moiety("formate_caps.xyz")
+with_defect = replace(parent, query => replacement; loc=[1, 3, 9])
+# output
+Name: new_xtal
+Bravais unit cell of a crystal.
+	Unit cell angles α = 60.000000 deg. β = 60.000000 deg. γ = 60.000000 deg.
+	Unit cell dimensions a = 29.634800 Å. b = 29.634800 Å, c = 29.634800 Å
+	Volume of unit cell: 18403.100761 Å³
+
+	# atoms = 888
+	# charges = 0
+	chemical formula: Dict(:Zr => 24, :H => 109, :O => 128, :C => 183)
+	space Group: P1
+	symmetry Operations:
+		'x, y, z'
+```
+
+![example 4](../../assets/examples/example4.png)

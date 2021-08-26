@@ -18,7 +18,7 @@ julia> Pluto.run()
 Load `PoreMatModGO.jl` by copying and pasting the URL below into the "Open from file"
 box on the `Pluto` main page.
 
-[https://github.com/SimonEnsemble/PoreMatMod.jl/blob/main/src/PoreMatModGO.jl]([https://github.com/SimonEnsemble/PoreMatMod.jl/blob/main/src/PoreMatModGO.jl)
+[https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/src/PoreMatModGO.jl](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/src/PoreMatModGO.jl?token=AD3TMGCN5XHK3VKRRIFAHV3BGBIE4)
 
 Prepare file inputs per the [manual](../../inputs) and load them into `PoreMatModGO` using the graphical interface.  
 All [replacement](../../replace) modes are available with interactive visual previews and outputs are downloadable in `.cif`, `.xyz`, and `.vtk` file formats.

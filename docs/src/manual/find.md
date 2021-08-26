@@ -53,7 +53,7 @@ search.search
 p-phenylene.xyz ∈ IRMOF-1.cif
 ```
 ```jldoctest find
-typeof(search.query.parent)
+typeof(search.search.query)
 # output
 Crystal
 ```
@@ -123,17 +123,36 @@ nb_isomorphisms(search)
 96
 ```
 
+To generate a `Crystal` containing only the substructures of the `parent` which are isomorphic to the `query`, use:
+
+```jldoctest find; output=false
+isomorphic_substructures(search)
+# output
+Name: IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1
+Bravais unit cell of a crystal.
+	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
+	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
+	Volume of unit cell: 17237.492730 Å³
+
+	# atoms = 240
+	# charges = 0
+	chemical formula: Dict(:H => 2, :C => 3)
+	space Group: P1
+	symmetry Operations:
+		'x, y, z'
+```
+
 ## Molecular and Graph Symmetry
 
 Due to the representation of molecules as graphs, `PoreMatMod.jl` may yield "extra" search results corresponding to different spatial isomers or moiety orientations.
 In some applications this may be advantageous, but in most cases it is advisable to search using the most minimal structure which uniquely matches the targeted parent moiety.
 
-An example is searching for [BDC.xyz](../../assets/find/BDC.xyz) in IRMOF-1 instead of the more minimal *p*-phenylene.
+An example is searching for [BDC.xyz](../../../assets/find/BDC.xyz) in IRMOF-1 instead of the more minimal *p*-phenylene.
 Thanks to the two carboxyl groups, the total number of isomorphisms is multiplied by a factor of 4, due to the graph-equivalence of the oxygen atoms in each group.  
 The number of locations at which the isomorphisms are found, however, is unchanged.
 
 ```jldoctest find
-query = moiety("p-terephthalate.xyz")
+query = moiety("BDC.xyz")
 search = query ∈ parent
 nb_isomorphisms(search) 
 # output
@@ -154,4 +173,5 @@ substructure_search
 nb_configs_at_loc
 nb_isomorphisms
 nb_locations
+isomorphic_substructures
 ```

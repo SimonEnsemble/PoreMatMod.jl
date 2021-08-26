@@ -1,4 +1,4 @@
-![logo.JPG](assets/logo.JPG)
+![logo.JPG](assets/index/logo.JPG)
 
 A pure-[Julia](https://julialang.org/) software package for manipulating chemical structures of porous crystals.  [PoreMatMod.jl](https://github.com/SimonEnsemble/PoreMatMod.jl) is built on the [@SimonEnsemble](https://SimonEnsemble.github.io) software [Xtals.jl](https://github.com/SimonEnsemble/Xtals.jl) to clean experimental and calculated data and provide novel hypothetical structural inputs to [PorousMaterials.jl](https://github.com/SimonEnsemble/PorousMaterials.jl) and other molecular dynamics or *ab initio* software packages.
 It is intended primarily for MOFs and other porous crystalline materials, but can work with other periodic structures, ensembles, and discrete molecules as well.
@@ -18,12 +18,12 @@ using PoreMatMod
 xtal = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
 infer_bonds!(xtal, true)
 # Repair the disordered linkers
-repaired = replace(xtal, moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz"))
+repaired = replace(xtal, moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz"), rand_all=true)
 # Remove the guest molecules to produce the activated MOF
-acetylene_search = substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true)
-activated = substructure_replace(acetylene_search, nothing, rand_all=true)
+search = substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true)
+activated = substructure_replace(search, nothing, rand_all=true)
 # Add a functional group
-novel = replace(activated, moiety("3-H!-4-pyridyl.xyz") => moiety("3-F-4-pyridyl.xyz"))
+novel = replace(activated, moiety("3-H!-4-pyridyl.xyz") => moiety("3-F-4-pyridyl.xyz"), rand_all=true)
 # Save the result
 write_cif(novel, "3,3'-F2-SIFSIX-2-Cu-i.cif")
 # output
@@ -37,6 +37,6 @@ write_cif(novel, "3,3'-F2-SIFSIX-2-Cu-i.cif")
 └ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
 ```
 
-Input files: [EMEHUB_C2H2.cif](assets/index/EMEHUB_C2H2.cif) [disordered_ligand!.xyz](assets/index/disordered_ligand!.xyz) [4-pyridyl.xyz](assets/index/4-pyridyl.xyz) [acetylene.xyz](assets/index/acetylene.xyz) [3-H!-4-pyridyl.xyz](assets/index/3-H!-4-pyridyl.xyz) [3-F-4-pyridyl.xyz](assets/index/3-F-4-pyridyl.xyz)
+Input files: [input_files.zip](assets/index/input_files.zip)
 
-![messy to novel](assets/index.png)
+![messy to novel](assets/index/example.png)
