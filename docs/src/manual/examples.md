@@ -6,28 +6,21 @@ end
 
 ## Examples
 
-Each example case below gives a description, illustration, and code snippet,
-and is linked to a more detailed Pluto notebook tutorial.
-
 ### Generate hypothetical structures
 
-Create novel derivatives of a `Crystal`, search for one of its substructures,
-and replace with a derivatized moiety.
+Example: *ortho* substitution with an acetylamido group at one quarter of the *p*-phenylene moieties in IRMOF-1.
 
-Example: *ortho* substitution with an acetylamido group at one quarter of the
-*p*-phenylene moieties in IRMOF-1.
-
-[search moiety](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/2-!-p-phenylene.xyz)
-[replacement moiety](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/2-acetylamido-p-phenylene.xyz)
-[parent structure](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/crystals/IRMOF-1.cif)
+[IRMOF-1.cif](../../assets/examples/IRMOF-1.cif)
+[2-!-p-phenylene.xyz](../../assets/examples/2-!-p-phenylene.xyz)
+[2-acetylamido-p-phenylene.xyz](../../assets/examples/2-acetylamido-p-phenylene.xyz)
 
 ```jldoctest; output=false
-xtal = Crystal("IRMOF-1.cif")
-infer_bonds!(xtal, true)
-s_moty = moiety("2-!-p-phenylene.xyz")
-r_moty = moiety("2-acetylamido-p-phenylene.xyz")
-search = s_moty ∈ xtal
-new_xtal = substructure_replace(search, r_moty, nb_loc=Int(nb_locations(search)/4))
+parent = Crystal("IRMOF-1.cif")
+infer_bonds!(parent, true)
+query = moiety("2-!-p-phenylene.xyz")
+replacement = moiety("2-acetylamido-p-phenylene.xyz")
+search = query ∈ parent
+new_xtal = substructure_replace(search, replacement, nb_loc=Int(nb_locations(search)/4))
 # output
 Name: new_xtal
 Bravais unit cell of a crystal.
@@ -43,25 +36,22 @@ Bravais unit cell of a crystal.
 		'x, y, z'
 ```
 
-![example 1](../../assets/IRMOF1example.png)
+![example 1](../../assets/examples/example1.png)
 
 ### Insert missing hydrogens
 
-To correct defects like missing atoms, use the affected substructure as the search
-moiety and a manually corrected copy as the replacement moiety.
-
 Example: Insert missing H atoms in IRMOF-1
 
-[search moiety](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/1,4-C-phenylene_noH.xyz)
-[replacement moiety](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/1,4-C-phenylene.xyz)
-[parent structure](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/crystals/IRMOF-1_noH.cif)
+[IRMOF-1_noH.cif](../../assets/examples/IRMOF-1_noH.cif)
+[1,4-C-phenylene_noH.xyz](../../assets/examples/1,4-C-phenylene_noH.xyz)
+[1,4-C-phenylene.xyz](../../assets/examples/1,4-C-phenylene.xyz)
 
 ```jldoctest; output=false
-xtal = Crystal("IRMOF-1_noH.cif")
-infer_bonds!(xtal, true)
-s_moty = moiety("1,4-C-phenylene_noH.xyz")
-r_moty = moiety("1,4-C-phenylene.xyz")
-repaired_xtal = substructure_replace(s_moty ∈ xtal, r_moty, rand_all=true)
+parent = Crystal("IRMOF-1_noH.cif")
+infer_bonds!(parent, true)
+query = moiety("1,4-C-phenylene_noH.xyz")
+replacement = moiety("1,4-C-phenylene.xyz")
+repaired_xtal = replace(parent, query => replacement)
 # output
 Name: new_xtal
 Bravais unit cell of a crystal.
@@ -77,24 +67,24 @@ Bravais unit cell of a crystal.
 		'x, y, z'
 ```
 
-![example 2](../../assets/missingHexample.png)
+![example 2](../../assets/examples/example2.png)
 
 ### Repair Disorder and Remove Adsorbates
 
-Note the use of the `(s_moty => r_moty) in xtal` syntactic sugar.
+Example: correct the crystallographic disorder of the PyC-2 ligands and remove guest molecules from the pores.
 
-[search moiety 1](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/disordered_ligand!.xyz)
-[search moiety 2](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/acetylene.xyz)
-[replacement moiety](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/4-pyridyl.xyz)
-[parent structure](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/crystals/EMEHUB_C2H2.cif)
+[EMEHUB_C2H2.cif](../../assets/examples/EMEHUB_C2H2.cif)
+[disordered_ligand!.xyz](../../assets/examples/disordered_ligand!.xyz)
+[acetylene.xyz](../../assets/examples/acetylene.xyz)
+[4-pyridyl.xyz](../../assets/examples/4-pyridyl.xyz)
+
 
 ```jldoctest; output=false
-xtal = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
-infer_bonds!(xtal, true)
-repaired = replace(xtal, moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz"))
-active = substructure_replace(
-    substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true), 
-    nothing, rand_all=true)
+parent = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
+infer_bonds!(parent, true)
+repaired = replace(parent, moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz"))
+acetylene_search = substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true)
+active = substructure_replace(acetylene_search, nothing, rand_all=true)
 # output
 ┌ Info: Crystal EMEHUB_C2H2.cif has I 4/m m m space group. I am converting it to P1 symmetry.
 └         To prevent this, pass `convert_to_p1=false` to the `Crystal` constructor.
@@ -118,4 +108,4 @@ Bravais unit cell of a crystal.
 		'x, y, z'
 ```
 
-![example 3](../../assets/mof-fix.png)
+![example 3](../../assets/examples/example3.png)

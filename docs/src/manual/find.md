@@ -1,42 +1,35 @@
 ```@meta
 DocTestSetup = quote
     using PoreMatMod
-    xtal = Crystal("IRMOF-1.cif")
-    infer_bonds!(xtal, true)
-    s_moty = moiety("p-phenylene.xyz")
+    parent = Crystal("IRMOF-1.cif")
+    infer_bonds!(parent, true)
+    query = moiety("p-phenylene.xyz")
 end
 ```
 
 # Substructure Searches
 
-Having seen how to load inputs to `PoreMatMod`, we can take the next step towards
-accomplishing our example task of functionalizing IRMOF-1. In order to identify
-the *p*-phenylene moiety in IRMOF-1, a variation of Ullmann's algorithm is applied.
+Having seen how to load inputs to `PoreMatMod.jl`, we can take the next step towards accomplishing our example task of functionalizing IRMOF-1. 
+In order to identify the *p*-phenylene moiety in IRMOF-1, a variation of Ullmann's algorithm is applied.
 
 ## Ullmann's Algorithm
 
-[Ullmann's algorithm for subgraph isomorphism](https://doi.org/10.1145/321921.321925)
-is the basis of the substructure search in `PoreMatMod`. The algorithm is a depth-first
-search of the permutation tree for all possible one-to-one correspondences between the
-nodes of one graph (the search graph) and any subset of nodes of another graph (the
-parent graph). The search tree is greatly reduced in size by imposing several constraints
-on possible node-to-node correspondences. At each branch of the search tree, additional 
-pruning further reduces the search space by comparing the immediate neighborhoods of 
-potentially-corresponding nodes.
+[Ullmann's algorithm for subgraph isomorphism](https://doi.org/10.1145/321921.321925) is the basis of the substructure search in `PoreMatMod`. 
+The algorithm is a depth-first search of the permutation tree for all possible one-to-one correspondences between the nodes of one graph (the `query`) and any subset of nodes of another graph (the `parent`). 
+The search tree is greatly reduced in size by imposing several constraints on possible node-to-node correspondences. 
+At each branch of the search tree, additional pruning further reduces the search space by comparing the immediate neighborhoods of potentially-corresponding nodes.
 
-`PoreMatMod` augments Ullmann's algorithm to include the requirement that potentially-
-corresponding nodes be of the same atomic species, as required by the chemical
-structure application. Additionally, the number of initial potential matches is
-reduced by further examination of each atom's local bonding neighborhood.  Bonds
-across the unit cell boundaries of periodic materials are handled innately by
-the graph representation of structures in `Xtals`.
+`PoreMatMod.jl` augments Ullmann's algorithm to include the requirement that potentially-corresponding nodes be of the same atomic species, as required by the chemical
+structure application. 
+Additionally, the number of initial potential matches is reduced by further examination of each atom's local bonding neighborhood.  
+Bonds across the unit cell boundaries of periodic materials are handled innately by the graph representation of structures in `Xtals.jl`.
 
-## Searching with `PoreMatMod`
+## Searching with `PoreMatMod.jl`
 
-With a parent crystal and search moiety loaded, execute a search:
+With a `parent` and `query` loaded, execute a search:
 
 ```jldoctest
-search = substructure_search(s_moty, xtal)
+search = substructure_search(query, parent)
 # output
 p-phenylene.xyz ∈ IRMOF-1.cif
 96 hits in 24 locations.
@@ -45,18 +38,17 @@ p-phenylene.xyz ∈ IRMOF-1.cif
 The `∈` (`in`) infix operator will also perform the search:
 
 ```jldoctest find
-search = s_moty ∈ xtal
+search = query ∈ parent
 # output
 p-phenylene.xyz ∈ IRMOF-1.cif
 96 hits in 24 locations.
 ```
 
-This returns a `Search` object.  Its `query` attribute stores the `Crystal` data
-for the search and parent structures, and its `results` attribute is a
-`GroupedDataFrame` listing the subgraph isomorphisms grouped by location.
+This returns a `Search` object.  
+Its `search` attribute stores the `Crystal` data for the `query` and `parent` structures, and its `results` attribute is a `GroupedDataFrame` listing the subgraph isomorphisms grouped by location.
 
 ```jldoctest find
-search.query
+search.search
 # output
 p-phenylene.xyz ∈ IRMOF-1.cif
 ```
@@ -66,7 +58,7 @@ typeof(search.query.parent)
 Crystal
 ```
 ```jldoctest find
-search.query.s_moty.name
+search.search.query.name
 # output
 "p-phenylene.xyz"
 ```
@@ -93,9 +85,7 @@ Last Group (4 rows): location = 24
    4 │       24  [326, 301, 288, 311, 229, 228, 3…
 ```
 
-In the chosen example, the search moiety (*p*-phenylene) occurs 24 times in the
-provided structure of the parent crystal (IRMOF-1), with 4 symmetry-equivalent search
-hits at each site, for a total of 96 subgraph isomorphisms.
+In the chosen example, the search moiety (*p*-phenylene) occurs 24 times in the provided structure of the parent crystal (IRMOF-1), with 4 symmetry-equivalent search hits at each site, for a total of 96 subgraph isomorphisms.
 
 ```jldoctest find
 nb_locations(search) 
@@ -133,23 +123,18 @@ nb_isomorphisms(search)
 96
 ```
 
-## Symmetry and Rotational Freedom
+## Molecular and Graph Symmetry
 
-Due to the representation of molecules as graphs, independently rotatable groups
-may yield "extra" search results corresponding to different rotamers.  In some
-applications this may be advantageous, but in most cases it is advisable to search
-using the most minimal structure which uniquely matches the targeted parent moiety.
+Due to the representation of molecules as graphs, `PoreMatMod.jl` may yield "extra" search results corresponding to different spatial isomers or moiety orientations.
+In some applications this may be advantageous, but in most cases it is advisable to search using the most minimal structure which uniquely matches the targeted parent moiety.
 
-An example is searching for 
-[*p*-terephthalate](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/test/data/moieties/p-terephthalate.xyz?token=AD3TMGDLHHV5ETQQPDKDVCLAYMPX6)
-in IRMOF-1 instead of the more minimal *p*-phenylene.  Thanks to the two
-independently rotatable carboxyl groups, the total number of isomorphisms is
-multiplied by a factor of 4.  The number of locations at which the isomorphisms
-are found is unchanged.
+An example is searching for [BDC.xyz](../../assets/find/BDC.xyz) in IRMOF-1 instead of the more minimal *p*-phenylene.
+Thanks to the two carboxyl groups, the total number of isomorphisms is multiplied by a factor of 4, due to the graph-equivalence of the oxygen atoms in each group.  
+The number of locations at which the isomorphisms are found, however, is unchanged.
 
 ```jldoctest find
-s_moty = moiety("p-terephthalate.xyz")
-search = s_moty ∈ xtal
+query = moiety("p-terephthalate.xyz")
+search = query ∈ parent
 nb_isomorphisms(search) 
 # output
 384
@@ -164,7 +149,7 @@ nb_locations(search)
 
 ```@docs
 Search
-Query
+SearchTerms
 substructure_search
 nb_configs_at_loc
 nb_isomorphisms
