@@ -41,13 +41,14 @@ begin
 	query1 = moiety("2-!-p-phenylene.xyz")
 	replacement1 = moiety("2-acetylamido-p-phenylene.xyz")
 	search = query1 ∈ parent1
-	example1 = substructure_replace(search, replacement1, nb_loc=Int(nb_locations(search)/4))
+	example1 = substructure_replace(search, replacement1,
+		nb_loc=Int(nb_locations(search)/4))
 	view_structure(example1)
 end
 
 # ╔═╡ Cell order:
 # ╟─143fa303-2ce1-471e-ab1f-09a77b88eb75
-# ╠═8d523993-6e85-443a-9949-12030552b457
+# ╟─8d523993-6e85-443a-9949-12030552b457
 # ╠═37939a7a-0651-11ec-11c1-6b5ef0a19ec2
 # ╠═21bf7b62-1aef-45c6-9da4-db8d4d69604c
 # ╟─5b71d14a-be80-4ac3-8983-62571d0d4e7d
