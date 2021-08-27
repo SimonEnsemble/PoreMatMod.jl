@@ -6,6 +6,8 @@ end
 
 ## Examples
 
+The following examples are also available as [Pluto notebooks](https://github.com/SimonEnsemble/PoreMatMod.jl/tree/master/examples)
+
 ### Generate hypothetical structures
 
 Example: *ortho* substitution with an acetylamido group at one quarter of the *p*-phenylene moieties in IRMOF-1.

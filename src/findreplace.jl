@@ -110,7 +110,7 @@ write_xyz(xtal::Crystal, name::String) = Xtals.write_xyz(Cart(xtal.atoms, xtal.b
 
 
 """
-iso_structs = isomorphic_substructures(s::Search)::Crystal
+`iso_structs = isomorphic_substructures(s::Search)::Crystal`
 
 Returns a crystal consisting of the atoms involved in subgraph isomorphisms in the search `s`
 """
@@ -118,7 +118,7 @@ function isomorphic_substructures(s::Search)::Crystal
     p = s.search.parent
     n = nb_locations(s)
     r = s.results
-    is = sum([p[r[i].isomorphism[1]] for i in 1:n])
+    return p[r[i].isomorphism[1] for i in 1:n]
 end
 
 
@@ -348,7 +348,7 @@ designating atoms to replace with other moieties.
 # Arguments
 - `query::Crystal` the search moiety
 - `parent::Crystal` the parent structure
-- `disconnected_component::Bool=false` if true, disables substructure searching and performs only exact matching
+- `disconnected_component::Bool=false` if true, disables substructure searching (e.g. for finding guest molecules)
 """
 function substructure_search(query::Crystal, parent::Crystal; disconnected_component::Bool=false)::Search
     # Make a copy w/o R tags for searching
