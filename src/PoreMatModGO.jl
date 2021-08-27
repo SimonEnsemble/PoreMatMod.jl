@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.14.7
+# v0.15.1
 
 using Markdown
 using InteractiveUtils
@@ -70,19 +70,19 @@ begin
     # dict for tracking load status of inputs
     isloaded = Dict([:r_moty => false, :s_moty => false, :parent => false])
     # r_moty loader
-    if replace_moiety["data"] != UInt8[]
+    if replace_moiety != nothing
         write("r_moty.xyz", replace_moiety["data"])
-        r_moty = moiety("r_moty")
+        r_moty = moiety("r_moty.xyz")
         isloaded[:r_moty] = true
     end
     # s_moty loader
-    if search_moiety["data"] != UInt8[]
+    if search_moiety != nothing
         write("s_moty.xyz", search_moiety["data"])
-        s_moty = moiety("s_moty")
+        s_moty = moiety("s_moty.xyz")
         isloaded[:s_moty] = true
     end
     # xtal loader
-    if parent_crystal["data"] != UInt8[]
+    if parent_crystal != nothing
         write("parent.cif", parent_crystal["data"])
         xtal = Crystal("parent.cif", check_overlap=false)
         Xtals.strip_numbers_from_atom_labels!(xtal)
@@ -193,12 +193,12 @@ Components $download_xyz $download_bonds $download_box
 end
 
 # ╔═╡ Cell order:
-# ╠═e45926b6-1437-49c7-a073-ac5bd7bfaff9
+# ╟─e45926b6-1437-49c7-a073-ac5bd7bfaff9
 # ╟─6c1969e0-02f5-11eb-3fa2-09931a63b1ac
 # ╟─50269ffe-02ef-11eb-0614-f11975d991fe
 # ╟─33b1fb50-0f73-11eb-2ab2-9d2cb6c5a533
 # ╟─415e9210-0f71-11eb-15c8-e7484b5be309
-# ╠═3997c4d0-0f75-11eb-2976-c161879b8d0c
+# ╟─3997c4d0-0f75-11eb-2976-c161879b8d0c
 # ╟─69edca20-0f94-11eb-13ba-334438ca2406
 # ╟─5918f770-103d-11eb-0537-81036bd3e675
 # ╟─31832e30-1054-11eb-24ed-219fd3e236a1
