@@ -115,10 +115,7 @@ write_xyz(xtal::Crystal, name::String) = Xtals.write_xyz(Cart(xtal.atoms, xtal.b
 Returns a crystal consisting of the atoms involved in subgraph isomorphisms in the search `s`
 """
 function isomorphic_substructures(s::Search)::Crystal
-    p = s.search.parent
-    n = nb_locations(s)
-    r = s.results
-    return p[r[i].isomorphism[1] for i in 1:n]
+    return s.search.parent[reduce(vcat, [s.results[i].isomorphism[1] for i in 1:nb_locations(s)])]
 end
 
 
@@ -177,9 +174,9 @@ end
 
 
 # Gets the rotation matrix for aligning the replacement moiety onto a subset (isomorphic to masked query) of parent atoms
-function r2p_op(r_moty, parent_subset, r2p_isom)
+function r2p_op(r_moty, parent, r2p_isom, parent_subset_center)
     A = r_moty.box.f_to_c * r_moty.atoms[[r for (r,p) in r2p_isom]].coords.xf
-    B = parent_subset.box.f_to_c * parent_subset.atoms.coords.xf
+    B = parent.box.f_to_c * (parent.atoms[[p for (r,p) in r2p_isom]].coords.xf .- parent_subset_center)
     return orthogonal_procrustes(A, B)
 end
 
@@ -294,7 +291,7 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
         # record the center of parent_subset so we can translate back later
         parent_subset_center = geometric_center(parent_subset)
         # shift to align centers at origin
-        center_on_self!.([parent_subset, query])
+        center_on_self!(query)
         # orthog. Procrustes
         xrm = nothing
         m2r_isom = nothing
@@ -308,7 +305,7 @@ function build_replacement_data(configs::Array{Tuple{Int,Int}}, search::Search,
                 # determine mapping r2p
                 r2p_isom = map_r′_to_p(m2r_isom′, s2p_isom, m2q_key)
                 # get OP rotation matrix to align replacement onto parent
-                rot_r2p = r2p_op(r_moty, parent_subset, r2p_isom)
+                rot_r2p = r2p_op(r_moty, parent, r2p_isom, parent_subset_center)
                 # transform r_moty by rot_r2p, and parent_subset_center (this is now a potential crystal to add)
                 xrm′ = xform_r_moty(r_moty′, rot_r2p, parent_subset_center, parent)
                 # check error and keep xrm & m2r_isom if better than previous best error

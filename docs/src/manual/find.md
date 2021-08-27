@@ -128,7 +128,7 @@ To generate a `Crystal` containing only the substructures of the `parent` which 
 ```jldoctest find; output=false
 isomorphic_substructures(search)
 # output
-Name: IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1_IRMOF-1
+Name: IRMOF-1.cif
 Bravais unit cell of a crystal.
 	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
 	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
