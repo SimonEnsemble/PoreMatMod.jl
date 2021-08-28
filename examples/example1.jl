@@ -31,7 +31,7 @@ end;
 md"""
 ### Generate hypothetical structures
 
-Example: *ortho* substitution with an acetylamido group at one quarter of the *p*-phenylene moieties in IRMOF-1.
+Example: mono-substitution with an acetylamido group at one quarter of the *p*-phenylene moieties in IRMOF-1.
 """
 
 # ╔═╡ 74aa19d2-b1a4-4333-9ff9-e6ea74e7d989
