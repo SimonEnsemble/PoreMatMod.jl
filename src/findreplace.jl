@@ -138,9 +138,10 @@ function adjust_for_pb!(xtal::Crystal)
 end
 
 
-# Performs orthogonal Procrustes on correlated point clouds A and B
-function orthogonal_procrustes(A::Array{Float64,2},
-        B::Array{Float64,2})::Array{Float64,2}
+# Gets the rotation matrix for aligning the replacement moiety onto a subset (isomorphic to masked query) of parent atoms
+function r2p_op(r_moty::Crystal, parent::Crystal, r2p_isom::Dict{Int,Int}, parent_subset_center::Vector{Float64})
+    A = r_moty.box.f_to_c * r_moty.atoms[[r for (r,p) in r2p_isom]].coords.xf
+    B = parent.box.f_to_c * (parent.atoms[[p for (r,p) in r2p_isom]].coords.xf .- parent_subset_center)
     # solve the SVD
     F = svd(A * B')
     # return rotation matrix
@@ -148,48 +149,14 @@ function orthogonal_procrustes(A::Array{Float64,2},
 end
 
 
-# Gets the query-to-parent rotation matrix
-function s2p_op(query::Crystal, parent::Crystal)::Array{Float64,2}
-    # query in Cartesian
-    A = query.box.f_to_c * query.atoms.coords.xf
-    # parent subset in Cartesian
-    B = parent.box.f_to_c * parent.atoms.coords.xf
-    # get rotation matrix
-    return orthogonal_procrustes(A, B)
-end
-
-
-# Gets the r_moty-to-s_mask rotation matrix
-function r2m_op(r_moty::Crystal, query::Crystal, m2r_isomorphism::Array{Int}, s_mask_atoms::Atoms)::Array{Float64,2}
-    if m2r_isomorphism == Int[]
-        return Matrix{Int}(I, 3, 3) # if no actual isom, skip OP and return identity
-    end
-    # r_moty subset in Cartesian
-    A = r_moty.box.f_to_c * r_moty.atoms[m2r_isomorphism].coords.xf
-    # s_mask in Cartesian
-    B = query.box.f_to_c * s_mask_atoms.coords.xf
-    # get rotation matrix
-    return orthogonal_procrustes(A, B)
-end
-
-
-# Gets the rotation matrix for aligning the replacement moiety onto a subset (isomorphic to masked query) of parent atoms
-function r2p_op(r_moty, parent, r2p_isom, parent_subset_center)
-    A = r_moty.box.f_to_c * r_moty.atoms[[r for (r,p) in r2p_isom]].coords.xf
-    B = parent.box.f_to_c * (parent.atoms[[p for (r,p) in r2p_isom]].coords.xf .- parent_subset_center)
-    return orthogonal_procrustes(A, B)
-end
-
-
 # Transforms r_moty according to two rotation matrices and a translational offset
-function xform_r_moty(r_moty::Crystal, rot_r2p::Matrix{Float64}, parent_offset::Vector{Float64}, parent::Crystal)::Crystal
+function xform_r_moty(r_moty::Crystal, rot_r2p::Matrix{Float64}, parent_subset_center::Vector{Float64}, parent::Crystal)::Crystal
     # put r_moty into cartesian space
-    atoms = Atoms{Cart}(length(r_moty.atoms.species), r_moty.atoms.species,
-        Cart(r_moty.atoms.coords, r_moty.box))
-    # transformation 1: rotate r_moty to align with parent_subset
+    atoms = Atoms{Cart}(length(r_moty.atoms.species), r_moty.atoms.species, Cart(r_moty.atoms.coords, r_moty.box))
+    # rotate r_moty to align with parent_subset
     atoms.coords.x[:,:] = rot_r2p * atoms.coords.x
-    # transformation 3: translate to align with original parent center
-    atoms.coords.x .+= parent.box.f_to_c * parent_offset
+    # translate to align with original parent center
+    atoms.coords.x .+= parent.box.f_to_c * parent_subset_center
     # cast atoms back to Frac
     xrm = Crystal(r_moty.name, parent.box, Atoms{Frac}(length(atoms.species),
         atoms.species, Frac(atoms.coords, parent.box)), Charges{Frac}(0))
