@@ -70,19 +70,19 @@ begin
     # dict for tracking load status of inputs
     isloaded = Dict([:r_moty => false, :s_moty => false, :parent => false])
     # r_moty loader
-    if !isnothing(replace_moiety)
+    if replace_moiety != nothing
         write("r_moty.xyz", replace_moiety["data"])
         r_moty = moiety("r_moty.xyz")
         isloaded[:r_moty] = true
     end
     # s_moty loader
-    if !isnothing(search_moiety)
+    if search_moiety != nothing
         write("s_moty.xyz", search_moiety["data"])
         s_moty = moiety("s_moty.xyz")
         isloaded[:s_moty] = true
     end
     # xtal loader
-    if !isnothing(parent_crystal)
+    if parent_crystal != nothing
         write("parent.cif", parent_crystal["data"])
         xtal = Crystal("parent.cif", check_overlap=false)
         Xtals.strip_numbers_from_atom_labels!(xtal)
