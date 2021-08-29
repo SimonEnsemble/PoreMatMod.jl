@@ -24,7 +24,7 @@ function view_structure(xtal::Crystal)
 	no_pb = deepcopy(xtal)
 	drop_cross_pb_bonds!(no_pb)
 	write_mol2(no_pb, filename="view.mol2")
-	viewfile("view.mol2", "mol2", vtkcell="unit_cell.vtk")
+	viewfile("view.mol2", "mol2", vtkcell="unit_cell.vtk", axes=Axes(4, 0.25))
 end;
 
 # ╔═╡ 5b71d14a-be80-4ac3-8983-62571d0d4e7d
@@ -40,7 +40,7 @@ begin
 	infer_bonds!(parent, true)
 	q = moiety("disordered_ligand!.xyz")
 	p = moiety("4-pyridyl.xyz")
-	repaired = replace(parent, q => p, loc=[1:8...], ori=[4 for _ in 1:8])
+	repaired = replace(parent, q => p, rand_all=true)
 	search = substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true)
 	active = substructure_replace(search, nothing, rand_all=true)
 	view_structure(active)

@@ -24,7 +24,7 @@ function view_structure(xtal::Crystal)
 	no_pb = deepcopy(xtal)
 	drop_cross_pb_bonds!(no_pb)
 	write_mol2(no_pb, filename="view.mol2")
-	viewfile("view.mol2", "mol2", vtkcell="unit_cell.vtk")
+	viewfile("view.mol2", "mol2", vtkcell="unit_cell.vtk", axes=Axes(4, 0.25))
 end;
 
 # ╔═╡ 5b71d14a-be80-4ac3-8983-62571d0d4e7d

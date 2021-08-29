@@ -24,14 +24,14 @@ function view_structure(xtal::Crystal)
 	no_pb = deepcopy(xtal)
 	drop_cross_pb_bonds!(no_pb)
 	write_mol2(no_pb, filename="view.mol2")
-	viewfile("view.mol2", "mol2", vtkcell="unit_cell.vtk")
+	viewfile("view.mol2", "mol2", vtkcell="unit_cell.vtk", axes=Axes(4, 0.25))
 end;
 
 # ╔═╡ 5b71d14a-be80-4ac3-8983-62571d0d4e7d
 md"""
 ### Generate hypothetical structures
 
-Example: mono-substitution with an acetylamido group at one quarter of the *p*-phenylene moieties in IRMOF-1.
+Example: *ortho* substitution with an acetylamido group at one quarter of the *p*-phenylene moieties in IRMOF-1.
 """
 
 # ╔═╡ 74aa19d2-b1a4-4333-9ff9-e6ea74e7d989
