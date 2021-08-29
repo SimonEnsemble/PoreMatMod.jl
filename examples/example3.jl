@@ -40,7 +40,7 @@ begin
 	infer_bonds!(parent, true)
 	q = moiety("disordered_ligand!.xyz")
 	p = moiety("4-pyridyl.xyz")
-	repaired = replace(parent, q => p, rand_all=true)
+	repaired = replace(parent, q => p, loc=[1:8...], ori=[4 for _ in 1:8])
 	search = substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true)
 	active = substructure_replace(search, nothing, rand_all=true)
 	view_structure(active)
