@@ -115,7 +115,10 @@ write_xyz(xtal::Crystal, name::String) = Xtals.write_xyz(Cart(xtal.atoms, xtal.b
 Returns a crystal consisting of the atoms involved in subgraph isomorphisms in the search `s`
 """
 function isomorphic_substructures(s::Search)::Crystal
-    return s.search.parent[reduce(vcat, [s.results[i].isomorphism[1] for i in 1:nb_locations(s)])]
+    p = s.search.parent
+    n = nb_locations(s)
+    r = s.results
+    return p[r[i].isomorphism[1] for i in 1:n]
 end
 
 
@@ -221,18 +224,6 @@ function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, q2p_isom::Array{Int},
 end
 
 
-# chains (m2r)⁻¹ -> m2q -> q2p to obtain r2p mapping
-function map_r′_to_p(m2r, q2p, m2q)
-    # get inverse of m2r_isom, i.e. r2m
-    r2m = Dict([r => m for (m,r) in enumerate(m2r)])
-    # chain r2m -> m2q
-    r2q = Dict([r => m2q[m] for (r,m) in r2m])
-    # chain r2q -> q2p
-    r2p = Dict([r => q2p[q] for (r,q) in r2q])
-    return r2p
-end
-
-
 # generates data for effecting a series of replacements
 function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
         parent::Crystal, r_moty::Crystal, mask::Crystal, q′_in_r::Search, m2q_key::Vector{Int}
@@ -252,7 +243,7 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
         # determine isomorphism from masked query to parent
         m2p_isom = q2p_isom[m2q_key]
         # find parent subset
-        parent_subset = deepcopy(parent[m2p_isom])
+        parent_subset = deepcopy(parent[s2p_isom])
         # adjust coordinates for periodic boundaries
         adjust_for_pb!(parent_subset)
         # record the center of parent_subset so we can translate back later
@@ -281,7 +272,6 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
                     xrm = xrm′
                 end
             end
-            # add optimal xrm to array
             push!(xrms, xrm)
         end
         # push obsolete atoms to array
@@ -346,8 +336,7 @@ function _substructure_replace(query::Crystal, r_moty::Crystal, parent::Crystal,
         return parent
     end
     # determine s_mask (which atoms from query are NOT in r_moty?)
-    m2q_key = idx_filter(query, r_group_indices(query))
-    mask = query[m2q_key]
+    mask = query[idx_filter(query, r_group_indices(query))]
     # get isomrphism between query/mask and r_moty
     q′_in_r = mask ∈ r_moty
     if nb_isomorphisms(q′_in_r) ≠ 0
