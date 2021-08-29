@@ -20,8 +20,7 @@ function example2()
 end
 
 
-function example3()
-	n = 4
+function example3(n=4)
     parent = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
 	infer_bonds!(parent, true)
 	q = moiety("disordered_ligand!.xyz")
