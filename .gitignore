@@ -3,3 +3,4 @@ docs/build/
 docs/*.cif
 *.vtk
 *.mol2
+temp*

@@ -260,9 +260,9 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
         # orthog. Procrustes
         xrm = nothing
         m2r_isom = nothing
+        alignment_err = Inf
         if nb_isomorphisms(q′_in_r) ≠ 0
             # choose best r2p by evaluating RMSD for all possibilities
-            alignment_err = Inf
             for m2r_isom′ ∈ [q′_in_r.results[i].isomorphism[1] for i ∈ 1:nb_locations(q′_in_r)]
                 # shift all r_moty nodes according to center of isomorphic subset
                 r_moty′ = deepcopy(r_moty)
@@ -274,7 +274,7 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
                 # transform r_moty by rot_r2p, and parent_subset_center (this is now a potential crystal to add)
                 xrm′ = xform_r_moty(r_moty′, rot_r2p, parent_subset_center, parent)
                 # check error and keep xrm & m2r_isom if better than previous best error
-                alignment_err′ = rmsd(xrm′.atoms.coords.xf[:, m2r_isom′], mask.atoms.coords.xf[:, :])
+                alignment_err′ = rmsd(xrm′.atoms.coords.xf[:, m2r_isom′[sortperm(m2r_isom′)]], mask.atoms.coords.xf[:, :])
                 if alignment_err′ < alignment_err
                     m2r_isom = m2r_isom′
                     alignment_err = alignment_err′
