@@ -4,12 +4,6 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 143fa303-2ce1-471e-ab1f-09a77b88eb75
-begin
-	using Pkg
-	Pkg.activate("..")
-end
-
 # ╔═╡ 37939a7a-0651-11ec-11c1-6b5ef0a19ec2
 using PoreMatMod, PlutoUI, Bio3DView
 
@@ -115,7 +109,6 @@ begin
 end
 
 # ╔═╡ Cell order:
-# ╠═143fa303-2ce1-471e-ab1f-09a77b88eb75
 # ╟─8d523993-6e85-443a-9949-12030552b457
 # ╠═37939a7a-0651-11ec-11c1-6b5ef0a19ec2
 # ╠═21bf7b62-1aef-45c6-9da4-db8d4d69604c
