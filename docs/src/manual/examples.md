@@ -6,6 +6,8 @@ end
 
 ## Examples
 
+The code and data files for all examples can be found here: [Example Notebooks and Data](../../../assets/examples/examples.zip)
+
 ### Generate hypothetical structures
 
 Example: *ortho* substitution with an acetylamido group at one quarter of the *p*-phenylene moieties in IRMOF-1.
