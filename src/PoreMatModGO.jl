@@ -13,14 +13,6 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ e45926b6-1437-49c7-a073-ac5bd7bfaff9
-# hacks for pre-registration dev work
-begin
-	cd("..")
-	import Pkg
-	Pkg.activate(".")
-end
-
 # ╔═╡ 6c1969e0-02f5-11eb-3fa2-09931a63b1ac
 begin
     using PoreMatMod, PlutoUI, Bio3DView
@@ -193,7 +185,6 @@ Components $download_xyz $download_bonds $download_box
 end
 
 # ╔═╡ Cell order:
-# ╟─e45926b6-1437-49c7-a073-ac5bd7bfaff9
 # ╟─6c1969e0-02f5-11eb-3fa2-09931a63b1ac
 # ╟─50269ffe-02ef-11eb-0614-f11975d991fe
 # ╟─33b1fb50-0f73-11eb-2ab2-9d2cb6c5a533
