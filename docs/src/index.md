@@ -1,7 +1,16 @@
 ![logo.JPG](assets/index/logo.JPG)
 
-A pure-[Julia](https://julialang.org/) software package for manipulating chemical structures of porous crystals.  [PoreMatMod.jl](https://github.com/SimonEnsemble/PoreMatMod.jl) is built on the [@SimonEnsemble](https://SimonEnsemble.github.io) software [Xtals.jl](https://github.com/SimonEnsemble/Xtals.jl) to clean experimental and calculated data and provide novel hypothetical structural inputs to [PorousMaterials.jl](https://github.com/SimonEnsemble/PorousMaterials.jl) and other molecular dynamics or *ab initio* software packages.
-It is intended primarily for MOFs and other porous crystalline materials, but can work with other periodic structures, ensembles, and discrete molecules as well.
+A pure-[Julia](https://julialang.org/) software package for manipulating chemical structures of porous crystals.  
+
+[PoreMatMod.jl](https://github.com/SimonEnsemble/PoreMatMod.jl) is built on the [@SimonEnsemble](https://SimonEnsemble.github.io) software [Xtals.jl](https://github.com/SimonEnsemble/Xtals.jl) and is interoperable with [PorousMaterials.jl](https://github.com/SimonEnsemble/PorousMaterials.jl) and other molecular dynamics or *ab initio* software packages.
+
+It is intended primarily for working with MOFs and other porous crystalline materials, but can work with other periodic structures, ensembles, and discrete molecules as well.
+Use cases include:
+- tuning the chemistry of existing crystal structure models to generate libraries of hypothetical materials for computational screening
+- generating heterogeneous, multi-linker MOFs with precise control of functional group placement
+- repairing artifacts in crystal structures—such as missing hydrogen atoms, disorder, and the presence of solvents—determined from XRD
+- introducing missing-linker and missing-SBU defects into MOFs to enable computational studies on defect-property relationships
+- searching for subgraphs in libraries of crystal structure models to, e.g., filter structures or characterize the diversity of the library
 
 `PoreMatMod.jl` can identify chemical substructures, create hypothetical structure libraries, and correct disorder in experimental data, using an implementation of Ullmann's algorithm for substructure isomorphism and the orthogonal Procrustes algorithm for point cloud alignment.  
 Periodic cell boundaries are treated automatically, and the unit cell is preserved in transformations.
