@@ -26,6 +26,8 @@ Bonds across the unit cell boundaries of periodic materials are handled innately
 
 ## Searching with `PoreMatMod.jl`
 
+![find graphic](../../assets/find/s_moty-in-xtal.png)
+
 With a `parent` and `query` loaded, execute a search:
 
 ```jldoctest

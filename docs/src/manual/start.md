@@ -2,8 +2,7 @@
 
 ## Installation
 
-Download and install the [Julia programming language](https://julialang.org/), v1.6 or higher, and set up [Xtals.jl](https://simonensemble.github.io/Xtals.jl/dev/).
-
+Download and install the [Julia programming language](https://julialang.org/), v1.6 or higher.
 Then, in the Julia REPL, open the package manager (using `]`) and enter:
 
 ```julia
