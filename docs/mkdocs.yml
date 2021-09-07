@@ -26,16 +26,12 @@ extra:
 
 docs_dir: 'build'
 
-pages:
-  - PoreMatMod: index.md
-  - Getting Started: manual/start.md
-  - Loading Data: manual/inputs.md
-  - Substructure Search: manual/find.md
-  - Sustructure Find/Replace: manual/replace.md
-  - PoreMatModGO: manual/PoreMatModGO.md
-  - Collaborate: collab.md
-  - Examples: manual/examples.md
-  - Hypothetical Structures: examples/make_hypothetical_MOF.jl.html
-  - Missing Atoms: examples/correct_missing_Hs.jl.html
-  - XRD Artifacts: examples/disorder_and_guests.jl.html
-  - Engineered Defects: examples/missing_linker_defect.jl.html
+# pages:
+#   - PoreMatMod: index.md
+#   - Getting Started: manual/start.md
+#   - Loading Data: manual/inputs.md
+#   - Substructure Search: manual/find.md
+#   - Sustructure Find/Replace: manual/replace.md
+#   - PoreMatModGO: manual/PoreMatModGO.md
+#   - Collaborate: collab.md
+#   - Examples: manual/examples.md

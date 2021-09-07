@@ -11,13 +11,9 @@ makedocs( # to test docs, run this call to `makedocs` in the REPL
         "Loading Data" => "manual/inputs.md",
         "Substructure Search" => "manual/find.md",
         "Substructure Find/Replace" => "manual/replace.md",
-        "PoreMatModGO" => "manual/PoreMatModGO.md",
-        "Collaborate" => "collab.md",
         "Examples" => "manual/examples.md",
-        "Hypothetical Structures" => "examples/make_hypothetical_MOF.jl.html",
-        "Missing Atoms" => "examples/correct_missing_Hs.jl.html",
-        "XRD Artifcats" => "examples/disorder_and_guests.jl.html",
-        "Engineered Defects" => "examples/missing_linker_defect.jl.html"
+        "PoreMatModGO" => "manual/PoreMatModGO.md",
+        "Collaborate" => "collab.md"
     ],
     format = Documenter.HTML(assets = ["assets/flux.css"])
 )
