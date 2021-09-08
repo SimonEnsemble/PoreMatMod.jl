@@ -408,7 +408,7 @@ Returns a new `Crystal` with the specified modifications (returns `search.search
 - `random::Bool` set `true` to select random replacement orientations
 - `nb_loc::Int` assign a value to select random replacement at `nb_loc` random locations
 - `loc::Array{Int}` assign value(s) to select specific locations for replacement.  If `ori` is not specified, replacement orientation is random.
-- `ori::Array{Int}` assign value(s) when `loc` is assigned to specify exact configurations for replacement.
+- `ori::Array{Int}` assign value(s) when `loc` is assigned to specify exact configurations for replacement. `0` values mean the configuration at that location should be selected for optimal alignment with the parent.
 - `name::String` assign to give the generated `Crystal` a name ("new_xtal" by default)
 - `verbose::Bool` set `true` to print console messages about the replacement(s) being performed
 """
