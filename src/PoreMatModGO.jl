@@ -44,7 +44,7 @@ $(Resource("https://simonensemble.github.io/osu_logo.jpg", :width => 250))
 
 # ╔═╡ 50269ffe-02ef-11eb-0614-f11975d991fe
 begin load_inputs
-    # input fields: s_moty, r_moty, xtal
+    # input fields: s_moty, replacement, xtal
     md"""
     ##### Input Files
 
@@ -60,12 +60,12 @@ end
 # write file input strings to files in temp directory
 begin
     # dict for tracking load status of inputs
-    isloaded = Dict([:r_moty => false, :s_moty => false, :parent => false])
-    # r_moty loader
+    isloaded = Dict([:replacement => false, :s_moty => false, :parent => false])
+    # replacement loader
     if !isnothing(replace_moiety)
-        write("r_moty.xyz", replace_moiety["data"])
-        r_moty = moiety("r_moty.xyz")
-        isloaded[:r_moty] = true
+        write("replacement.xyz", replace_moiety["data"])
+        replacement = moiety("replacement.xyz")
+        isloaded[:replacement] = true
     end
     # s_moty loader
     if !isnothing(search_moiety)
@@ -125,14 +125,14 @@ end
 if all(values(isloaded))
 	new_xtal_flag = true
 	if replace_mode == "random replacement at each location"
-		new_xtal = substructure_replace(search, r_moty)
+		new_xtal = substructure_replace(search, replacement)
 	elseif replace_mode == "random replacement at n random locations" && nb_loc > 0
-		new_xtal = substructure_replace(search, r_moty, nb_loc=nb_loc)
+		new_xtal = substructure_replace(search, replacement, nb_loc=nb_loc)
 	elseif replace_mode == "random replacement at specific locations" && loc ≠ []
-		new_xtal = substructure_replace(search, r_moty, loc=[parse(Int, x) for x in loc])
+		new_xtal = substructure_replace(search, replacement, loc=[parse(Int, x) for x in loc])
 	elseif replace_mode == "specific replacements"
 		if loc ≠ [] && ori ≠ "" && length(loc) == length(split(ori, ","))
-			new_xtal = substructure_replace(search, r_moty,
+			new_xtal = substructure_replace(search, replacement,
 				loc=[parse(Int, x) for x in loc],
 				ori=[parse(Int, x) for x in split(ori, ",")])
 		else

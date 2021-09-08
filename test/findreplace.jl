@@ -50,33 +50,33 @@ parent = Crystal("IRMOF-1.cif")
 strip_numbers_from_atom_labels!(parent)
 infer_bonds!(parent, true)
 s_moty = moiety("2-!-p-phenylene.xyz")
-r_moty = moiety("2-acetylamido-p-phenylene.xyz")
-new_xtal = replace(parent, s_moty => r_moty)
+replacement = moiety("2-acetylamido-p-phenylene.xyz")
+new_xtal = replace(parent, s_moty => replacement)
 @test new_xtal.atoms.n == 592
-new_xtal = replace(parent, s_moty => r_moty, nb_loc=1)
+new_xtal = replace(parent, s_moty => replacement, nb_loc=1)
 @test new_xtal.atoms.n == 431
-new_xtal = replace(parent, s_moty => r_moty, loc=[2,3])
+new_xtal = replace(parent, s_moty => replacement, loc=[2,3])
 @test new_xtal.atoms.n == 438
-new_xtal = replace(parent, s_moty => r_moty, loc=[2,3,4], ori=[1,1,1])
+new_xtal = replace(parent, s_moty => replacement, loc=[2,3,4], ori=[1,1,1])
 @test new_xtal.atoms.n == 445
-r_moty = moiety("p-phenylene.xyz")
-new_xtal = replace(parent, s_moty => r_moty)
+replacement = moiety("p-phenylene.xyz")
+new_xtal = replace(parent, s_moty => replacement)
 @test ne(new_xtal.bonds) == ne(parent.bonds)
-r_moty = moiety("2-acetylamido-p-phenylene.xyz")
-new_xtal = replace(parent, s_moty => r_moty, nb_loc=1)
-@test ne(new_xtal.bonds) == (ne(parent.bonds) - ne(s_moty.bonds) + ne(r_moty.bonds))
+replacement = moiety("2-acetylamido-p-phenylene.xyz")
+new_xtal = replace(parent, s_moty => replacement, nb_loc=1)
+@test ne(new_xtal.bonds) == (ne(parent.bonds) - ne(s_moty.bonds) + ne(replacement.bonds))
 xtal = Crystal("IRMOF-1.cif")
 strip_numbers_from_atom_labels!(xtal)
 infer_bonds!(xtal, true)
 s_moty = moiety("2-!-p-phenylene.xyz")
 nb_bonds(xtal) = ne(xtal.bonds)
 # test that a "no-op" leaves the number of bonds unchanged
-r_moty = moiety("p-phenylene.xyz")
-@test nb_bonds(replace(xtal, s_moty => r_moty)) == nb_bonds(xtal)
+replacement = moiety("p-phenylene.xyz")
+@test nb_bonds(replace(xtal, s_moty => replacement)) == nb_bonds(xtal)
 # test that adding a new moiety increases the number of bonds correctly
-r_moty = moiety("2-acetylamido-p-phenylene.xyz")
-@test ne((replace(xtal, s_moty => r_moty, nb_loc=1)).bonds) ==
-    (ne(xtal.bonds) - ne(s_moty.bonds) + ne(r_moty.bonds))
+replacement = moiety("2-acetylamido-p-phenylene.xyz")
+@test ne((replace(xtal, s_moty => replacement, nb_loc=1)).bonds) ==
+    (ne(xtal.bonds) - ne(s_moty.bonds) + ne(replacement.bonds))
 end # test set: find_repalce
 
 end # module
