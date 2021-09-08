@@ -108,7 +108,7 @@ With all three file inputs loaded (IRMOF-1 as `parent`, 2-!-*p*-phenylene as `qu
 Random configurations will be chosen for each location in `search.results`, so that each occurrence of the `query` in the `parent` is replaced.
 
 ```jldoctest replace_md
-substructure_replace(search, replacement, rand_all=true)
+substructure_replace(search, replacement)
 # output
 Name: new_xtal
 Bravais unit cell of a crystal.
@@ -194,7 +194,7 @@ The search is usually the slowest step, and it is desirable not to perform it re
 However, for one-shot find-and-replace operations, the `replace` function syntax from standard `Julia` may be used:
 
 ```jldoctest replace_md; output=false
-replace(parent, query => replacement, rand_all=true)
+replace(parent, query => replacement)
 # output
 Name: new_xtal
 Bravais unit cell of a crystal.

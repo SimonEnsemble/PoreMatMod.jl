@@ -15,19 +15,19 @@ function example2()
 	infer_bonds!(parent, true)
 	query = moiety("1,4-C-phenylene_noH.xyz")
 	replacement = moiety("1,4-C-phenylene.xyz")
-	repaired_xtal = replace(parent, query => replacement, rand_all=true)
+	repaired_xtal = replace(parent, query => replacement)
 	view_crystal(repaired_xtal)
 end
 
 
-function example3(n=4)
+function example3()
     parent = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
 	infer_bonds!(parent, true)
 	q = moiety("disordered_ligand!.xyz")
-	p = moiety("4-pyridyl.xyz")
-	repaired = replace(parent, q => p, loc=[1:8...], ori=[n for _ in 1:8])
+	r = moiety("4-pyridyl.xyz")
+	repaired = replace(parent, q => r)
 	search = substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true)
-	active = substructure_replace(search, nothing, rand_all=true)
+	active = substructure_replace(search, nothing)
 	view_crystal(active)
 end
 

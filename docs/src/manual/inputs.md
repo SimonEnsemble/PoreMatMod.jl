@@ -21,6 +21,8 @@ These paths are set at module load time, and default to `./data/crystals` and `.
 
 `PoreMatMod.jl` requires chemical structural data as input.  The first necessary input is a `.cif` or `.cssr` file containing atomic coordinates and unit cell information.
 
+![Ti-MIL-125](../../assets/inputs/Ti-MIL-125.png)
+
 The file must be located in `rc[:paths][:crystals]` as described above. In the case of our guiding example, the functionalization of IRMOF-1, this means we need to either put [IRMOF-1.cif](../../../assets/inputs/IRMOF-1.cif) into `./data/crystals` or set `rc[:paths][:crystals]` to point `PoreMatMod.jl` to where it is located.
 
 ### Fragments
@@ -31,6 +33,8 @@ The `.xyz` format is simple: the first line gives the number of input lines whic
 For use with `PoreMatMod.jl`, `.xyz` data must have clean atom labels, meaning only plain atomic symbols. 
 The exception is the use of `!` for indicating atoms which will be altered in a [`replace` operation](../../replace). 
 For [substructure searches](../../find) using [`substructure_search`], any `!` tags are ignored (the atoms are treated as normal).
+
+![query fragment](../../assets/inputs/query.png)
 
 The `.xyz` file must be located at `rc[:paths][:moieties]`.
 For what we want to do with IRMOF-1, the best choice is to search for the [`p-phenylene.xyz`](../../../assets/inputs/p-phenylene.xyz) moiety that is the core of the BDC linker.

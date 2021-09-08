@@ -125,7 +125,7 @@ end
 if all(values(isloaded))
 	new_xtal_flag = true
 	if replace_mode == "random replacement at each location"
-		new_xtal = substructure_replace(search, r_moty, rand_all=true)
+		new_xtal = substructure_replace(search, r_moty)
 	elseif replace_mode == "random replacement at n random locations" && nb_loc > 0
 		new_xtal = substructure_replace(search, r_moty, nb_loc=nb_loc)
 	elseif replace_mode == "random replacement at specific locations" && loc ≠ []

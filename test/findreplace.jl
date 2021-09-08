@@ -51,7 +51,7 @@ strip_numbers_from_atom_labels!(parent)
 infer_bonds!(parent, true)
 s_moty = moiety("2-!-p-phenylene.xyz")
 r_moty = moiety("2-acetylamido-p-phenylene.xyz")
-new_xtal = replace(parent, s_moty => r_moty, rand_all=true)
+new_xtal = replace(parent, s_moty => r_moty)
 @test new_xtal.atoms.n == 592
 new_xtal = replace(parent, s_moty => r_moty, nb_loc=1)
 @test new_xtal.atoms.n == 431
@@ -60,7 +60,7 @@ new_xtal = replace(parent, s_moty => r_moty, loc=[2,3])
 new_xtal = replace(parent, s_moty => r_moty, loc=[2,3,4], ori=[1,1,1])
 @test new_xtal.atoms.n == 445
 r_moty = moiety("p-phenylene.xyz")
-new_xtal = replace(parent, s_moty => r_moty, rand_all=true)
+new_xtal = replace(parent, s_moty => r_moty)
 @test ne(new_xtal.bonds) == ne(parent.bonds)
 r_moty = moiety("2-acetylamido-p-phenylene.xyz")
 new_xtal = replace(parent, s_moty => r_moty, nb_loc=1)
@@ -72,7 +72,7 @@ s_moty = moiety("2-!-p-phenylene.xyz")
 nb_bonds(xtal) = ne(xtal.bonds)
 # test that a "no-op" leaves the number of bonds unchanged
 r_moty = moiety("p-phenylene.xyz")
-@test nb_bonds(replace(xtal, s_moty => r_moty, rand_all=true)) == nb_bonds(xtal)
+@test nb_bonds(replace(xtal, s_moty => r_moty)) == nb_bonds(xtal)
 # test that adding a new moiety increases the number of bonds correctly
 r_moty = moiety("2-acetylamido-p-phenylene.xyz")
 @test ne((replace(xtal, s_moty => r_moty, nb_loc=1)).bonds) ==

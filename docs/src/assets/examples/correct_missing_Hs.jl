@@ -78,7 +78,7 @@ md"""
 
 # ╔═╡ 74aa19d2-b1a4-4333-9ff9-e6ea74e7d989
 begin
-	child = replace(parent, query => replacement, rand_all=true)
+	child = replace(parent, query => replacement)
 	view_structure(child)
 end
 

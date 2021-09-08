@@ -98,12 +98,12 @@ md"""
 # ╔═╡ 74aa19d2-b1a4-4333-9ff9-e6ea74e7d989
 begin
 	# repair ring disorder
-	child = replace(parent, query1 => replacement, rand_all=true)
+	child = replace(parent, query1 => replacement)
 	
 	# search for disconnected acetylene components
 	search = substructure_search(query2, child, disconnected_component=true)
 	# delete guest molecules
-	child = substructure_replace(search, nothing, rand_all=true)
+	child = substructure_replace(search, nothing)
 	
 	view_structure(child)
 end
