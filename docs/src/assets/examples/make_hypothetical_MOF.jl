@@ -8,7 +8,7 @@ using InteractiveUtils
 using PoreMatMod, PlutoUI, Bio3DView
 
 # ╔═╡ 8ca1eb06-df90-4837-87b1-2e76e1670504
-include("ExampleViewer.jl"); # helper functions for viewing molecules and crystals
+include("ExampleHelper.jl"); # helper functions for viewing molecules and crystals
 
 # ╔═╡ 8d523993-6e85-443a-9949-12030552b457
 md"""
