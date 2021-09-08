@@ -141,10 +141,10 @@ adjust_for_pb!(xtal::Crystal) = adjust_for_pb!(xtal.atoms.coords.xf, xtal_name=x
 
 
 # Gets the rotation matrix for aligning the replacement moiety onto a subset (isomorphic to masked query) of parent atoms
-function r2p_op(r_moty::Crystal, parent::Crystal, r2p_isom::Dict{Int,Int}, parent_subset_center::Vector{Float64})
-    @assert r_moty.atoms.n ≥ 3 && parent.atoms.n ≥ 3 "Parent and replacement must each be at least 3 atoms for SVD alignment."
+function r2p_op(replacement::Crystal, parent::Crystal, r2p_isom::Dict{Int,Int}, parent_subset_center::Vector{Float64})
+    @assert replacement.atoms.n ≥ 3 && parent.atoms.n ≥ 3 "Parent and replacement must each be at least 3 atoms for SVD alignment."
     # get matrix A (replacement fragment coordinates)
-    A = r_moty.box.f_to_c * r_moty.atoms[[r for (r,p) in r2p_isom]].coords.xf
+    A = replacement.box.f_to_c * replacement.atoms[[r for (r,p) in r2p_isom]].coords.xf
     # prepare parent subset
     parent_subset = deepcopy(parent.atoms[[p for (r,p) in r2p_isom]].coords.xf)
     adjust_for_pb!(parent_subset)
@@ -157,19 +157,19 @@ function r2p_op(r_moty::Crystal, parent::Crystal, r2p_isom::Dict{Int,Int}, paren
 end
 
 
-# Transforms r_moty according to two rotation matrices and a translational offset
-function xform_r_moty(r_moty::Crystal, rot_r2p::Matrix{Float64}, parent_subset_center::Vector{Float64}, parent::Crystal)::Crystal
-    # put r_moty into cartesian space
-    atoms = Atoms{Cart}(length(r_moty.atoms.species), r_moty.atoms.species, Cart(r_moty.atoms.coords, r_moty.box))
-    # rotate r_moty to align with parent_subset
+# Transforms replacement according to two rotation matrices and a translational offset
+function xform_replacement(replacement::Crystal, rot_r2p::Matrix{Float64}, parent_subset_center::Vector{Float64}, parent::Crystal)::Crystal
+    # put replacement into cartesian space
+    atoms = Atoms{Cart}(length(replacement.atoms.species), replacement.atoms.species, Cart(replacement.atoms.coords, replacement.box))
+    # rotate replacement to align with parent_subset
     atoms.coords.x[:,:] = rot_r2p * atoms.coords.x
     # translate to align with original parent center
     atoms.coords.x .+= parent.box.f_to_c * parent_subset_center
     # cast atoms back to Frac
-    xrm = Crystal(r_moty.name, parent.box, Atoms{Frac}(length(atoms.species),
+    xrm = Crystal(replacement.name, parent.box, Atoms{Frac}(length(atoms.species),
         atoms.species, Frac(atoms.coords, parent.box)), Charges{Frac}(0))
     # restore bonding network
-    for e in edges(r_moty.bonds)
+    for e in edges(replacement.bonds)
         add_edge!(xrm.bonds, src(e), dst(e))
     end
     return xrm
@@ -183,7 +183,7 @@ end
 
 
 # tracks which bonds need to be made between the parent and array
-# of transformed r_moty's (xrms) along with the new fragments
+# of transformed replacement's (xrms) along with the new fragments
 function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, q2p_isom::Array{Int},
         parent::Crystal, m2r_isom::Union{Array{Int},Nothing}, xrm::Union{Crystal,Nothing}, count_xrms::Int)
     # skip bond accumulation for null replacement
@@ -201,10 +201,10 @@ function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, q2p_isom::Array{Int},
         n = LightGraphs.neighbors(parent.bonds, p)
         # loop over neighbors
         for nᵢ in n
-            # if neighbor not in q2p_isom, must bond it to r_moty replacement
+            # if neighbor not in q2p_isom, must bond it to replacement replacement
             # of parent_subset atom
             if !(nᵢ ∈ q2p_isom)
-                # ID the atom in r_moty
+                # ID the atom in replacement
                 r = m2r_isom[s]
                 # add the index offset
                 r += parent.atoms.n + (count_xrms - 1) * xrm.atoms.n
@@ -236,7 +236,7 @@ end
 
 # generates data for effecting a series of replacements
 function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
-        parent::Crystal, r_moty::Crystal, mask::Crystal, q′_in_r::Search, m2q_key::Vector{Int}
+        parent::Crystal, replacement::Crystal, mask::Crystal, q′_in_r::Search, m2q_key::Vector{Int}
         )::Tuple{Vector{Crystal},Vector{Int},Vector{Tuple{Int,Int}}}
     xrms = Crystal[]
     del_atoms = Int[]
@@ -277,15 +277,15 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
                 for i ∈ 1:nb_locations(q′_in_r)
                     for j ∈ 1:nb_configs_at_loc(q′_in_r)[i]
                         m2r_isom′ = q′_in_r.results[i].isomorphism[j]
-                        # shift all r_moty nodes according to center of isomorphic subset
-                        r_moty′ = deepcopy(r_moty)
-                        r_moty′.atoms.coords.xf .-= geometric_center(r_moty[m2r_isom′])
+                        # shift all replacement nodes according to center of isomorphic subset
+                        replacement′ = deepcopy(replacement)
+                        replacement′.atoms.coords.xf .-= geometric_center(replacement[m2r_isom′])
                         # determine mapping r2p
                         r2p_isom = map_r′_to_p(m2r_isom′, q2p_isom′, m2q_key)
                         # get OP rotation matrix to align replacement onto parent
-                        rot_r2p = r2p_op(r_moty, parent, r2p_isom, parent_subset_center)
-                        # transform r_moty by rot_r2p, and parent_subset_center (this is now a potential crystal to add)
-                        xrm′ = xform_r_moty(r_moty′, rot_r2p, parent_subset_center, parent)
+                        rot_r2p = r2p_op(replacement, parent, r2p_isom, parent_subset_center)
+                        # transform replacement by rot_r2p, and parent_subset_center (this is now a potential crystal to add)
+                        xrm′ = xform_replacement(replacement′, rot_r2p, parent_subset_center, parent)
                         # check error and keep xrm & m2r_isom if better than previous best error
                         alignment_err′ = rmsd(xrm′.atoms.coords.xf[:, m2r_isom′], mask.atoms.coords.xf[:, :])
                         if alignment_err′ < alignment_err
@@ -353,25 +353,25 @@ end
 
 
 ## Internal method for performing substructure replacements
-function _substructure_replace(query::Crystal, r_moty::Crystal, parent::Crystal,
+function _substructure_replace(query::Crystal, replacement::Crystal, parent::Crystal,
         search::Search, configs::Array{Tuple{Int,Int}},
         new_xtal_name::String)::Crystal
     # configs must all be unique
     @assert length(configs) == length(unique(configs)) "configs must be unique"
     # mutation guard
-    query, r_moty = deepcopy.([query, r_moty])
+    query, replacement = deepcopy.([query, replacement])
     # if there are no replacements to be made, just return the parent
     if nb_isomorphisms(search) == 0
         @warn "No replacements to be made."
         return parent
     end
-    # determine s_mask (which atoms from query are NOT in r_moty?)
+    # determine s_mask (which atoms from query are NOT in replacement?)
     m2q_key = idx_filter(query, r_group_indices(query))
     mask = query[m2q_key]
-    # get isomrphism between query/mask and r_moty
-    q′_in_r = mask ∈ r_moty
+    # get isomrphism between query/mask and replacement
+    q′_in_r = mask ∈ replacement
     # loop over configs to build replacement data
-    xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, r_moty, mask, q′_in_r, m2q_key)
+    xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, replacement, mask, q′_in_r, m2q_key)
     # append temporary crystals to parent
     atoms = xrms == Crystal[] ? parent.atoms : parent.atoms + sum([xrm.atoms for xrm ∈ xrms if xrm.atoms.n > 0])
     xtal = Crystal(new_xtal_name, parent.box, atoms, Charges{Frac}(0))
@@ -395,60 +395,82 @@ end
 
 ## Find/replace function (exposed)
 @doc raw"""
-    substructure_replace(search, r_moty, nb_loc=2)
+    substructure_replace(search, replacement, nb_loc=2)
 
-Inserts `r_moty` into a parent structure according to `search` and `kwargs`.
+Inserts `replacement` into a parent structure according to `search` and `kwargs`.
 Provide a replacement style `kwarg` to direct the location and orientation of replacements.
 Default behavior is to seek the replacement operation with lowest RMSD on spatial alignment.
 Returns a new `Crystal` with the specified modifications (returns `search.search.parent` if no replacements are made)
 
 # Arguments
 - `search::Search` the `Search` for a substructure moiety in the parent crystal
-- `r_moty::Crystal` the moiety to use for replacement of the searched substructure
+- `replacement::Crystal` the moiety to use for replacement of the searched substructure
 - `random::Bool` set `true` to select random replacement orientations
 - `nb_loc::Int` assign a value to select random replacement at `nb_loc` random locations
 - `loc::Array{Int}` assign value(s) to select specific locations for replacement.  If `ori` is not specified, replacement orientation is random.
 - `ori::Array{Int}` assign value(s) when `loc` is assigned to specify exact configurations for replacement.
 - `name::String` assign to give the generated `Crystal` a name ("new_xtal" by default)
+- `verbose::Bool` set `true` to print console messages about the replacement(s) being performed
 """
-function substructure_replace(search::Search, r_moty::Crystal; random::Bool=false,
-        nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[], name::String="new_xtal")::Crystal
+function substructure_replace(search::Search, replacement::Crystal; random::Bool=false,
+        nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[], name::String="new_xtal", verbose::Bool=false)::Crystal
     # replacement at all locations (default)
     if nb_loc == 0 && loc == Int[] && ori == Int[]
         nb_loc = nb_locations(search)
         loc = [1:nb_loc...]
         if random
             ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
+            if verbose
+                @info "Replacing" q_in_p=search r=replacement.name mode="random ori @ all loc"
+            end
         else
             ori = zeros(Int, nb_loc)
+            if verbose
+                @info "Replacing" q_in_p=search r=replacement.name mode="optimal ori @ all loc"
+            end
         end
     # replacement at nb_loc random locations
     elseif nb_loc > 0 && ori == Int[] && loc == Int[]
         loc = sample([1:nb_locations(search)...], nb_loc, replace=false)
         if random
             ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
+            if verbose
+                @info "Replacing" q_in_p=search r=replacement.name mode="random ori @ $nb_loc loc"
+            end
         else
             ori = zeros(Int, nb_loc)
+            if verbose
+                @info "Replacing" q_in_p=search r=replacement.name mode="optimal ori @ $nb_loc loc"
+            end
         end
     # replacement at specific locations
     elseif loc ≠ Int[]
         nb_loc = length(loc)
         if random
             ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
+            if verbose
+                @info "Replacing" q_in_p=search r=replacement.name mode="random ori @ loc: $loc"
+            end
         else
             ori = zeros(Int, nb_loc)
+            if verbose
+                @info "Replacing" q_in_p=search r=replacement.name mode="optimal ori @ loc: $loc"
+            end
         end
     # specific replacements
     elseif ori ≠ Int[] && loc ≠ Int[]
         @assert length(loc) == length(ori) "one orientation per location"
         nb_loc = length(ori)
+        if verbose
+            @info "Replacing" q_in_p=search r=replacement.name mode="loc: $loc\tori: $ori"
+        end
     end
 
     # generate configuration tuples (location, orientation)
     configs = Tuple{Int,Int}[(loc[i], ori[i]) for i in 1:nb_loc]
     # process replacements
-    return _substructure_replace(search.search.query, r_moty, search.search.parent,
+    return _substructure_replace(search.search.query, replacement, search.search.parent,
         search, configs, name)
 end
 
-substructure_replace(search::Search, r_moty::Nothing; kwargs...) = substructure_replace(search, moiety(nothing); kwargs...)
+substructure_replace(search::Search, replacement::Nothing; kwargs...) = substructure_replace(search, moiety(nothing); kwargs...)
