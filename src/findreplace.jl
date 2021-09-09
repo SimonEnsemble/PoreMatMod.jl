@@ -236,7 +236,7 @@ end
 
 # generates data for effecting a series of replacements
 function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
-        parent::Crystal, replacement::Crystal, mask::Crystal, q′_in_r::Search, m2q_key::Vector{Int}
+        parent::Crystal, replacement::Crystal, q′_in_r::Search, m2q_key::Vector{Int}
         )::Tuple{Vector{Crystal},Vector{Int},Vector{Tuple{Int,Int}}}
     xrms = Crystal[]
     del_atoms = Int[]
@@ -270,8 +270,8 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
             adjust_for_pb!(parent_subset)
             # record the center of parent_subset so we can translate back later
             parent_subset_center = geometric_center(parent_subset)
+            
             # orthog. Procrustes
-        
             if nb_isomorphisms(q′_in_r) ≠ 0
                 # choose best r2p by evaluating RMSD for all possibilities
                 for i ∈ 1:nb_locations(q′_in_r)
@@ -287,7 +287,7 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
                         # transform replacement by rot_r2p, and parent_subset_center (this is now a potential crystal to add)
                         xrm′ = xform_replacement(replacement′, rot_r2p, parent_subset_center, parent)
                         # check error and keep xrm & m2r_isom if better than previous best error
-                        alignment_err′ = rmsd(xrm′.atoms.coords.xf[:, m2r_isom′], mask.atoms.coords.xf[:, :])
+                        alignment_err′ = rmsd(xrm′.atoms.coords.xf[:, m2r_isom′], parent.atoms.coords.xf[:, m2q_key])
                         if alignment_err′ < alignment_err
                             m2r_isom = m2r_isom′
                             alignment_err = alignment_err′
@@ -353,25 +353,24 @@ end
 
 
 ## Internal method for performing substructure replacements
-function _substructure_replace(search::Search, replacement::Crystal, configs::Array{Tuple{Int,Int}}, new_xtal_name::String)::Crystal
-    query = search.search.query
-    parent = search.search.parent
+function _substructure_replace(q_in_p::Search, replacement::Crystal, configs::Array{Tuple{Int,Int}}, new_xtal_name::String)::Crystal
+    query = q_in_p.search.query
+    parent = q_in_p.search.parent
     # configs must all be unique
     @assert length(configs) == length(unique(configs)) "configs must be unique"
     # mutation guard
     query, replacement = deepcopy.([query, replacement])
     # if there are no replacements to be made, just return the parent
-    if nb_isomorphisms(search) == 0
+    if nb_isomorphisms(q_in_p) == 0
         @warn "No replacements to be made."
         return parent
     end
-    # determine s_mask (which atoms from query are NOT in replacement?)
+    # which atoms from query are in replacement?
     m2q_key = idx_filter(query, r_group_indices(query))
-    mask = query[m2q_key]
     # get isomrphism between query/mask and replacement
-    q′_in_r = mask ∈ replacement
+    q′_in_r = query[m2q_key] ∈ replacement
     # loop over configs to build replacement data
-    xrms, del_atoms, bonds = build_replacement_data(configs, search, parent, replacement, mask, q′_in_r, m2q_key)
+    xrms, del_atoms, bonds = build_replacement_data(configs, q_in_p, parent, replacement, q′_in_r, m2q_key)
     # append temporary crystals to parent
     atoms = xrms == Crystal[] ? parent.atoms : parent.atoms + sum([xrm.atoms for xrm ∈ xrms if xrm.atoms.n > 0])
     xtal = Crystal(new_xtal_name, parent.box, atoms, Charges{Frac}(0))
