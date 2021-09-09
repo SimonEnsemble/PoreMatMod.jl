@@ -194,10 +194,19 @@ By using the `random` keyword argument, the search for optimal alignment can be 
 
 ```jldoctest replace_md; output=false
 substructure_replace(search, replacement, nb_loc=3, random=true)
-
 # output
+Name: new_xtal
+Bravais unit cell of a crystal.
+	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
+	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
+	Volume of unit cell: 17237.492730 Å³
 
-
+	# atoms = 445
+	# charges = 0
+	chemical formula: Dict(:N => 3, :Zn => 32, :H => 105, :O => 107, :C => 198)
+	space Group: P1
+	symmetry Operations:
+		'x, y, z'
 ```
 
 ## Simple syntax

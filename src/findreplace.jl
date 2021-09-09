@@ -353,9 +353,9 @@ end
 
 
 ## Internal method for performing substructure replacements
-function _substructure_replace(query::Crystal, replacement::Crystal, parent::Crystal,
-        search::Search, configs::Array{Tuple{Int,Int}},
-        new_xtal_name::String)::Crystal
+function _substructure_replace(search::Search, replacement::Crystal, configs::Array{Tuple{Int,Int}}, new_xtal_name::String)::Crystal
+    query = search.search.query
+    parent = search.search.parent
     # configs must all be unique
     @assert length(configs) == length(unique(configs)) "configs must be unique"
     # mutation guard
@@ -469,8 +469,7 @@ function substructure_replace(search::Search, replacement::Crystal; random::Bool
     # generate configuration tuples (location, orientation)
     configs = Tuple{Int,Int}[(loc[i], ori[i]) for i in 1:nb_loc]
     # process replacements
-    return _substructure_replace(search.search.query, replacement, search.search.parent,
-        search, configs, name)
+    return _substructure_replace(search, replacement, configs, name)
 end
 
 substructure_replace(search::Search, replacement::Nothing; kwargs...) = substructure_replace(search, moiety(nothing); kwargs...)
