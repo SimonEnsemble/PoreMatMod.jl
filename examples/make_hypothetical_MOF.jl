@@ -45,7 +45,7 @@ rc[:paths][:moieties]
 # ╔═╡ be86f07e-0669-46c2-8c79-80e65dfcc6f2
 md"""
 !!! example \"the task\"
-	we have the IRMOF-1 crystal structure, and wish to append acetamido functional groups to six of its (randomly chosen) BDC linkers to give a mixed-linker IRMOF-1 derivative.
+	we have the IRMOF-1 crystal structure, and wish to append acetamido functional groups to six of its (randomly chosen) BDC (1,4-benzodicarboxylate) linkers to give a mixed-linker IRMOF-1 derivative.
 
 **Parent crystal structure**: first, we read in the `.cif` file describing the parent IRMOF-1 crystal structure.
 """
@@ -60,7 +60,7 @@ end
 
 # ╔═╡ 9b2d534a-4f78-4950-add1-9ba645669bb9
 md"""
-**Query fragment**: next, we construct (e.g. using Avogadro as a molecule editor or cutting this fragment out of the parent structure) a query fragment as a _p_-phenylene fragment to match that on the BCD linker of the IRMOF-1 parent structure. we mark one hydrogen atom on the query fragment as "masked" (shown in pink) by tagging its species label with `!` in the input. we need to mask this hydrogen atom because it will eventually be replaced by the acetamido functional group.
+**Query fragment**: next, we construct (e.g. using Avogadro as a molecule builder/editor or cutting this fragment out of the parent structure) a query fragment as a _p_-phenylene fragment to match that on the BCD linker of the IRMOF-1 parent structure. we mark one hydrogen atom on the query fragment as "masked" (shown in pink) by tagging its species label with `!` in the input. we need to mask this hydrogen atom because it will eventually be replaced by the acetamido functional group.
 """
 
 # ╔═╡ 4be03110-61ab-4cd6-b3fe-7d51ac5ee771
@@ -106,6 +106,12 @@ begin
 	view_structure(child)
 end
 
+# ╔═╡ 986ecdc4-455f-457e-a964-f00ddfeb53a2
+md"write the child crystal structure to file for downstream molecular simulations"
+
+# ╔═╡ 71209370-c445-4ff2-a873-b6e31c46419b
+write_cif(child, "acetamido-functionalized_IRMOF-1.cif")
+
 # ╔═╡ Cell order:
 # ╟─8d523993-6e85-443a-9949-12030552b457
 # ╠═37939a7a-0651-11ec-11c1-6b5ef0a19ec2
@@ -126,3 +132,5 @@ end
 # ╟─c8f8dbd3-4191-460d-944f-f5e456ce8b83
 # ╟─127a2bef-3903-4801-bc75-00a6dde2bc6e
 # ╠═74aa19d2-b1a4-4333-9ff9-e6ea74e7d989
+# ╟─986ecdc4-455f-457e-a964-f00ddfeb53a2
+# ╠═71209370-c445-4ff2-a873-b6e31c46419b
