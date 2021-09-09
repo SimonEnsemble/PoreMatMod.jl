@@ -22,6 +22,31 @@ for file_type in [:moieties, :crystals]
     end
 end
 
+input_file_message() = md"
+!!! note \"input files for the example Pluto notebooks\"
+	if the input files required for the example Pluto notebooks are not present in the correct folders, the script `ExampleHelper.jl` automatically copies the required input files from the `examples/data` directory of the `PoreMatMod.jl` source code to the folders `rc[:paths][:crystals]` and `rc[:paths][:moieties]`. all input files for the examples are also on Github [here](https://github.com/SimonEnsemble/PoreMatMod.jl/tree/master/examples/data).
+
+	n.b. you may change the folders from which `PoreMatMod.jl` reads input files by setting `rc[:paths][:crystals]` and `rc[:paths][:moieties]` as the desired path. for example, if you desire to store your crystal structures in a folder `~/my_xtals/` (a folder in your home directory), set:
+	```julia
+	rc[:paths][:crystals] = joinpath(homedir(), \"my_xtals\").
+	```
+"
+
+xtal_folder_message() = md"
+📕 folder from which `PoreMatMod.jl` reads `.cif` files that represent crystal structures:
+"
+
+moiety_folder_message() = md"
+📕 folder from which `PoreMatMod.jl` reads `.xyz` files that represent fragments/moities:
+"
+
+fragment_construction_note() = md"
+!!! note \"how can we construct the query/replacement fragments?\"
+    two options we use: (1) use Avogadro as a molecule builder/editor and export it as `.xyz` or (2) cut the appropriate fragment out of the MOF crystal structure in the `.cif` file using e.g. iRASPA.
+"
+
+write_cif_message() = md"write the child crystal structure to file for downstream molecular simulations"
+
 # function to visualize a crystal in the notebook
 function view_structure(xtal::Crystal)
 	write_vtk(xtal.box, "temp_unit_cell.vtk")

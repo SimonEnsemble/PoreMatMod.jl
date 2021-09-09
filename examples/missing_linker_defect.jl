@@ -21,23 +21,17 @@ md"""
 ## Example: introduce missing-linker defects into a MOF structure
 """
 
-# ╔═╡ 15999d51-e6a2-40c8-9647-2b1d58d07e65
-md"
-!!! note \"input files for the example Pluto notebooks\"
-	if the input files required for the example Pluto notebooks are not present in the correct folders, the script `ExampleHelper.jl` automatically copies the required input files from the `examples/data` directory of the `PoreMatMod.jl` source code to the folders `rc[:paths][:crystals]` and `rc[:paths][:moieties]`. all input files for the examples are also on Github [here](https://github.com/SimonEnsemble/PoreMatMod.jl/tree/master/examples/data).
+# ╔═╡ e2877131-2e59-4e00-b549-70529d8e71e4
+input_file_message()
 
-	n.b. you may change the folders from which `PoreMatMod.jl` reads input files by setting `rc[:paths][:crystals]` and `rc[:paths][:moieties]` as the desired path. for example, if you desire to store your crystal structures in a folder `~/my_xtals/` (a folder in your home directory), set:
-	```julia
-	rc[:paths][:crystals] = joinpath(homedir(), \"my_xtals\").
-	```
-📕 folder from which `PoreMatMod.jl` reads `.cif` files that represent crystal structures:
-"
+# ╔═╡ 3eb0313b-0a64-482e-930a-14bd0353a00c
+xtal_folder_message()
 
 # ╔═╡ d47c97d5-614e-4c61-b65d-f3fb44014cd1
 rc[:paths][:crystals]
 
 # ╔═╡ 528b29d8-847a-4723-8fde-fa319a7b8f3f
-md"📕 folder from which `PoreMatMod.jl` reads `.xyz` files that represent fragments/moities:"
+moiety_folder_message()
 
 # ╔═╡ 1a62d3bf-95f5-4b1b-af12-6f9db700e5f4
 rc[:paths][:moieties]
@@ -58,9 +52,12 @@ begin
 	view_structure(parent)          # view structure
 end
 
+# ╔═╡ 103d3258-5f1c-4b6f-81e3-f45c2bbac844
+fragment_construction_note()
+
 # ╔═╡ 15ae88e9-b886-4cc6-9ba7-41111bfa06b0
 md"""
-**Query fragment**: next, we construct a query fragment to be the BDC linker in the parent structure (e.g. using Avogadro as a molecule builder/editor or cutting this fragment out of the parent structure). the masked atoms to be deleted are tagged with `!` in the `.xyz` input file: the masked hydrogen and carbon atoms are shown in light pink and dark pink, respectively.
+**Query fragment**: next, we construct a query fragment to be the BDC linker in the parent structure. the masked atoms to be deleted are tagged with `!` in the `.xyz` input file: the masked hydrogen and carbon atoms are shown in light pink and dark pink, respectively.
 """
 
 # ╔═╡ 1a443428-e283-4205-986e-d0c4ac09bbaa
@@ -105,7 +102,7 @@ begin
 end
 
 # ╔═╡ 7b34f300-4815-43f3-8f10-18cb6c76c7f4
-md"write the child crystal structure to file for downstream molecular simulations"
+write_cif_message()
 
 # ╔═╡ 14f1459b-f505-4950-80f4-7e641abb6b7a
 write_cif(child, "defected_UiO-66.cif")
@@ -114,12 +111,14 @@ write_cif(child, "defected_UiO-66.cif")
 # ╟─8d523993-6e85-443a-9949-12030552b457
 # ╠═37939a7a-0651-11ec-11c1-6b5ef0a19ec2
 # ╠═21bf7b62-1aef-45c6-9da4-db8d4d69604c
-# ╟─15999d51-e6a2-40c8-9647-2b1d58d07e65
+# ╟─e2877131-2e59-4e00-b549-70529d8e71e4
+# ╠═3eb0313b-0a64-482e-930a-14bd0353a00c
 # ╠═d47c97d5-614e-4c61-b65d-f3fb44014cd1
-# ╟─528b29d8-847a-4723-8fde-fa319a7b8f3f
+# ╠═528b29d8-847a-4723-8fde-fa319a7b8f3f
 # ╠═1a62d3bf-95f5-4b1b-af12-6f9db700e5f4
 # ╟─5b71d14a-be80-4ac3-8983-62571d0d4e7d
 # ╠═8819797c-f1a2-4c46-999d-00316bd21e44
+# ╟─103d3258-5f1c-4b6f-81e3-f45c2bbac844
 # ╟─15ae88e9-b886-4cc6-9ba7-41111bfa06b0
 # ╠═1a443428-e283-4205-986e-d0c4ac09bbaa
 # ╟─19282148-e649-4d6e-833d-43fa3cde14c6

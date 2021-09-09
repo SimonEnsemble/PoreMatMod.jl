@@ -21,23 +21,17 @@ md"""
 ## example: generate a hypothetical MOF structure by decorating its linkers with functional groups
 """
 
-# ╔═╡ 3ff0cd63-8bdf-4ba5-92b6-e2a52f7573c2
-md"
-!!! note \"input files for the example Pluto notebooks\"
-	if the input files required for the example Pluto notebooks are not present in the correct folders, the script `ExampleHelper.jl` automatically copies the required input files from the `examples/data` directory of the `PoreMatMod.jl` source code to the folders `rc[:paths][:crystals]` and `rc[:paths][:moieties]`. all input files for the examples are also on Github [here](https://github.com/SimonEnsemble/PoreMatMod.jl/tree/master/examples/data).
+# ╔═╡ 74b45651-21d5-4332-a4a5-866ea1bb02b8
+input_file_message()
 
-	n.b. you may change the folders from which `PoreMatMod.jl` reads input files by setting `rc[:paths][:crystals]` and `rc[:paths][:moieties]` as the desired path. for example, if you desire to store your crystal structures in a folder `~/my_xtals/` (a folder in your home directory), set:
-	```julia
-	rc[:paths][:crystals] = joinpath(homedir(), \"my_xtals\").
-	```
-📕 folder from which `PoreMatMod.jl` reads `.cif` files that represent crystal structures:
-"
+# ╔═╡ 3ff0cd63-8bdf-4ba5-92b6-e2a52f7573c2
+xtal_folder_message()
 
 # ╔═╡ ccc7fc86-5f48-4cc9-bd5c-349fc1d55b0c
 rc[:paths][:crystals]
 
 # ╔═╡ b66dd0d5-5bac-4b23-a33f-17305b0d4728
-md"📕 folder from which `PoreMatMod.jl` reads `.xyz` files that represent fragments/moities:"
+moiety_folder_message()
 
 # ╔═╡ a76e79ee-c82c-4771-818d-5380a5fb4c18
 rc[:paths][:moieties]
@@ -58,9 +52,12 @@ begin
 	view_structure(parent)          # view structure
 end
 
+# ╔═╡ b402e79a-784b-4d8b-82f1-df4fe1cedad1
+fragment_construction_note()
+
 # ╔═╡ 9b2d534a-4f78-4950-add1-9ba645669bb9
 md"""
-**Query fragment**: next, we construct (e.g. using Avogadro as a molecule builder/editor or cutting this fragment out of the parent structure) a query fragment as a _p_-phenylene fragment to match that on the BCD linker of the IRMOF-1 parent structure. we mark one hydrogen atom on the query fragment as "masked" (shown in pink) by tagging its species label with `!` in the input. we need to mask this hydrogen atom because it will eventually be replaced by the acetamido functional group.
+**Query fragment**: next, we construct a query fragment as a _p_-phenylene fragment to match that on the BCD linker of the IRMOF-1 parent structure. we mark one hydrogen atom on the query fragment as "masked" (shown in pink) by tagging its species label with `!` in the input. we need to mask this hydrogen atom because it will eventually be replaced by the acetamido functional group.
 """
 
 # ╔═╡ 4be03110-61ab-4cd6-b3fe-7d51ac5ee771
@@ -76,7 +73,7 @@ end
 
 # ╔═╡ d1aa8a19-3702-40f6-b73e-b9ebfc1a7a71
 md"""
-**Replacement fragment**: next, we construct (e.g. using Avogadro as a molecule editor) a replacement fragment as a modified version of the query fragment (with acetamido group in place of one hydrogen atom).
+**Replacement fragment**: next, we construct a replacement fragment as a modified version of the query fragment (with acetamido group in place of one hydrogen atom).
 """
 
 # ╔═╡ 44e7e665-ae68-4cd4-b45f-138a0fb8910e
@@ -107,7 +104,7 @@ begin
 end
 
 # ╔═╡ 986ecdc4-455f-457e-a964-f00ddfeb53a2
-md"write the child crystal structure to file for downstream molecular simulations"
+write_cif_message()
 
 # ╔═╡ 71209370-c445-4ff2-a873-b6e31c46419b
 write_cif(child, "acetamido-functionalized_IRMOF-1.cif")
@@ -116,13 +113,15 @@ write_cif(child, "acetamido-functionalized_IRMOF-1.cif")
 # ╟─8d523993-6e85-443a-9949-12030552b457
 # ╠═37939a7a-0651-11ec-11c1-6b5ef0a19ec2
 # ╠═8ca1eb06-df90-4837-87b1-2e76e1670504
+# ╠═74b45651-21d5-4332-a4a5-866ea1bb02b8
 # ╟─3ff0cd63-8bdf-4ba5-92b6-e2a52f7573c2
 # ╠═ccc7fc86-5f48-4cc9-bd5c-349fc1d55b0c
 # ╟─b66dd0d5-5bac-4b23-a33f-17305b0d4728
 # ╠═a76e79ee-c82c-4771-818d-5380a5fb4c18
 # ╟─be86f07e-0669-46c2-8c79-80e65dfcc6f2
 # ╠═b53e7c38-d8f5-4f28-a9dc-f7902a86fdb2
-# ╟─9b2d534a-4f78-4950-add1-9ba645669bb9
+# ╟─b402e79a-784b-4d8b-82f1-df4fe1cedad1
+# ╠═9b2d534a-4f78-4950-add1-9ba645669bb9
 # ╠═4be03110-61ab-4cd6-b3fe-7d51ac5ee771
 # ╟─e5eaaef4-13a0-48bd-9f2b-5040b2d10ac1
 # ╟─559ef3c3-a176-4d65-8958-810c9b0b32c5
