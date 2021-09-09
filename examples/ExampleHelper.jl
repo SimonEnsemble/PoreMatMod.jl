@@ -1,22 +1,26 @@
-# load the data if missing
-if !isdir(joinpath(pwd(), "data"))
-	mkpath(joinpath(pwd(), "data", "crystals"))
-	mkpath(joinpath(pwd(), "data", "moieties"))
-	using ZipFile
-	download("https://github.com/SimonEnsemble/PoreMatMod.jl/raw/0093f074fca8c14515ef3125f5fb03b22a0a8303/docs/src/assets/examples/examples.zip", "temp_examples.zip")
-	r = ZipFile.Reader("temp_examples.zip")
-	for f in r.files
-		try
-			open(f.name, "w") do io
-				write(io, read(f, String))
-			end
-		catch
-		end
-	end
-	close(r)
-	rm("temp_examples.zip")
-end
+using Logging
 
+# list of required files for examples
+required_files = Dict(:crystals => ["IRMOF-1.cif"],
+                      :moieties => ["2-!-p-phenylene.xyz", "2-acetylamido-p-phenylene.xyz"]
+                     )
+
+# make sure directories are present and the right files for the examples
+for file_type in [:moieties, :crystals]
+    # make sure directories exist
+    if ! isdir(rc[:paths][file_type])
+        @warn "$(rc[:paths][file_type]) directory not present; creating it."
+        mkpath(rc[:paths][file_type])
+    end
+    for required_file in required_files[file_type]
+        where_it_shld_be = joinpath(rc[:paths][file_type], required_file)
+        if ! isfile(where_it_shld_be)
+            @warn "$where_it_shld_be not present; copying it from src."
+            where_it_is = normpath(joinpath(pathof(PoreMatMod), "..", "..", "examples", "data", String(file_type), required_file))
+            cp(where_it_is, where_it_shld_be)
+        end
+    end
+end
 
 # function to visualize a crystal in the notebook
 function view_structure(xtal::Crystal)
