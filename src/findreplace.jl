@@ -141,13 +141,14 @@ adjust_for_pb!(xtal::Crystal) = adjust_for_pb!(xtal.atoms.coords.xf, xtal_name=x
 
 
 # Gets the rotation matrix for aligning the replacement moiety onto a subset (isomorphic to masked query) of parent atoms
-function r2p_op(replacement::Crystal, parent::Crystal, r2p_isom::Dict{Int,Int}, parent_subset_center::Vector{Float64})
+function r2p_op(replacement::Crystal, parent::Crystal, r2p_isom::Dict{Int,Int})
     @assert replacement.atoms.n ≥ 3 && parent.atoms.n ≥ 3 "Parent and replacement must each be at least 3 atoms for SVD alignment."
     # get matrix A (replacement fragment coordinates)
     A = replacement.box.f_to_c * replacement.atoms[[r for (r,p) in r2p_isom]].coords.xf
     # prepare parent subset
     parent_subset = deepcopy(parent.atoms[[p for (r,p) in r2p_isom]].coords.xf)
     adjust_for_pb!(parent_subset)
+    parent_subset_center = geometric_center(parent_subset)
     # get matrix B (parent subset coordinates)
     B = parent.box.f_to_c * (parent_subset .- parent_subset_center)
     # solve the SVD
@@ -283,7 +284,7 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
                         # determine mapping r2p
                         r2p_isom = map_r′_to_p(m2r_isom′, q2p_isom′, m2q_key)
                         # get OP rotation matrix to align replacement onto parent
-                        rot_r2p = r2p_op(replacement, parent, r2p_isom, parent_subset_center)
+                        rot_r2p = r2p_op(replacement, parent, r2p_isom)
                         # transform replacement by rot_r2p, and parent_subset_center (this is now a potential crystal to add)
                         xrm′ = xform_replacement(replacement′, rot_r2p, parent_subset_center, parent)
                         # check error and keep xrm & m2r_isom if better than previous best error
@@ -442,6 +443,13 @@ function substructure_replace(search::Search, replacement::Crystal; random::Bool
                 @info "Replacing" q_in_p=search r=replacement.name mode="optimal ori @ $nb_loc loc"
             end
         end
+    # specific replacements
+    elseif ori ≠ Int[] && loc ≠ Int[]
+        @assert length(loc) == length(ori) "one orientation per location"
+        nb_loc = length(ori)
+        if verbose
+            @info "Replacing" q_in_p=search r=replacement.name mode="loc: $loc\tori: $ori"
+        end
     # replacement at specific locations
     elseif loc ≠ Int[]
         nb_loc = length(loc)
@@ -455,13 +463,6 @@ function substructure_replace(search::Search, replacement::Crystal; random::Bool
             if verbose
                 @info "Replacing" q_in_p=search r=replacement.name mode="optimal ori @ loc: $loc"
             end
-        end
-    # specific replacements
-    elseif ori ≠ Int[] && loc ≠ Int[]
-        @assert length(loc) == length(ori) "one orientation per location"
-        nb_loc = length(ori)
-        if verbose
-            @info "Replacing" q_in_p=search r=replacement.name mode="loc: $loc\tori: $ori"
         end
     end
 
