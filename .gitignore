@@ -5,3 +5,5 @@ docs/*.cif
 *.mol2
 temp*
 test/*.cif
+examples/*.cif
+examples/*.html

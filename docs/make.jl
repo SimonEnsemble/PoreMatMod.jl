@@ -1,5 +1,17 @@
-using Documenter, PoreMatMod
+using Documenter, PoreMatMod, PlutoSliderServer
 
+# run the Pluto example notebooks and export them to HTML for inclusion in the docs
+cd("examples")
+PlutoSliderServer.export_directory()
+rm("index.html")
+for file in readdir()
+    if length(split(file, ".html")) > 1
+        mv(file, "../docs/src/examples/$file", force=true)
+    end
+end
+cd("..")
+
+# build the docs
 makedocs( # to test docs, run this call to `makedocs` in the REPL
     root = joinpath(dirname(pathof(PoreMatMod)), "..", "docs"),
     modules = [PoreMatMod],
@@ -18,4 +30,5 @@ makedocs( # to test docs, run this call to `makedocs` in the REPL
     format = Documenter.HTML(assets = ["assets/flux.css"])
 )
 
+# deploy the docs
 deploydocs(repo = "github.com/SimonEnsemble/PoreMatMod.jl.git")
