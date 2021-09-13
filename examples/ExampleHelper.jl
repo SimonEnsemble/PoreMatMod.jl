@@ -22,7 +22,7 @@ for file_type in [:moieties, :crystals]
     end
 end
 
-input_file_message() = md"
+input_file_message() = md"""
 !!! note \"input files for the example Pluto notebooks\"
 	if the input files required for the example Pluto notebooks are not present in the correct folders, the script `ExampleHelper.jl` automatically copies the required input files from the `examples/data` directory of the `PoreMatMod.jl` source code to the folders `rc[:paths][:crystals]` and `rc[:paths][:moieties]`. all input files for the examples are also on Github [here](https://github.com/SimonEnsemble/PoreMatMod.jl/tree/master/examples/data).
 
@@ -30,22 +30,22 @@ input_file_message() = md"
 	```julia
 	rc[:paths][:crystals] = joinpath(homedir(), \"my_xtals\").
 	```
-"
+"""
 
-xtal_folder_message() = md"
+xtal_folder_message() = md"""
 📕 folder from which `PoreMatMod.jl` reads `.cif` files that represent crystal structures:
-"
+"""
 
-moiety_folder_message() = md"
+moiety_folder_message() = md"""
 📕 folder from which `PoreMatMod.jl` reads `.xyz` files that represent fragments/moities:
-"
+"""
 
-fragment_construction_note() = md"
+fragment_construction_note() = md"""
 !!! note \"how can we construct the query/replacement fragments?\"
     two options we use: (1) use Avogadro as a molecule builder/editor and export it as `.xyz` or (2) cut the appropriate fragment out of the MOF crystal structure in the `.cif` file using e.g. iRASPA.
-"
+"""
 
-write_cif_message() = md"write the child crystal structure to file for downstream molecular simulations"
+write_cif_message() = md"""write the child crystal structure to file for downstream molecular simulations"""
 
 # function to visualize a crystal in the notebook
 function view_structure(xtal::Crystal)
@@ -53,9 +53,15 @@ function view_structure(xtal::Crystal)
 	no_pb = deepcopy(xtal)
 	drop_cross_pb_bonds!(no_pb)
 	write_mol2(no_pb, filename="temp_view.mol2")
-	output = viewfile("temp_view.mol2", "mol2", vtkcell="temp_unit_cell.vtk")
-	rm("temp_unit_cell.vtk")
-	rm("temp_view.mol2")
+	output = nothing
+	try
+		output = viewfile("temp_view.mol2", "mol2", vtkcell="temp_unit_cell.vtk")
+	catch
+		output = viewfile("temp_view.mol2", "mol2", vtkcell="temp_unit_cell.vtk", html=true)
+	finally
+		rm("temp_unit_cell.vtk")
+		rm("temp_view.mol2")
+	end
 	return output
 end
 
@@ -74,8 +80,14 @@ function view_query_or_replacement(filename::String)
 	# write temporary modified file, view it, and delete it
 	filename = joinpath(PoreMatMod.rc[:paths][:moieties], "temp_" * filename)
 	write_xyz(moty, filename)
-	output = viewfile(filename, "xyz")
-	rm(filename)
+	output = nothing
+	try
+		output = viewfile(filename, "xyz")
+	catch
+		output = viewfile(filename, "xyz", html=true)
+	finally
+		rm(filename)
+	end
 	return output
 end
 

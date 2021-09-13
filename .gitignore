@@ -4,3 +4,4 @@ docs/*.cif
 *.vtk
 *.mol2
 temp*
+test/*.cif
