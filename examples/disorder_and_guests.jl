@@ -43,7 +43,7 @@ md"""
 # ╔═╡ 6d9c3b97-fd26-470c-8acf-8ce10b33b82d
 begin
 	# read in the parent xtal
-	parent = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false) 
+	parent = Crystal("SIFSIX-2-Cu-i.cif", check_overlap=false) 
 	
 	infer_bonds!(parent, true)	# infer bonds
 	view_structure(parent)      # view structure

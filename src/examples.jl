@@ -21,7 +21,7 @@ end
 
 
 function example3()
-    parent = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
+    parent = Crystal("SIFSIX-2-Cu-i.cif", check_overlap=false)
 	infer_bonds!(parent, true)
 	q = moiety("disordered_ligand!.xyz")
 	r = moiety("4-pyridyl.xyz")

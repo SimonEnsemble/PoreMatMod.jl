@@ -1,7 +1,7 @@
 using Logging
 
 # list of required files for examples
-required_files = Dict(:crystals => ["IRMOF-1.cif", "EMEHUB_C2H2.cif", "IRMOF-1_noH.cif", "UiO-66.cif"],
+required_files = Dict(:crystals => ["IRMOF-1.cif", "SIFSIX-2-Cu-i.cif", "IRMOF-1_noH.cif", "UiO-66.cif"],
                       :moieties => ["2-!-p-phenylene.xyz", "2-acetylamido-p-phenylene.xyz", "1,4-C-phenylene_noH.xyz", "1,4-C-phenylene.xyz", "4-pyridyl.xyz",
 					  "acetylene.xyz", "BDC.xyz", "disordered_ligand!.xyz", "formate_caps.xyz"]
                      )
