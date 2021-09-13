@@ -6,11 +6,7 @@ using InteractiveUtils
 
 # ╔═╡ 37939a7a-0651-11ec-11c1-6b5ef0a19ec2
 # load required packages (Pluto.jl will automatically install them)
-begin
-	import Pkg
-	Pkg.activate("/home/cokes/.julia/dev/PoreMatMod")
-	using PoreMatMod, PlutoUI, Bio3DView, Logging
-end
+using PoreMatMod, PlutoUI, Bio3DView, Logging
 
 # ╔═╡ 996e8512-6d04-4555-b59b-d9d0b94cd744
 # helper functions for viewing molecules and crystals and gathering input files
