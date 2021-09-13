@@ -38,8 +38,6 @@ novel = replace(activated, moiety("3-H!-4-pyridyl.xyz") => moiety("3-F-4-pyridyl
 # Save the result
 write_cif(novel, "3,3'-F2-SIFSIX-2-Cu-i.cif")
 # output
-┌ Info: Crystal SIFSIX-2-Cu-i.cif has I 4/m m m space group. I am converting it to P1 symmetry.
-└         To prevent this, pass `convert_to_p1=false` to the `Crystal` constructor.
 ┌ Warning: carbon atom 1 in SIFSIX-2-Cu-i.cif is bonded to more than four atoms!
 └ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
 ┌ Warning: carbon atom 6 in disordered_ligand!.xyz is bonded to more than four atoms!
