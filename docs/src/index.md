@@ -18,27 +18,27 @@ Periodic cell boundaries are treated automatically, and the unit cell is preserv
 **Example**: repairing, activating, and functionalizing an experimental structure.
 The structure below, of a MOF called [SIFSIX-2-Cu-i](https://dx.doi.org/10.1126/science.aaf2458), contains disordered PyC2 linkers and acetylene guest molecules.
 
+![messy to novel](assets/index/example.png)
+
 Loading the data, resolving the disorder, removing the guest molecules, replacing the linkers, and saving the result can be done with a very short script:
 
 ```jldoctest; output=false
 # Import the module
 using PoreMatMod
 # Load some messy data
-xtal = Crystal("EMEHUB_C2H2.cif", remove_duplicates=true, check_overlap=false)
+xtal = Crystal("SIFSIX-2-Cu-i.cif", check_overlap=false)
 infer_bonds!(xtal, true)
 # Repair the disordered linkers
-repaired = replace(xtal, moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz"), rand_all=true)
+repaired = replace(xtal, moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz"))
 # Remove the guest molecules to produce the activated MOF
 search = substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true)
-activated = substructure_replace(search, nothing, rand_all=true)
+activated = substructure_replace(search, nothing)
 # Add a functional group
-novel = replace(activated, moiety("3-H!-4-pyridyl.xyz") => moiety("3-F-4-pyridyl.xyz"), rand_all=true)
+novel = replace(activated, moiety("3-H!-4-pyridyl.xyz") => moiety("3-F-4-pyridyl.xyz"))
 # Save the result
 write_cif(novel, "3,3'-F2-SIFSIX-2-Cu-i.cif")
 # output
-┌ Info: Crystal EMEHUB_C2H2.cif has I 4/m m m space group. I am converting it to P1 symmetry.
-└         To prevent this, pass `convert_to_p1=false` to the `Crystal` constructor.
-┌ Warning: carbon atom 1 in EMEHUB_C2H2.cif is bonded to more than four atoms!
+┌ Warning: carbon atom 1 in SIFSIX-2-Cu-i.cif is bonded to more than four atoms!
 └ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
 ┌ Warning: carbon atom 6 in disordered_ligand!.xyz is bonded to more than four atoms!
 └ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
@@ -47,5 +47,3 @@ write_cif(novel, "3,3'-F2-SIFSIX-2-Cu-i.cif")
 ```
 
 Input files: [input_files.zip](assets/index/input_files.zip)
-
-![messy to novel](assets/index/example.png)
