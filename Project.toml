@@ -17,7 +17,6 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 Xtals = "ede5f01d-793e-4c47-9885-c447d1f18d6d"
-ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
 
 [compat]
 Bio3DView = "^0.1.0"
@@ -32,7 +31,6 @@ PlutoUI = "^0.7.9"
 Reexport = "^1.1.0"
 StatsBase = "^0.33.0"
 Xtals = "0.3.0"
-ZipFile = "^0.9.3"
 julia = "^1.6"
 
 [extras]

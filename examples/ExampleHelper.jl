@@ -1,8 +1,9 @@
 using Logging
 
 # list of required files for examples
-required_files = Dict(:crystals => ["IRMOF-1.cif"],
-                      :moieties => ["2-!-p-phenylene.xyz", "2-acetylamido-p-phenylene.xyz"]
+required_files = Dict(:crystals => ["IRMOF-1.cif", "EMEHUB_C2H2.cif", "IRMOF-1_noH.cif", "UiO-66.cif"],
+                      :moieties => ["2-!-p-phenylene.xyz", "2-acetylamido-p-phenylene.xyz", "1,4-C-phenylene_noH.xyz", "1,4-C-phenylene.xyz", "4-pyridyl.xyz",
+					  "acetylene.xyz", "BDC.xyz", "disordered_ligand!.xyz", "formate_caps.xyz"]
                      )
 
 # make sure directories are present and the right files for the examples
@@ -22,7 +23,8 @@ for file_type in [:moieties, :crystals]
     end
 end
 
-input_file_message() = md"""
+function input_file_message() 
+	return md"""
 !!! note \"input files for the example Pluto notebooks\"
 	if the input files required for the example Pluto notebooks are not present in the correct folders, the script `ExampleHelper.jl` automatically copies the required input files from the `examples/data` directory of the `PoreMatMod.jl` source code to the folders `rc[:paths][:crystals]` and `rc[:paths][:moieties]`. all input files for the examples are also on Github [here](https://github.com/SimonEnsemble/PoreMatMod.jl/tree/master/examples/data).
 
@@ -31,21 +33,32 @@ input_file_message() = md"""
 	rc[:paths][:crystals] = joinpath(homedir(), \"my_xtals\").
 	```
 """
+end
 
-xtal_folder_message() = md"""
+function xtal_folder_message()
+	return md"""
 📕 folder from which `PoreMatMod.jl` reads `.cif` files that represent crystal structures:
 """
+end
 
-moiety_folder_message() = md"""
+function moiety_folder_message() 
+	return md"""
 📕 folder from which `PoreMatMod.jl` reads `.xyz` files that represent fragments/moities:
 """
+end
 
-fragment_construction_note() = md"""
+function fragment_construction_note() 
+	return md"""
 !!! note \"how can we construct the query/replacement fragments?\"
     two options we use: (1) use Avogadro as a molecule builder/editor and export it as `.xyz` or (2) cut the appropriate fragment out of the MOF crystal structure in the `.cif` file using e.g. iRASPA.
 """
+end
 
-write_cif_message() = md"""write the child crystal structure to file for downstream molecular simulations"""
+function write_cif_message()
+	return md"""
+write the child crystal structure to file for downstream molecular simulations
+"""
+end
 
 # function to visualize a crystal in the notebook
 function view_structure(xtal::Crystal)
