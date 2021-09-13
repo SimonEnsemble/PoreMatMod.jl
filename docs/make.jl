@@ -19,7 +19,8 @@ makedocs( # to test docs, run this call to `makedocs` in the REPL
         "XRD Artifcats" => "examples/disorder_and_guests.jl.html",
         "Engineered Defects" => "examples/missing_linker_defect.jl.html"
     ],
-    format = Documenter.HTML(assets = ["assets/flux.css"])
+    format = Documenter.HTML(assets = ["assets/flux.css"]),
+    doctest = false # doctests are run in testing; running them here is redundant and slow
 )
 
 deploydocs(repo = "github.com/SimonEnsemble/PoreMatMod.jl.git")
