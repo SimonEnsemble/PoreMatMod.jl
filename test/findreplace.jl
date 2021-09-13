@@ -77,6 +77,14 @@ replacement = moiety("p-phenylene.xyz")
 replacement = moiety("2-acetylamido-p-phenylene.xyz")
 @test ne((replace(xtal, s_moty => replacement, nb_loc=1)).bonds) ==
     (ne(xtal.bonds) - ne(s_moty.bonds) + ne(replacement.bonds))
+# test that the coordinates resulting from a specific replacement are the same as a verified test run
+parent = Crystal("IRMOF-1.cif")
+infer_bonds!(parent, true)
+query = moiety("2-!-p-phenylene.xyz")
+replacement = moiety("2-acetylamido-p-phenylene.xyz")
+xtal1 = replace(parent, query => replacement, loc=[2,4,6,8], ori=[1,2,3,4])
+xtal2 = Crystal("verified_acetamido_IRMOF-1.cif")
+@test all(isapprox.(xtal1.atoms.coords.xf, xtal2.atoms.coords.xf, rtol=1e-4))
 end # test set: find_repalce
 
 end # module
