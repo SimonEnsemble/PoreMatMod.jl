@@ -2,6 +2,7 @@ testfiles = [
     "moiety.jl"
     "ullmann.jl"
     "findreplace.jl"
+    "examples.jl"
 ]
 
 using Test, Documenter, FIGlet

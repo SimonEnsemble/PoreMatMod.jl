@@ -103,12 +103,12 @@ With all three file inputs loaded (IRMOF-1 as `parent`, 2-!-*p*-phenylene as `qu
 
 `PoreMatMod.jl` has several replacement modes, one of which must be specified.
 
-### Random orientation at each location
+### Optimal orientation at each location
 
-Random configurations will be chosen for each location in `search.results`, so that each occurrence of the `query` in the `parent` is replaced.
+Optimal configurations will be chosen for each location in `search.results`, so that each occurrence of the `query` in the `parent` is replaced with minimal perturbation of the conserved atoms from the parent structure.
 
-```jldoctest replace_md
-substructure_replace(search, replacement, rand_all=true)
+```jldoctest replace_md; output=false
+substructure_replace(search, replacement)
 # output
 Name: new_xtal
 Bravais unit cell of a crystal.
@@ -124,11 +124,11 @@ Bravais unit cell of a crystal.
 		'x, y, z'
 ```
 
-### Random orientation at n random locations
+### Optimal orientation at n random locations
 
-The `parent` will be modified using random configurations at each of $n$ locations.
+The `parent` will be modified using optimal configurations at each of $n$ randomly-selected locations.
 
-```jldoctest replace_md
+```jldoctest replace_md; output=false
 substructure_replace(search, replacement, nb_loc=4)
 # output
 Name: new_xtal
@@ -145,11 +145,11 @@ Bravais unit cell of a crystal.
 		'x, y, z'
 ```
 
-### Random orientation at specific locations
+### Optimal orientation at specific locations
 
-The `parent` is modified using random configurations at a list of specified locations.
+The `parent` is modified using optimal configurations at a list of specified locations.
 
-```jldoctest replace_md
+```jldoctest replace_md; output=false
 substructure_replace(search, replacement, loc=[13, 20])
 # output
 Name: new_xtal
@@ -168,10 +168,11 @@ Bravais unit cell of a crystal.
 
 ### Specific orientations at specific locations
 
-Specific replacements are made.
+Specific replacements are made by providing the values of `loc` and `ori`.
+If any values in `ori` are zero, the corresponding location will processed with the optimal replacement.
 
-```jldoctest replace_md
-substructure_replace(search, replacement, loc=[13, 20], ori=[1, 1])
+```jldoctest replace_md; output=false
+substructure_replace(search, replacement, loc=[13, 20], ori=[1, 0])
 # output
 Name: new_xtal
 Bravais unit cell of a crystal.
@@ -187,6 +188,27 @@ Bravais unit cell of a crystal.
 		'x, y, z'
 ```
 
+### Random orientations
+
+By using the `random` keyword argument, the search for optimal alignment can be skipped, with the value of `ori` being selected at random.
+
+```jldoctest replace_md; output=false
+substructure_replace(search, replacement, nb_loc=3, random=true)
+# output
+Name: new_xtal
+Bravais unit cell of a crystal.
+	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
+	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
+	Volume of unit cell: 17237.492730 Å³
+
+	# atoms = 445
+	# charges = 0
+	chemical formula: Dict(:N => 3, :Zn => 32, :H => 105, :O => 107, :C => 198)
+	space Group: P1
+	symmetry Operations:
+		'x, y, z'
+```
+
 ## Simple syntax
 
 Generally, it is advisable to perform the `search` and use `substructure_replace`, as multiple replacement tasks can be performed with a single searching step.
@@ -194,7 +216,7 @@ The search is usually the slowest step, and it is desirable not to perform it re
 However, for one-shot find-and-replace operations, the `replace` function syntax from standard `Julia` may be used:
 
 ```jldoctest replace_md; output=false
-replace(parent, query => replacement, rand_all=true)
+replace(parent, query => replacement)
 # output
 Name: new_xtal
 Bravais unit cell of a crystal.
