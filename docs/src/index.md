@@ -1,25 +1,21 @@
 ![logo.JPG](assets/index/logo.JPG)
 
-`PoreMatMod.jl` is a software package in [Julia](https://julialang.org/) for (i) subgraph matching in and (ii) modifying of crystal structures. 
-By functioning as a "find-and-replace" tool on atomistic structure models, `PoreMatMod.jl` can search crystals for chemical substructures, create libraries of hypothetical structures, introduce defects into structures, and correct artifacts of X-ray structure determination.
+`PoreMatMod.jl` is a software package in [Julia](https://julialang.org/) for (i) subgraph matching and (ii) modifying crystal structures. 
+
+Functioning as a "find-and-replace" tool on atomistic structure models of porous materials, `PoreMatMod.jl` can:
+* search crystals for chemical substructures
+* create libraries of hypothetical structures by e.g. decoration with functional groups
+* correct artifacts of X-ray structure determination (missing H, disorder, guests)
+* introduce defects into crystal structures
 
 `PoreMatMod.jl` implements 
-(i, for find operations) Ullmann's algorithm for subgraph isomorphism search
-(ii, for replace operations) the orthogonal Procrustes algorithm for point cloud alignment.  
+1. (for find operations) Ullmann's algorithm for subgraph isomorphism search
+2. (for replace operations) the orthogonal Procrustes algorithm for point cloud alignment.  
 Periodic boundary conditions are respected, and the unit cell is preserved.
 
-While developed primarily for porous crystals such as metal-organic frameworks (MOFs), `PoreMatMod.jl` can operate on any periodic chemical system as well as discrete molecules.
+While developed primarily for porous crystals such as metal-organic frameworks (MOFs), `PoreMatMod.jl` can operate on any periodic atomistic system as well as discrete molecules.
 
-Example use cases:
-:hammer: tuning the chemistry of (e.g., decorating with functional groups) existing crystal structure models to generate libraries of hypothetical materials for computational screening
-:hammer: generating heterogeneous, multi-linker MOFs with precise control of functional group placement
-:hammer: repairing artifacts in crystal structures---such as missing hydrogen atoms, disorder, and the presence of solvents---determined from X-ray diffraction studies
-:hammer: introducing missing-linker and missing-node defects into MOFs to enable computational studies on defect-property relationships
-:hammer: searching for subgraphs in libraries of crystal structure models to, e.g., filter structures or characterize the diversity of the library
-
-note: `PoreMatMod.jl` is built on [Xtals.jl](https://github.com/SimonEnsemble/Xtals.jl).
-
-## example: creating a functionalized MOF structure
+## introductory example: creating a functionalized MOF structure
 
 suppose we wish to decorate the linkers of IRMOF-1 with trifluoromethyl (tfm) groups.
 the `PoreMatMod.jl` code below accomplishes this by (i) searching the parent IRMOF-1 structure for a phenylene query fragment and (ii) replacing each instance with a tfm-phenylene replacement fragment to give the child structure.
@@ -39,3 +35,12 @@ child_xtal = replace(parent_xtal, query_fragment => replacement_fragment)
 ```
 
 ![](s_moty-to-r_moty.png)
+
+!!! example "Further examples"
+
+    See the [examples page](../../examples) for links to Pluto notebooks with `PoreMatMod.jl` code to accomplish various find-and-replace tasks.
+
+!!! note "Please cite our paper!"
+
+    If you found `PoreMatMod.jl` useful, please consider citing our paper:
+    > A. Henle, N. Gantzler, P. Thallapally, X. Fern, C. Simon. `PoreMatMod.jl`: Julia package for _in silico_ post-synthetic modification of crystal structure models. _ChemRxiv_. (2021)
