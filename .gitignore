@@ -1,9 +1,0 @@
-Manifest.toml
-docs/build/
-docs/*.cif
-*.vtk
-*.mol2
-temp*
-test/*.cif
-examples/*.cif
-examples/*.html
