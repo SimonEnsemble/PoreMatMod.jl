@@ -2,13 +2,12 @@ language: julia
 
 codecov: true
 
-julia:
-    - 1.6
+julia: 1.6
 
 addons:
-  apt:
-    packages:
-    - libhdf5-serial-dev
+    apt:
+        packages:
+        - libhdf5-serial-dev
 
 script:
     - julia --project --check-bounds=yes -e 'import Pkg; Pkg.build(); Pkg.test("PoreMatMod")'
@@ -19,4 +18,4 @@ after_success:
     - julia --project ./docs/make.jl
 
 notifications:
-  email: true
+    email: true

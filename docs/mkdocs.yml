@@ -1,5 +1,5 @@
 site_name:        ""
-repo_url:         https://github.com/SimonEnsemble/MOFfun.jl
+repo_url:         https://github.com/SimonEnsemble/PoreMatMod.jl
 site_description: Documentation for the julia package PoreMatMod.jl
 site_author:      eahenle
 

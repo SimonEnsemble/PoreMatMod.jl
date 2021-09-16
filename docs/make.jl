@@ -1,15 +1,15 @@
 using Documenter, PoreMatMod, PlutoSliderServer
 
 # run the Pluto example notebooks and export them to HTML for inclusion in the docs
-cd("examples")
-PlutoSliderServer.export_directory()
-rm("index.html")
-for file in readdir()
-    if length(split(file, ".html")) > 1
-        mv(file, "../docs/src/examples/$file", force=true)
+cd("examples") # next line fails if not actually in examples/
+PlutoSliderServer.export_directory() # runs each notebook in examples/ and exports to HTML
+rm("index.html") # previous line makes additional table-of-contents page (not needed)
+for file in readdir() # loop over files in examples/
+    if length(split(file, ".html")) > 1 # select only the HTML files
+        mv(file, "../docs/src/examples/$file", force=true) # move HTML files to docs source folder for build
     end
 end
-cd("..")
+cd("..") # return to root for running makedocs
 
 # build the docs
 makedocs( # to test docs, run this call to `makedocs` in the REPL
@@ -27,7 +27,8 @@ makedocs( # to test docs, run this call to `makedocs` in the REPL
         "PoreMatModGO" => "manual/PoreMatModGO.md",
         "Collaborate" => "collab.md"
     ],
-    format = Documenter.HTML(assets = ["assets/flux.css"])
+    format = Documenter.HTML(assets = ["assets/flux.css"]),
+    doctest = false # doctests are run in testing; running them here is redundant and slow
 )
 
 # deploy the docs
