@@ -1,0 +1,43 @@
+[deps]
+Bio3DView = "99c8bb3a-9d13-5280-9740-b4880ed9c598"
+Blink = "ad839575-38b3-5650-b840-f874b8c74a25"
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+FIGlet = "3064a664-84fe-4d92-92c7-ed492f3d8fae"
+LightGraphs = "093fc24a-ae57-5d10-9952-331d41423f4d"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+MetaGraphs = "626554b9-1ddb-594c-aa3c-2596fe9399a5"
+PlutoSliderServer = "2fc8631c-6f24-4c5b-bca7-cbb509c42db4"
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+Xtals = "ede5f01d-793e-4c47-9885-c447d1f18d6d"
+
+[compat]
+Bio3DView = "^0.1.0"
+Blink = "^0.12.0"
+CSV = "^0.8.0"
+DataFrames = "^0.22.0"
+Documenter = "^0.27.0"
+FIGlet = "^0.2.0"
+LightGraphs = "^1.3.0"
+MetaGraphs = "^0.6.6"
+PlutoSliderServer = "^0.2.4"
+PlutoUI = "^0.7.9"
+Reexport = "^1.1.0"
+StatsBase = "^0.33.0"
+Xtals = "0.3.0"
+julia = "^1.6"
+
+[extras]
+InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
+Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test", "Printf", "PyCall", "InteractiveUtils", "Logging", "Markdown", "Pkg"]

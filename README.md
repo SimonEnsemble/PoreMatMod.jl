@@ -1,4 +1,4 @@
-![logo.JPG](logo.JPG)
+![logo.JPG](logo.jpg)
 
 [![Build Status](https://travis-ci.org/SimonEnsemble/PoreMatMod.jl.svg?branch=master)](https://app.travis-ci.com/github/SimonEnsemble/PoreMatMod.jl)
 [![Coverage Status](https://coveralls.io/repos/github/SimonEnsemble/PoreMatMod.jl/badge.svg?branch=master)](https://coveralls.io/github/SimonEnsemble/PoreMatMod.jl?branch=master)
