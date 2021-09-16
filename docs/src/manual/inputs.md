@@ -10,7 +10,7 @@ This section details how to load data into `PoreMatMod.jl`, including the handli
 
 ## Crystal structures
 
-Accepted file formats for crystal structures (containing atomic coordinates and unit cell information) are `.cif` and `.cssr`.
+Accepted file formats for crystal structures (containing atomic coordinates and unit cell information) are `.cif` and `.cssr`. See [here](https://en.wikipedia.org/wiki/Crystallographic_Information_File) for information about CIF files.
 
 Crystal structure files (`.cif`, `.cssr`) are read from the path `rc[:paths][:crystals]`.
 
@@ -27,9 +27,11 @@ the `Crystal` data structure (`parent_xtal::Crystal`) is inherited from `Xtals.j
 
 ## Query and Replacement Fragments
 
-Accepted file formats for chemical fragments (list of atoms and their Cartesian coordinates) are `.xyz`.
+Accepted file formats for chemical fragments (list of atoms and their Cartesian coordinates) are `.xyz`. See [here](https://en.wikipedia.org/wiki/XYZ_file_format) for information about XYZ files. 
 
 Query and replacement fragment files (`.xyz`) are read from the path `rc[:paths][:moieties]`.
+
+N.b. masked atoms of query fragments must be labeled with `!` for [`replace` operation](../../replace). For [substructure searches](../../find) using [`substructure_search`], any `!` tags are ignored (the atoms are treated as normal).
 
 _Example_: Read [`p-phenylene.xyz`](../../../assets/inputs/p-phenylene.xyz):
 
@@ -64,22 +66,6 @@ rc[:paths][:moiety] = pwd()                                    # look in present
 
 ## Other data
 `PoreMatMod.jl` draws atomic masses and covalent radii from [`Xtals.jl`](https://github.com/SimonEnsemble/Xtals.jl/).
-
-
-For use with `PoreMatMod.jl`, `.xyz` data must have clean atom labels, meaning only plain atomic symbols. 
-The exception is the use of `!` for indicating atoms which will be altered in a [`replace` operation](../../replace). 
-For [substructure searches](../../find) using [`substructure_search`], any `!` tags are ignored (the atoms are treated as normal).
-
-![query fragment](../../assets/inputs/query.png)
-
-The `.xyz` file must be located at `rc[:paths][:moieties]`.
-For what we want to do with IRMOF-1, the best choice is to search for the [`p-phenylene.xyz`](../../../assets/inputs/p-phenylene.xyz) moiety that is the core of the BDC linker.
-
-## Loading Files
-
-
-
-Both `parent` and `query` are `Crystal` objects.
 
 ## Documentation
 
