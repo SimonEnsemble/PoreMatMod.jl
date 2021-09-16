@@ -15,7 +15,6 @@ script:
 after_success:
     - julia --project -e 'import Pkg; Pkg.add("Documenter"); Pkg.add("Coverage")'
     - julia --project -e 'using Coverage; Codecov.submit(process_folder())'
-    - cp -r test/data/* data/*
     - julia --project ./docs/make.jl
 
 notifications:
