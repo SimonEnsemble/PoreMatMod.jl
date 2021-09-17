@@ -26,9 +26,9 @@ begin
 md"""
 # 💠 PoreMatModGO 🚀
 
-This notebook interactively substitutes moieties within a crystal using a modified implementation of Ullmann's algorithm to perform substructure searches and applying singular value decomposition to align fragments of the generated materials. Read the docs [here](https://github.com/SimonEnsemble/PoreMatModGO.jl).
-
-See the original publication on PoreMatMod.jl here: [(article)](http://localhost:1234) [(GitHub)](https://github.com/SimonEnsemble/PoreMatMod.jl)
+This notebook interactively substitutes moieties within a crystal using a modified implementation of Ullmann's algorithm to perform substructure searches and applying singular value decomposition to align fragments of the generated materials. Read the docs [here](SimonEnsemble.github.io/PoreMatMod.jl).
+## TODO insert link to paper
+See the original publication on PoreMatMod.jl here: [(article)](LINK_TO_PAPER) [(GitHub)](https://github.com/SimonEnsemble/PoreMatMod.jl)
 """
 end
 
