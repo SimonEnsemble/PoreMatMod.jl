@@ -18,8 +18,8 @@ Crystal structure files (`.cif`, `.cssr`) are read from the path `rc[:paths][:cr
     Read in the crystal structure of [IRMOF-1.cif](../../../assets/inputs/IRMOF-1.cif) and infer its bonding network:
 
     ```jldoctest; output=false
-    parent_xtal = Crystal("IRMOF-1.cif")
-    infer_bonds!(parent_xtal, true) # true b/c we want periodic bonds included
+    parent = Crystal("IRMOF-1.cif")
+    infer_bonds!(parent, true) # true b/c we want periodic bonds included
     # output
     true
     ```

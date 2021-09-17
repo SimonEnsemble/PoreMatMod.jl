@@ -1,6 +1,9 @@
-# Collaborating/Contributing
+# Contributing/Reporting Issues
+
+### Reporting Issues
+
+Please report any bugs or make suggestions for improvements by filing an issue on Github [here](https://github.com/SimonEnsemble/PoreMatMod.jl/issues).
 
 ### `PoreMatMod.jl` Wants You!
 
-This project is still being actively developed, and we would love to see its scope grow.
-Please [post issues](https://github.com/SimonEnsemble/PoreMatMod.jl/issues) and/or make pull requests for fixes, new features, etc.
+We welcome contributions (pull requests) for bug fixes, improvements, new features, etc. If the change is fundamental/major, please post an issue to discuss first.

@@ -14,7 +14,7 @@ cd("..") # return to root for running makedocs
 # build the docs
 makedocs( # to test docs, run this call to `makedocs` in the REPL
     root = joinpath(dirname(pathof(PoreMatMod)), "..", "docs"),
-    modules = [PoreMatMod],
+    modules = [PoreMatMod, Xtals],
     sitename = "PoreMatMod.jl",
     clean = true,
     pages = [
@@ -25,7 +25,7 @@ makedocs( # to test docs, run this call to `makedocs` in the REPL
         "Substructure Find/Replace" => "manual/replace.md",
         "Examples" => "manual/examples.md",
         "PoreMatModGO" => "manual/PoreMatModGO.md",
-        "Collaborate" => "collab.md"
+        "Contribute/Reporting Issues" => "collab.md"
     ],
     format = Documenter.HTML(assets = ["assets/flux.css"]),
     doctest = false # doctests are run in testing; running them here is redundant and slow
