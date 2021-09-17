@@ -79,8 +79,12 @@ end
 
 
 # generates data for effecting a series of replacements
-function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search, parent::Crystal, replacement::Crystal, q′_in_r::Search, m2q_key::Vector{Int}
+function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search, parent::Crystal, replacement::Crystal
         )::Tuple{Vector{Crystal},Vector{Int},Vector{Tuple{Int,Int}}}
+    # which atoms from query are in replacement?
+    m2q_key = idx_filter(q_in_p.search.query, r_group_indices(q_in_p.search.query))
+    # get isomrphism between query/mask and replacement
+    q′_in_r = q_in_p.search.query[m2q_key] ∈ replacement
     xrms = Crystal[]
     del_atoms = Int[]
     bonds = Tuple{Int,Int}[] # tuple (i,j) encodes a bond in the child crystal
@@ -174,12 +178,8 @@ function _substructure_replace(q_in_p::Search, replacement::Crystal, configs::Ar
         @warn "No replacements to be made."
         return parent
     end
-    # which atoms from query are in replacement?
-    m2q_key = idx_filter(query, r_group_indices(query))
-    # get isomrphism between query/mask and replacement
-    q′_in_r = query[m2q_key] ∈ replacement
     # loop over configs to build replacement data
-    xrms, del_atoms, bonds = build_replacement_data(configs, q_in_p, parent, replacement, q′_in_r, m2q_key)
+    xrms, del_atoms, bonds = build_replacement_data(configs, q_in_p, parent, replacement)
     # append temporary crystals to parent
     atoms = xrms == Crystal[] ? parent.atoms : parent.atoms + sum([xrm.atoms for xrm ∈ xrms if xrm.atoms.n > 0])
     xtal = Crystal(new_xtal_name, parent.box, atoms, Charges{Frac}(0))
