@@ -3,26 +3,33 @@
 ## Installation
 
 Download and install the [Julia programming language](https://julialang.org/), v1.6 or higher.
-Then, in the Julia REPL, open the package manager (using `]`) and enter:
+
+To install `PoreMadMod.jl` (officially registered as a Julia package), in the Julia REPL, enter the package manager by typing `]` and enter:
 
 ```julia
 pkg> add PoreMatMod
 ```
 
-Finally, load `PoreMatMod.jl` into the namespace:
+## Loading the `PoreMatMod.jl` package
+
+To load the `PoreMatMod.jl` package, so that its functions are imported into your namespace, in your Julia code:
 
 ```julia
-julia> using PoreMatMod # That's it!
+julia> using PoreMatMod
 ```
 
-## Xtals.jl
+We recommend writing Julia code and performing find-and-replace tasks with `PoreMadMod.jl` using interactive [Pluto notebooks](https://github.com/fonsp/Pluto.jl).
 
-`PoreMatMod.jl` is built on [`Xtals.jl`](https://github.com/SimonEnsemble/Xtals.jl), which provides the framework for representing and manipulating crystal structures. 
-It is recommended that the user be familiar with some of its key functions, which are re-exported by `PoreMatMod`, particularly [`Crystal`] and [`infer_bonds!`].
+## Running tests (optional)
 
+Run the unit tests associated with `PoreMatMod.jl` by entering package mode in the Julia REPL via (`]`) and entering:
 
-## A Guiding Example
+```julia
+pkg> test PoreMatMod
+```
 
-This manual makes repeated reference to the following task: given the experimental structure of [IRMOF-1](../../../assets/start/IRMOF-1.cif), produce the hypothetical structure of an isoreticular MOF where the BDC linker has been replaced with a derivative, 2-acetylamido-BDC.
+!!! note
 
-![IRMOF-1_example](../../assets/start/example1.png)
+    `PoreMatMod.jl` is built on [`Xtals.jl`](https://github.com/SimonEnsemble/Xtals.jl), which provides:
+    * the data structure and reader, `Crystal`, for crystal structures 
+    * the `infer_bonds!` function that assigns bonds between atoms of a `Crystal`

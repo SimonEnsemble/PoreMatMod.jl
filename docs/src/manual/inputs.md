@@ -4,78 +4,81 @@ DocTestSetup = quote
 end
 ```
 
-# Input Files
+# Reading data from crystal structure and chemical fragment files into `PoreMatMod.jl`
 
-This section details the handling of data paths, formatting of input files, and loading of data into `PoreMatMod.jl`.
+This section details how to load data into `PoreMatMod.jl`, including the handling of paths to data and input file formats.
 
-## Data Directories
+## Crystal structures
 
-`PoreMatMod.jl` draws its basic working data (atomic masses, covalent radii, etc.) from [`Xtals.jl`](https://github.com/SimonEnsemble/Xtals.jl/).
+Accepted file formats for crystal structures (containing atomic coordinates and unit cell information) are `.cif` and `.cssr`. See [here](https://en.wikipedia.org/wiki/Crystallographic_Information_File) for information about CIF files.
 
-Structural data are drawn from `rc[:paths][:crystals]` and `rc[:paths][:moieties]`.
-These paths are set at module load time, and default to `./data/crystals` and `./data/moieties`, respectively.
+Crystal structure files (`.cif`, `.cssr`) are read from the path `rc[:paths][:crystals]`.
 
-## Input Files and Formats
+!!! example
+    Read in the crystal structure of [IRMOF-1.cif](../../../assets/inputs/IRMOF-1.cif) and infer its bonding network:
 
-### Crystals
+    ```jldoctest; output=false
+    parent = Crystal("IRMOF-1.cif")
+    infer_bonds!(parent, true) # true b/c we want periodic bonds included
+    # output
+    true
+    ```
 
-`PoreMatMod.jl` requires chemical structural data as input.  The first necessary input is a `.cif` or `.cssr` file containing atomic coordinates and unit cell information.
+the `Crystal` constructor returns a [`Crystal`](@ref) data structure, inherited from `Xtals.jl` (see the [`docs`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal)).
 
-![Ti-MIL-125](../../assets/inputs/Ti-MIL-125.png)
+## Query and Replacement Fragments
 
-The file must be located in `rc[:paths][:crystals]` as described above. In the case of our guiding example, the functionalization of IRMOF-1, this means we need to either put [IRMOF-1.cif](../../../assets/inputs/IRMOF-1.cif) into `./data/crystals` or set `rc[:paths][:crystals]` to point `PoreMatMod.jl` to where it is located.
+Accepted file formats for chemical fragments (list of atoms and their Cartesian coordinates) are `.xyz`. See [here](https://en.wikipedia.org/wiki/XYZ_file_format) for information about XYZ files. 
 
-### Fragments
+Query and replacement fragment files (`.xyz`) are read from the path `rc[:paths][:moieties]`.
 
-The next required input is a `.xyz` file containing the atomic coordinates of a search moiety--a chemical substructure to identify in the crystal.  
-The `.xyz` format is simple: the first line gives the number of input lines which follow, and each subsequent input line consists of the atom label in the first space-delimited column, followed by 3 columns for the atom's Cartesian coordinates in Ångströms.
+N.b. masked atoms of query fragments must be labeled with `!` for [`replace` operations](../../replace). For [substructure searches](../../find) using `substructure_search`, any `!` tags are ignored (the atoms are treated according to their chemical species).
 
-For use with `PoreMatMod.jl`, `.xyz` data must have clean atom labels, meaning only plain atomic symbols. 
-The exception is the use of `!` for indicating atoms which will be altered in a [`replace` operation](../../replace). 
-For [substructure searches](../../find) using [`substructure_search`], any `!` tags are ignored (the atoms are treated as normal).
+!!! example
+    Read in the chemical fragment [`p-phenylene.xyz`](../../../assets/inputs/p-phenylene.xyz):
 
-![query fragment](../../assets/inputs/query.png)
+    ```jldoctest; output=false
+    query = moiety("p-phenylene.xyz")
+    # output
+    Name: p-phenylene.xyz
+    Bravais unit cell of a crystal.
+    	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
+    	Unit cell dimensions a = 1.000000 Å. b = 1.000000 Å, c = 1.000000 Å
+    	Volume of unit cell: 1.000000 Å³
 
-The `.xyz` file must be located at `rc[:paths][:moieties]`.
-For what we want to do with IRMOF-1, the best choice is to search for the [`p-phenylene.xyz`](../../../assets/inputs/p-phenylene.xyz) moiety that is the core of the BDC linker.
+    	# atoms = 10
+    	# charges = 0
+    	chemical formula: Dict(:H => 2, :C => 3)
+    	space Group: P1
+    	symmetry Operations:
+    		'x, y, z'
+    ```
 
-## Loading Files
+the [`moiety`](@ref) reader also returns a `Crystal` data structure but with an arbitrary unit cube unit cell.
 
-Load [IRMOF-1.cif](../../../assets/inputs/IRMOF-1.cif) and build the bonding network:
+## Changing the Data Directories
 
-```jldoctest; output=false
-parent = Crystal("IRMOF-1.cif")
-infer_bonds!(parent, true)
-# output
-true
-```
+`rc[:paths][:crystals]` and `rc[:paths][:moieties]` default to `./data/crystals` and `./data/moieties`, respectively.
 
-[`Crystal`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal) is inherited and re-exported from `Xtals.jl`.
-See the [`docs`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal) for more information.
+change the paths to where the files are read from by changing `rc[:paths][:crystals]` and `rc[:paths][:moieties]`.
 
-Load [`p-phenylene.xyz`](../../../assets/inputs/p-phenylene.xyz):
+!!! example
+    Suppose we wish to store our `.cif` files in `~/my_xtals` and our `.xyz` files in our present working directory.
 
-```jldoctest; output=false
-query = moiety("p-phenylene.xyz")
-# output
-Name: p-phenylene.xyz
-Bravais unit cell of a crystal.
-	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
-	Unit cell dimensions a = 1.000000 Å. b = 1.000000 Å, c = 1.000000 Å
-	Volume of unit cell: 1.000000 Å³
+    ```julia
+    rc[:paths][:crystals] = joinpath(homedir(), "my_xtals_folder")
+    rc[:paths][:moiety] = pwd()                                  
+    ```
 
-	# atoms = 10
-	# charges = 0
-	chemical formula: Dict(:H => 2, :C => 3)
-	space Group: P1
-	symmetry Operations:
-		'x, y, z'
-```
+## Other data
+`PoreMatMod.jl` draws atomic masses and covalent radii from [`Xtals.jl`](https://github.com/SimonEnsemble/Xtals.jl/).
 
-Both `parent` and `query` are `Crystal` objects.
-
-## Documentation
+## Detailed documentation for functions
 
 ```@docs
 moiety
+Crystal
+infer_bonds!
+BondingRule
+strip_numbers_from_atom_labels!
 ```

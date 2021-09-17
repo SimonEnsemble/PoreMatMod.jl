@@ -1,49 +1,46 @@
 ![logo.JPG](assets/index/logo.JPG)
 
-A pure-[Julia](https://julialang.org/) software package for manipulating chemical structures of porous crystals.  
+`PoreMatMod.jl` is a software package in [Julia](https://julialang.org/) for (i) subgraph matching and (ii) modifying crystal structures. 
 
-[PoreMatMod.jl](https://github.com/SimonEnsemble/PoreMatMod.jl) is built on the [@SimonEnsemble](https://SimonEnsemble.github.io) software [Xtals.jl](https://github.com/SimonEnsemble/Xtals.jl) and is interoperable with [PorousMaterials.jl](https://github.com/SimonEnsemble/PorousMaterials.jl) and other molecular dynamics or *ab initio* software packages.
+Functioning as a "find-and-replace" tool on atomistic structure models of porous materials, `PoreMatMod.jl` can:
+* search crystals for chemical substructures
+* create libraries of hypothetical structures by e.g. decoration with functional groups
+* correct artifacts of X-ray structure determination (missing H, disorder, guests)
+* introduce defects into crystal structures
 
-It is intended primarily for working with MOFs and other porous crystalline materials, but can work with other periodic structures, ensembles, and discrete molecules as well.
-Use cases include:
-- tuning the chemistry of existing crystal structure models to generate libraries of hypothetical materials for computational screening
-- generating heterogeneous, multi-linker MOFs with precise control of functional group placement
-- repairing artifacts in crystal structures—such as missing hydrogen atoms, disorder, and the presence of solvents—determined from XRD
-- introducing missing-linker and missing-SBU defects into MOFs to enable computational studies on defect-property relationships
-- searching for subgraphs in libraries of crystal structure models to, e.g., filter structures or characterize the diversity of the library
+`PoreMatMod.jl` implements 
+1. (for find operations) Ullmann's algorithm for subgraph isomorphism search
+2. (for replace operations) the orthogonal Procrustes algorithm for point cloud alignment.  
+Periodic boundary conditions are respected, and the unit cell is preserved.
 
-`PoreMatMod.jl` can identify chemical substructures, create hypothetical structure libraries, and correct disorder in experimental data, using an implementation of Ullmann's algorithm for substructure isomorphism and the orthogonal Procrustes algorithm for point cloud alignment.  
-Periodic cell boundaries are treated automatically, and the unit cell is preserved in transformations.
+While developed primarily for porous crystals such as metal-organic frameworks (MOFs), `PoreMatMod.jl` can operate on any periodic atomistic system as well as discrete molecules.
 
-**Example**: repairing, activating, and functionalizing an experimental structure.
-The structure below, of a MOF called [SIFSIX-2-Cu-i](https://dx.doi.org/10.1126/science.aaf2458), contains disordered PyC2 linkers and acetylene guest molecules.
+## introductory example: creating a functionalized MOF structure
 
-![messy to novel](assets/index/example.png)
+suppose we wish to decorate the linkers of IRMOF-1 with trifluoromethyl (tfm) groups.
+the `PoreMatMod.jl` code below accomplishes this by (i) searching the parent IRMOF-1 structure for a phenylene query fragment and (ii) replacing each instance with a tfm-phenylene replacement fragment to give the child structure.
 
-Loading the data, resolving the disorder, removing the guest molecules, replacing the linkers, and saving the result can be done with a very short script:
+```julia
+# read crystal structure of the parent MOF
+parent_xtal = Crystal("IRMOF-1.cif")
 
-```jldoctest; output=false
-# Import the module
-using PoreMatMod
-# Load some messy data
-xtal = Crystal("SIFSIX-2-Cu-i.cif", check_overlap=false)
-infer_bonds!(xtal, true)
-# Repair the disordered linkers
-repaired = replace(xtal, moiety("disordered_ligand!.xyz") => moiety("4-pyridyl.xyz"))
-# Remove the guest molecules to produce the activated MOF
-search = substructure_search(moiety("acetylene.xyz"), repaired, disconnected_component=true)
-activated = substructure_replace(search, nothing)
-# Add a functional group
-novel = replace(activated, moiety("3-H!-4-pyridyl.xyz") => moiety("3-F-4-pyridyl.xyz"))
-# Save the result
-write_cif(novel, "3,3'-F2-SIFSIX-2-Cu-i.cif")
-# output
-┌ Warning: carbon atom 1 in SIFSIX-2-Cu-i.cif is bonded to more than four atoms!
-└ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
-┌ Warning: carbon atom 6 in disordered_ligand!.xyz is bonded to more than four atoms!
-└ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
-┌ Warning: carbon atom 1 in disordered_ligand!.xyz is bonded to more than four atoms!
-└ @ Xtals ~/.julia/packages/Xtals/Kf4en/src/bonds.jl:407
+# read query and replacement fragments
+query_fragment       = moiety("p-phenylene.xyz")  # masked atoms marked with !
+replacement_fragment = moiety("tfm-p-phenylene.xyz")
+
+# (1) search parent structure for query fragment
+# (2) replace occurrences of query fragment with replacement fragments
+#     (with randomly chosen orientations)
+child_xtal = replace(parent_xtal, query_fragment => replacement_fragment)
 ```
 
-Input files: [input_files.zip](assets/index/input_files.zip)
+![](s_moty-to-r_moty.png)
+
+!!! example "Further examples"
+
+    See the [examples page](../../examples) for links to Pluto notebooks with `PoreMatMod.jl` code to accomplish various find-and-replace tasks.
+
+!!! note "Please cite our paper!"
+
+    If you found `PoreMatMod.jl` useful, please consider citing our paper:
+    > A. Henle, N. Gantzler, P. Thallapally, X. Fern, C. Simon. `PoreMatMod.jl`: Julia package for _in silico_ post-synthetic modification of crystal structure models. _ChemRxiv_. (2021)
