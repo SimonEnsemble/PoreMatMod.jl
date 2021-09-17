@@ -42,16 +42,16 @@ N.b. masked atoms of query fragments must be labeled with `!` for [`replace` ope
     # output
     Name: p-phenylene.xyz
     Bravais unit cell of a crystal.
-        Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
-        Unit cell dimensions a = 1.000000 Å. b = 1.000000 Å, c = 1.000000 Å
-        Volume of unit cell: 1.000000 Å³
+    	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
+    	Unit cell dimensions a = 1.000000 Å. b = 1.000000 Å, c = 1.000000 Å
+    	Volume of unit cell: 1.000000 Å³
 
-        # atoms = 10
-        # charges = 0
-        chemical formula: Dict(:H => 2, :C => 3)
-        space Group: P1
-        symmetry Operations:
-            'x, y, z'
+    	# atoms = 10
+    	# charges = 0
+    	chemical formula: Dict(:H => 2, :C => 3)
+    	space Group: P1
+    	symmetry Operations:
+    		'x, y, z'
     ```
 
 the [`moiety`](@ref) reader also returns a `Crystal` data structure but with an arbitrary unit cube unit cell.
