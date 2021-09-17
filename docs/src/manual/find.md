@@ -7,13 +7,13 @@ DocTestSetup = quote
 end
 ```
 
-## Subgraph matching
+# Subgraph matching (substructure searches)
 
 `PoreMatMod.jl` conducts subgraph matching, i.e. searches for subgraphs of a `parent` graph isomorphic to a `query` graph, using [Ullmann's algorithm for subgraph isomorphisms](https://doi.org/10.1145/321921.321925).
 
 Both the `parent` crystal structure and `query` fragment are represented by node-labeled (by the chemical species) graphs. For crystals, bonds across the unit cell boundaries of periodic materials are accounted for, allowing us to find subgraph isomorphisms when the fragment is split across a unit cell boundary.
 
-# Substructure Searches
+# Substructure Searches: how to
 
 To learn by example, suppose we wish to search the IRMOF-1 crystal structure for *p*-phenylene fragments.
 

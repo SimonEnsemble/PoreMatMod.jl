@@ -8,20 +8,7 @@ end
 
 # Find/Replace Operations
 
-In the previous sections, we saw how we can represent structures using the [`Xtals`](https://github.com/SimonEnsemble/Xtals.jl) framework, and how we can identify substructure matches via Ullmann's algorithm for subgraph isomorphism.
-Next, we will see how to use this to effect a substructure replacement.
-
-## Orthogonal Procrustes
-
-The question of how best to align crystal fragments in space is addressed by the ["Orthogonal Procrustes"](https://simonensemble.github.io/2018-10/orthogonal-procrustes.html) problem. 
-If two point sets $A$ and $B$ have a known 1-to-1 correspondence mapping each point in $A$ to a unique point in $B$, and $A$ is a "noisy" rotated copy of $B$, we wish to find $R$, the rotation matrix that transforms $A$ to reconstruct $B$ with the minimum error. 
-This is accomplished via singular value decomposition of $ABᵀ$. 
-In the linked example $A$ and $B$ are two-dimensional for the purpose of visualization, but the solution to the problem is the same for point sets in any $n$-dimensional space. 
-In `PoreMatMod.jl` the solution is applied three-dimensionally, using the subgraph isomorphism identified by Ullmann's algorithm as the 1-to-1 correspondence.
-
-## The Find-Replace Algorithm
-
-With Ullmann's Algorithm (UA) and Orthogonal Procrustes (OP) in mind, we can tackle the problem of replacing the BDC linkers of IRMOF-1 with the 2-acetylamido derivative.
+Next, we learn to effect a substructure replacement. To learn by example, we tackle the problem of replacing the BDC linkers of IRMOF-1 with the 2-acetylamido-BDC linker.
 
 First, we perform a search using a `query` with `!`-tagged atom(s), to direct the replacement stage of the algorithm.
 In this case, we should use [2-!-p-phenylene.xyz](../../../assets/replace/2-!-p-phenylene.xyz).
@@ -234,7 +221,18 @@ Bravais unit cell of a crystal.
 
 Note it is still required to specify a replacement style via keyword argument.
 
-## Documentation
+## Orthogonal Procrustes
+
+The question of how best to align crystal fragments in space is addressed by the ["Orthogonal Procrustes"](https://simonensemble.github.io/2018-10/orthogonal-procrustes.html) problem. 
+If two point sets $A$ and $B$ have a known 1-to-1 correspondence mapping each point in $A$ to a unique point in $B$, and $A$ is a "noisy" rotated copy of $B$, we wish to find $R$, the rotation matrix that transforms $A$ to reconstruct $B$ with the minimum error. 
+This is accomplished via singular value decomposition of $ABᵀ$. 
+In the linked example $A$ and $B$ are two-dimensional for the purpose of visualization, but the solution to the problem is the same for point sets in any $n$-dimensional space. 
+In `PoreMatMod.jl` the solution is applied three-dimensionally, using the subgraph isomorphism identified by Ullmann's algorithm as the 1-to-1 correspondence.
+
+## The Find-Replace Algorithm
+
+
+## Documentation of functions
 
 ```@docs
 substructure_replace
