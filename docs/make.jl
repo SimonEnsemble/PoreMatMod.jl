@@ -19,17 +19,18 @@ makedocs( # to test docs, run this call to `makedocs` in the REPL
     clean = true,
     pages = [
         "PoreMatMod" => "index.md",
-        "Getting Started" => "manual/start.md",
-        "Loading Data" => "manual/inputs.md",
-        "Substructure Search" => "manual/find.md",
-        "Substructure Find/Replace" => "manual/replace.md",
+        "Manual" => [
+            "Getting Started" => "manual/start.md",
+            "Loading Data" => "manual/inputs.md",
+            "Substructure Search" => "manual/find.md",
+            "Substructure Find/Replace" => "manual/replace.md"],
         "Examples" => "manual/examples.md",
         "PoreMatModGO" => "manual/PoreMatModGO.md",
-        "Contribute/Reporting Issues" => "collab.md"
+        "Contribute/Report Issues" => "collab.md"
     ],
     format = Documenter.HTML(assets = ["assets/flux.css"]),
     doctest = false # doctests are run in testing; running them here is redundant and slow
 )
 
 # deploy the docs
-deploydocs(repo = "github.com/SimonEnsemble/PoreMatMod.jl.git")
+deploydocs(repo = "github.com/SimonEnsemble/PoreMatMod.jl.git", push_preview=true, versions=nothing)
