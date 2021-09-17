@@ -23,7 +23,9 @@ export
 
 include("Ullmann.jl")
 include("moiety.jl")
-include("findreplace.jl")
+include("misc.jl")
+include("search.jl")
+include("replace.jl")
 include("examples.jl")
 
 end
