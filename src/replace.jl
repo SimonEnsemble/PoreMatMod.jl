@@ -117,7 +117,7 @@ for config in configs
     q2p_isom = nothing
     for ori′ in ori
         # pull up specific isomorphism from query to parent
-        q2p_isom′ = q_in_p.results[loc].isomorphism[ori′]
+        q2p_isom′ = q_in_p.results[loc][ori′]
         # determine isomorphism from masked query to parent
         m2p_isom = q2p_isom′[m2q_key]
         # find parent subset
@@ -132,7 +132,7 @@ for config in configs
             # choose best r2p by evaluating RMSD for all possibilities
             for i ∈ 1:nb_locations(q′_in_r)
                 for j ∈ 1:nb_configs_at_loc(q′_in_r)[i]
-                    m2r_isom′ = q′_in_r.results[i].isomorphism[j]
+                    m2r_isom′ = q′_in_r.results[i][j]
                     # shift all replacement nodes according to center of isomorphic subset
                     replacement′ = deepcopy(replacement)
                     replacement′.atoms.coords.xf .-= geometric_center(replacement[m2r_isom′])

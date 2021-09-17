@@ -25,7 +25,7 @@ makedocs( # to test docs, run this call to `makedocs` in the REPL
             "Substructure Search" => "manual/find.md",
             "Substructure Find/Replace" => "manual/replace.md"],
         "Examples" => "manual/examples.md",
-        "PoreMatModGO" => "manual/PoreMatModGO.md",
+        "PoreMatModGO" => "PoreMatModGO.md",
         "Contribute/Report Issues" => "collab.md"
     ],
     format = Documenter.HTML(assets = ["assets/flux.css"]),
