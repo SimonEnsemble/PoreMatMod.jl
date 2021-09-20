@@ -23,7 +23,7 @@ N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline m
 
 
 ## License
-`PoreMatMod.jl` is licensed under the [MIT license](./LICENSE)
+`PoreMatMod.jl` is licensed under the [MIT license](./LICENSE).
 
 ## Installation
 `PoreMatMod.jl` is a registered pakcage and can be installed by entering the following the in package manager.
@@ -37,7 +37,14 @@ N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline m
 Please visit our [documentation pages](https://SimonEnsemble.github.io/PoreMatMod.jl/) for detailed instructions and examples.
 
 ## Citing
-
+```latex
+@misc{henle2021pmm,
+    title={PoreMatMod.jl: Julia package for in silico post-synthetic modification of crystal structure models.},
+    author={E. Adrian Henle and Nickolas Gantzler and Praveen K. Thallapally and Xiaoli Z. Fern and Cory M. Simon}
+    year={2021}
+    preprint={ChemRxiv}
+}
+```
 ## Contributing
 
-`PoreMatMod.jl` is being actively developed and we encourage feature requests and community feedback [on GitHub](https://github.com/SimonEnsemble/PoreMatMod.jl/issues)
+`PoreMatMod.jl` is being actively developed and we encourage feature requests and community feedback [on GitHub](https://github.com/SimonEnsemble/PoreMatMod.jl/issues).
