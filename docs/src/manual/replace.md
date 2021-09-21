@@ -108,7 +108,7 @@ Bravais unit cell of a crystal.
 		'x, y, z'
 ```
 
-Note it is still required to specify a replacement style via keyword argument.
+To direct the number, location, and orientation of the replacements made, use the keyword arguments.  These are described in the docstrings and demonstrated in the [examples](../../../examples).
 
 ## Orthogonal Procrustes
 

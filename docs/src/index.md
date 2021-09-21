@@ -15,7 +15,7 @@ Periodic boundary conditions are respected, and the unit cell is preserved.
 
 While developed primarily for porous crystals such as metal-organic frameworks (MOFs), `PoreMatMod.jl` can operate on any periodic atomistic system as well as discrete molecules.
 
-## introductory example: creating a functionalized MOF structure
+### introductory example: creating a functionalized MOF structure
 
 suppose we wish to decorate the linkers of IRMOF-1 with trifluoromethyl (tfm) groups.
 the `PoreMatMod.jl` code below accomplishes this by (i) searching the parent IRMOF-1 structure for a phenylene query fragment and (ii) replacing each instance with a tfm-phenylene replacement fragment to give the child structure.
