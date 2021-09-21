@@ -202,7 +202,7 @@ end
 
 
 @doc raw"""
-substructure_replace(search, replacement, nb_loc=2)
+`substructure_replace(search, replacement, nb_loc=2)`
 
 Inserts `replacement` into a parent structure according to `search` and `kwargs`.
 Provide a replacement style `kwarg` to direct the location and orientation of replacements.

@@ -20,6 +20,15 @@ Click on the images or descriptions below to see Pluto notebooks demonstrating e
     ](../../../examples/make_hypothetical_MOF.jl.html)
 
 
+!!! example "Example: Using different replacement modes"
+    Replace BDC with nitro-BDC in IRMOF-1 using the different replacement modes to obtain different results.
+
+    [link](../../../examples/replacement_modes.jl.html)
+
+    [
+        ![example1.5](../../assets/examples/example1.5.png)
+    ](../../../examples/replacement_modes.jl.html)
+
 !!! example "Example: Insert missing hydrogen atoms"
      Insert missing H atoms in IRMOF-1.
 

@@ -24,7 +24,7 @@ makedocs( # to test docs, run this call to `makedocs` in the REPL
             "Loading Data" => "manual/inputs.md",
             "Substructure Search" => "manual/find.md",
             "Substructure Find/Replace" => "manual/replace.md"],
-        "Examples" => "manual/examples.md",
+        "Examples" => "examples.md",
         "PoreMatModGO" => "PoreMatModGO.md",
         "Contribute/Report Issues" => "collab.md"
     ],
