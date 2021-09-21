@@ -4,12 +4,6 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ ee3def7b-fc30-47a3-8bb9-d40debafe902
-begin
-	import Pkg
-	Pkg.develop("PoreMatMod")
-end
-
 # ╔═╡ 37939a7a-0651-11ec-11c1-6b5ef0a19ec2
 # load required packages (Pluto.jl will automatically install them)
 using PoreMatMod, PlutoUI, Bio3DView, Logging
@@ -176,7 +170,6 @@ begin
 end
 
 # ╔═╡ Cell order:
-# ╠═ee3def7b-fc30-47a3-8bb9-d40debafe902
 # ╟─8d523993-6e85-443a-9949-12030552b457
 # ╠═37939a7a-0651-11ec-11c1-6b5ef0a19ec2
 # ╠═8ca1eb06-df90-4837-87b1-2e76e1670504
