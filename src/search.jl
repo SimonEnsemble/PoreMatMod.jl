@@ -1,5 +1,5 @@
 """
-    SearchTerms(parent, query)
+    `SearchTerms(parent, query)`
 
 Stores the `Crystal` inputs used to generate a `Search`
 """
@@ -15,7 +15,7 @@ Base.show(io::IO, q::SearchTerms) = print(io, q.query.name, " ∈ ", q.parent.na
     `search = Search(search_terms, results)`
 
 Stores the `SearchTerms` used for a substructure search, and the results returned by carrying out the search.
-Results are grouped by location in the parent `Crystal` and can be examined using `nb_isomorphisms`, `nb_locations`, and `nb_configs_at_loc`.
+Results are grouped by location in the parent `Crystal` and can be examined using `nb_isomorphisms`, `nb_locations`, and `nb_ori_at_loc`.
 Subgraph isomorphisms are encoded like
 
     `isom = search.results[i][j] = [7, 21, 9]`
@@ -34,7 +34,7 @@ end
 
 
 @doc raw"""
-    nb_isomorphisms(search::Search)
+    `nb_isomorphisms(search::Search)`
 
 Returns the number of isomorphisms found in the specified `Search`
 
@@ -47,7 +47,7 @@ end
 
 
 @doc raw"""
-    nb_locations(search::Search)
+    `nb_locations(search::Search)`
 
 Returns the number of unique locations (collections of atoms) at which the
 specified `Search` results contain isomorphisms.
@@ -61,7 +61,7 @@ end
 
 
 @doc raw"""
-    nb_configs_at_loc(search)
+    `nb_ori_at_loc(search)`
 
 Returns a array containing the number of isomorphic configurations at a given
 location (collection of atoms) for which the specified `Search` results
@@ -70,7 +70,7 @@ contain isomorphisms.
 # Arguments
 - `search::Search` a substructure `Search` object
 """
-function nb_configs_at_loc(search::Search)::Array{Int}
+function nb_ori_at_loc(search::Search)::Array{Int}
     return length.(search.results)
 end
 
@@ -95,7 +95,7 @@ end
 
 
 @doc raw"""
-    substructure_search(query, parent; disconnected_component=false)
+    `substructure_search(query, parent; disconnected_component=false)`
 
 Searches for a substructure within a `Crystal` and returns a `Search` struct
 containing all identified subgraph isomorphisms.  Matches are made on the basis
