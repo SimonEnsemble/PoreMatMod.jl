@@ -14,19 +14,19 @@ p_phenylene_w_R_grp = moiety("2-!-p-phenylene.xyz")
 search1 = p_phenylene ∈ irmof1
 @test nb_isomorphisms(search1) == 96
 @test nb_locations(search1) == 24
-@test nb_configs_at_loc(search1)[1] == 4
+@test nb_ori_at_loc(search1)[1] == 4
 @test search1.results[1][1] ==
     [233, 306, 318, 245, 185, 197, 414, 329, 402, 341]
 search2 = p_phenylene ∈ timil125
 @test nb_isomorphisms(search2) == 48
 @test nb_locations(search2) == 12
-@test nb_configs_at_loc(search2)[1] == 4
+@test nb_ori_at_loc(search2)[1] == 4
 @test search2.results[1][1] ==
     [8, 140, 144, 141, 7, 133, 186, 185, 190, 189]
 search3 = p_phenylene_w_R_grp ∈ timil125
 @test nb_isomorphisms(search3) == 48
 @test nb_locations(search3) == 12
-@test nb_configs_at_loc(search3)[1] == 4
+@test nb_ori_at_loc(search3)[1] == 4
 @test search3.results[1][1] ==
     [8, 140, 144, 141, 7, 133, 185, 190, 189, 186]
 s_moty = moiety("!-S-bromochlorofluoromethane.xyz")

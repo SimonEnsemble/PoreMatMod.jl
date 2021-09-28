@@ -103,7 +103,7 @@ nb_locations(search)
 24
 ```
 ```jldoctest find; output=false
-nb_configs_at_loc(search)  # 24-element Vector{Int64}: [4, 4, 4, ..., 4]
+nb_ori_at_loc(search)  # 24-element Vector{Int64}: [4, 4, 4, ..., 4]
 # output
 24-element Vector{Int64}:
  4
@@ -191,7 +191,7 @@ Additionally, the number of initial potential matches is reduced by further exam
 Search
 SearchTerms
 substructure_search
-nb_configs_at_loc
+nb_ori_at_loc
 nb_isomorphisms
 nb_locations
 isomorphic_substructures

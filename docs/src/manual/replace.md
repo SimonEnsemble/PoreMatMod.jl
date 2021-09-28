@@ -57,7 +57,7 @@ s2 = substructure_search(moiety("2-!-p-phenylene.xyz"), parent)
 
 nb_isomorphisms(s1) == nb_isomorphisms(s2) &&
 nb_locations(s1) == nb_locations(s2) &&
-isequal(nb_configs_at_loc(s1), nb_configs_at_loc(s2))
+isequal(nb_ori_at_loc(s1), nb_ori_at_loc(s2))
 # output
 true
 ```
