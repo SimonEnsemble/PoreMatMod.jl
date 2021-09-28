@@ -199,6 +199,12 @@ git-tree-sha1 = "299304989a5e6473d985212c28928899c74e9421"
 uuid = "8f4d0f93-b110-5947-807f-2305c1781a2d"
 version = "1.5.2"
 
+[[Configurations]]
+deps = ["Crayons", "ExproniconLite", "OrderedCollections", "TOML"]
+git-tree-sha1 = "b8486a417456d2fbbe2af13e24cef459c9f42429"
+uuid = "5218b696-f38b-4ac9-8b61-a12ec717816d"
+version = "0.15.4"
+
 [[Crayons]]
 git-tree-sha1 = "3f71217b538d7aaee0b69ab47d9b7724ca8afa0d"
 uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
@@ -242,6 +248,11 @@ uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 deps = ["ArgTools", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 
+[[ExproniconLite]]
+git-tree-sha1 = "45b421f664eba4cd4bed8e5e706f69f2ccd8fcb3"
+uuid = "55351af7-c7e9-48d6-89ff-24e801d99491"
+version = "0.6.10"
+
 [[FIGlet]]
 deps = ["BinaryProvider", "Pkg"]
 git-tree-sha1 = "bfc6b52f75b4720581e3e49ae786da6764e65b6a"
@@ -269,6 +280,11 @@ git-tree-sha1 = "8339d61043228fdd3eb658d86c926cb282ae72a8"
 uuid = "59287772-0a20-5a39-b81b-1366585eb4c0"
 version = "0.4.2"
 
+[[FromFile]]
+git-tree-sha1 = "f4fce099f9e14cd12d91e29fd105ef891fb55297"
+uuid = "ff7dd447-1dcb-4ce3-b8ac-22a812192de7"
+version = "0.1.1"
+
 [[FunctionalCollections]]
 deps = ["Test"]
 git-tree-sha1 = "04cb9cfaa6ba5311973994fe3496ddec19b6292a"
@@ -278,6 +294,18 @@ version = "0.5.0"
 [[Future]]
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
+
+[[FuzzyCompletions]]
+deps = ["REPL"]
+git-tree-sha1 = "2cc2791b324e8ed387a91d7226d17be754e9de61"
+uuid = "fb4132e2-a121-4a70-b8a1-d5b831dcdcc2"
+version = "0.4.3"
+
+[[GitHubActions]]
+deps = ["JSON", "Logging"]
+git-tree-sha1 = "56e01ec63d13e1cf015d9ff586156eae3cc7cd6f"
+uuid = "6b79fd1a-b13a-48ab-b6b0-aaee1fee41df"
+version = "0.1.4"
 
 [[HTTP]]
 deps = ["Base64", "Dates", "IniFile", "Logging", "MbedTLS", "NetworkOptions", "Sockets", "URIs"]
@@ -410,6 +438,12 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 [[MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 
+[[MsgPack]]
+deps = ["Serialization"]
+git-tree-sha1 = "a8cbf066b54d793b9a48c5daa5d586cf2b5bd43d"
+uuid = "99f44e22-a591-53d1-9472-aa23ef4bd671"
+version = "1.1.0"
+
 [[Mustache]]
 deps = ["Printf", "Tables"]
 git-tree-sha1 = "36995ef0d532fe08119d70b2365b7b03d4e00f48"
@@ -451,6 +485,18 @@ version = "1.2.0"
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
+[[Pluto]]
+deps = ["Base64", "Configurations", "Dates", "Distributed", "FileWatching", "FuzzyCompletions", "HTTP", "InteractiveUtils", "Logging", "Markdown", "MsgPack", "Pkg", "REPL", "Sockets", "TableIOInterface", "Tables", "UUIDs"]
+git-tree-sha1 = "d4955d6b5267ed826d03e3f05cc23426492b23c9"
+uuid = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
+version = "0.16.1"
+
+[[PlutoSliderServer]]
+deps = ["Base64", "Configurations", "Distributed", "FromFile", "GitHubActions", "HTTP", "Logging", "Pkg", "Pluto", "SHA", "Sockets", "TOML", "UUIDs"]
+git-tree-sha1 = "cff19495202bd7bfa51fddffca066266913ac05e"
+uuid = "2fc8631c-6f24-4c5b-bca7-cbb509c42db4"
+version = "0.2.5"
+
 [[PlutoUI]]
 deps = ["Base64", "Dates", "InteractiveUtils", "JSON", "Logging", "Markdown", "Random", "Reexport", "Suppressor"]
 git-tree-sha1 = "44e225d5837e2a2345e69a1d1e01ac2443ff9fcb"
@@ -464,10 +510,10 @@ uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
 version = "1.3.0"
 
 [[PoreMatMod]]
-deps = ["Bio3DView", "Blink", "CSV", "DataFrames", "FIGlet", "LightGraphs", "LinearAlgebra", "MetaGraphs", "Reexport", "StatsBase", "Xtals"]
-git-tree-sha1 = "e5a1ce5176a1d028a2d66e9addfdc048ff797351"
+deps = ["Bio3DView", "Blink", "CSV", "DataFrames", "FIGlet", "LightGraphs", "LinearAlgebra", "MetaGraphs", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
+git-tree-sha1 = "4234ac253ba7c16a30ee8dc562960e509ff456c6"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
-version = "0.1.0"
+version = "0.1.2"
 
 [[PrettyTables]]
 deps = ["Crayons", "Formatting", "Markdown", "Reexport", "Tables"]
@@ -574,6 +620,11 @@ version = "0.2.0"
 [[TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+
+[[TableIOInterface]]
+git-tree-sha1 = "9a0d3ab8afd14f33a35af7391491ff3104401a35"
+uuid = "d1efa939-5518-4425-949f-ab857e148477"
+version = "0.1.6"
 
 [[TableTraits]]
 deps = ["IteratorInterfaceExtensions"]
