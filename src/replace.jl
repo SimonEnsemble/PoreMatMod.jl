@@ -41,16 +41,16 @@ end
 # tracks which bonds need to be made between the parent and array
 # of transformed replacement's (xrms) along with the new fragments
 function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, q2p_isom::Array{Int},
-    parent::Crystal, m2r_isom::Union{Array{Int},Nothing}, xrm::Union{Crystal,Nothing}, count_xrms::Int)
+    parent::Crystal, q_unmasked2r_isom::Union{Array{Int},Nothing}, xrm::Union{Crystal,Nothing}, count_xrms::Int)
     # skip bond accumulation for null replacement
-    if m2r_isom == Int[] || isnothing(m2r_isom)
+    if q_unmasked2r_isom == Int[] || isnothing(q_unmasked2r_isom)
         return
     end
     # bonds between new fragments and parent
     # loop over q2p_isom
     for (s, p) in enumerate(q2p_isom)
         # in case the replacement moiety is smaller than the search moiety
-        if s > length(m2r_isom)
+        if s > length(q_unmasked2r_isom)
             break
         end
         # find neighbors of parent_subset atoms
@@ -61,7 +61,7 @@ function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, q2p_isom::Array{Int},
             # of parent_subset atom
             if !(nᵢ ∈ q2p_isom)
                 # ID the atom in replacement
-                r = m2r_isom[s]
+                r = q_unmasked2r_isom[s]
                 # add the index offset
                 r += parent.atoms.n + (count_xrms - 1) * xrm.atoms.n
                 # push bond to array
@@ -78,13 +78,47 @@ function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, q2p_isom::Array{Int},
 end
 
 
+# align the replacement onto the parent subgraph using the mappings between q, p, q′, and r
+function align(q_unmasked2r_isom::Vector{Int}, parent::Crystal, replacement::Crystal, r2p_isom::Dict{Int, Int}, q_unmasked2p_isom::Vector{Int})
+    # find parent subset
+    parent_subset = deepcopy(parent[q_unmasked2p_isom])
+    # adjust coordinates for periodic boundaries
+    adjust_for_pb!(parent_subset)
+    # record the center of parent_subset so we can translate back later
+    parent_subset_center = geometric_center(parent_subset)
+    # shift all replacement nodes according to center of isomorphic subset
+    replacement′ = deepcopy(replacement)
+    replacement′.atoms.coords.xf .-= geometric_center(replacement[q_unmasked2r_isom])
+    # get OP rotation matrix to align replacement onto parent
+    rot_r2p = r2p_op(replacement′, parent, r2p_isom)
+    # transform replacement by rot_r2p, and parent_subset_center (this is now a potential crystal to add)
+    xrm = xform_replacement(replacement′, rot_r2p, parent_subset_center, parent)
+    # calculate the alignment error
+    alignment_error = rmsd(xrm.atoms.coords.xf[:, q_unmasked2r_isom], parent.atoms.coords.xf[:, q_unmasked2p_isom])
+    return xrm, alignment_error
+end
+
+
 # generates data for effecting a series of replacements
-function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search, parent::Crystal, replacement::Crystal
-        )::Tuple{Vector{Crystal},Vector{Int},Vector{Tuple{Int,Int}}}
+function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search, replacement::Crystal)
+    parent = q_in_p.search.parent
+    query = q_in_p.search.query
     # which atoms from query are in replacement?
-    m2q_key = idx_filter(q_in_p.search.query, r_group_indices(q_in_p.search.query))
+    q_unmasked2q = idx_filter(query, r_group_indices(query)) ## TODO eliminate (if possible)
+    # BitArray for identifying atoms as masked (false) or unmasked (true)
+    not_masked = map(species -> ! occursin(rc[:r_tag], String(species)), query.atoms.species) .== true
     # get isomrphism between query/mask and replacement
-    q′_in_r = q_in_p.search.query[m2q_key] ∈ replacement
+    q_unmasked_in_r = query[not_masked] ∈ replacement
+    # check for good input
+    if nb_locations(q_unmasked_in_r) > 1
+        @warn "There should be a single subset of the replacement isomorphic to the unmasked query!"
+    end
+    # take arbitrary isom, if any
+    q_unmasked2r_isom = nb_isomorphisms(q_unmasked_in_r) ≠ 0 ? q_unmasked_in_r.results[1][1] : nothing
+    if !isnothing(q_unmasked2r_isom)
+        q2r_isom′ = Dict([q => q_unmasked2r_isom[m] for (m, q) in enumerate(q_unmasked2q)])
+    end
+    # containers for optimal results
     xrms = Crystal[]
     del_atoms = Int[]
     bonds = Tuple{Int,Int}[] # tuple (i,j) encodes a bond in the child crystal
@@ -96,56 +130,29 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
     # and accumulate list of bonds for each replacement configuration
     for config in configs
         loc = config[1]
-        ori = config[2]
-        if ori == 0
-            ori = [1:nb_configs_at_loc(q_in_p)[loc]...]
-        else
-            ori = [ori]
-        end
+        ori = config[2] == 0 ? [1:nb_ori_at_loc(q_in_p)[loc]...] : [config[2]]
         xrm = nothing
-        m2r_isom = nothing
         alignment_err = Inf
         q2p_isom = nothing
-        for ori′ in ori
+        for ori′ in ori # choose best r2p by evaluating RMSD for all possibilities
+            #### all variables w/ prime (e.g. ori′) are local to loop iteration
             # pull up specific isomorphism from query to parent
             q2p_isom′ = q_in_p.results[loc][ori′]
-            # determine isomorphism from masked query to parent
-            m2p_isom = q2p_isom′[m2q_key]
-            # find parent subset
-            parent_subset = deepcopy(parent[m2p_isom])
-            # adjust coordinates for periodic boundaries
-            adjust_for_pb!(parent_subset)
-            # record the center of parent_subset so we can translate back later
-            parent_subset_center = geometric_center(parent_subset)
-            
             # orthog. Procrustes
-            if nb_isomorphisms(q′_in_r) ≠ 0
-                # choose best r2p by evaluating RMSD for all possibilities
-                for i ∈ 1:nb_locations(q′_in_r)
-                    for j ∈ 1:nb_configs_at_loc(q′_in_r)[i]
-                        m2r_isom′ = q′_in_r.results[i][j]
-                        q2r_isom′ = Dict([m2q_key[m] => m2r_isom′[m] for m in 1:length(m2q_key)])
-                        # shift all replacement nodes according to center of isomorphic subset
-                        replacement′ = deepcopy(replacement)
-                        replacement′.atoms.coords.xf .-= geometric_center(replacement[m2r_isom′])
-                        # determine mapping r2p
-                        r2p_isom = Dict([r => q2p_isom′[q] for (q,r) in q2r_isom′])
-                        # get OP rotation matrix to align replacement onto parent
-                        rot_r2p = r2p_op(replacement, parent, r2p_isom)
-                        # transform replacement by rot_r2p, and parent_subset_center (this is now a potential crystal to add)
-                        xrm′ = xform_replacement(replacement′, rot_r2p, parent_subset_center, parent)
-                        # check error and keep xrm & m2r_isom if better than previous best error
-                        alignment_err′ = rmsd(xrm′.atoms.coords.xf[:, m2r_isom′], parent.atoms.coords.xf[:, m2q_key])
-                        if alignment_err′ < alignment_err
-                            m2r_isom = m2r_isom′
-                            alignment_err = alignment_err′
-                            xrm = xrm′
-                            q2p_isom = q2p_isom′
-                        end
-                    end
+            if !isnothing(q_unmasked2r_isom)
+                # determine mapping r2p
+                r2p_isom = Dict([r => q2p_isom′[q] for (q,r) in q2r_isom′])
+                # determine isomorphism from masked query to parent
+                q_unmasked2p_isom = q2p_isom′[q_unmasked2q]
+                # check error and keep xrm & q_unmasked2r_isom if better than previous best error
+                xrm′, alignment_err′ = align(q_unmasked2r_isom, parent, replacement, r2p_isom, q_unmasked2p_isom)
+                if alignment_err′ < alignment_err
+                    alignment_err = alignment_err′
+                    xrm = xrm′
+                    q2p_isom = q2p_isom′
                 end
             else
-                q2p_isom = q2p_isom′
+                q2p_isom = q2p_isom′ # the replacement is `nothing` (or invalid)
             end
         end
         # add optimal xrm to array
@@ -159,7 +166,7 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
         # clean up del_atoms
         del_atoms = unique(del_atoms)
         # accumulate bonds
-        accumulate_bonds!(bonds, q2p_isom, parent, m2r_isom, xrm, length(xrms))
+        accumulate_bonds!(bonds, q2p_isom, parent, q_unmasked2r_isom, xrm, length(xrms))
     end
     return xrms, del_atoms, bonds
 end
@@ -179,7 +186,7 @@ function _substructure_replace(q_in_p::Search, replacement::Crystal, configs::Ar
         return parent
     end
     # loop over configs to build replacement data
-    xrms, del_atoms, bonds = build_replacement_data(configs, q_in_p, parent, replacement)
+    xrms, del_atoms, bonds = build_replacement_data(configs, q_in_p, replacement)
     # append temporary crystals to parent
     atoms = xrms == Crystal[] ? parent.atoms : parent.atoms + sum([xrm.atoms for xrm ∈ xrms if xrm.atoms.n > 0])
     xtal = Crystal(new_xtal_name, parent.box, atoms, Charges{Frac}(0))
@@ -226,7 +233,7 @@ function substructure_replace(search::Search, replacement::Crystal; random::Bool
         nb_loc = nb_locations(search)
         loc = [1:nb_loc...]
         if random
-            ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
+            ori = [rand(1:nb_ori_at_loc(search)[i]) for i in loc]
             if verbose
                 @info "Replacing" q_in_p=search r=replacement.name mode="random ori @ all loc"
             end
@@ -240,7 +247,7 @@ function substructure_replace(search::Search, replacement::Crystal; random::Bool
     elseif nb_loc > 0 && ori == Int[] && loc == Int[]
         loc = sample([1:nb_locations(search)...], nb_loc, replace=false)
         if random
-            ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
+            ori = [rand(1:nb_ori_at_loc(search)[i]) for i in loc]
             if verbose
                 @info "Replacing" q_in_p=search r=replacement.name mode="random ori @ $nb_loc loc"
             end
@@ -261,7 +268,7 @@ function substructure_replace(search::Search, replacement::Crystal; random::Bool
     elseif loc ≠ Int[]
         nb_loc = length(loc)
         if random
-            ori = [rand(1:nb_configs_at_loc(search)[i]) for i in loc]
+            ori = [rand(1:nb_ori_at_loc(search)[i]) for i in loc]
             if verbose
                 @info "Replacing" q_in_p=search r=replacement.name mode="random ori @ loc: $loc"
             end
