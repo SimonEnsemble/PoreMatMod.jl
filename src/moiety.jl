@@ -54,7 +54,7 @@ end
 
 ## moiety import function (exposed)
 @doc raw"""
-    moiety(name)
+    `moiety(name)`
 
 Generates a moiety (`Crystal`) from an .xyz file found in `rc[:paths][:moieties]`
 
