@@ -9,6 +9,8 @@ end
 
 # Subgraph matching (substructure searches)
 
+![find graphic](../../assets/find/s_moty-in-xtal.png)
+
 `PoreMatMod.jl` conducts subgraph matching, i.e. searches for subgraphs of a `parent` graph isomorphic to a `query` graph, using [Ullmann's algorithm for subgraph isomorphisms](https://doi.org/10.1145/321921.321925).
 
 Both the `parent` crystal structure and `query` fragment are represented by node-labeled (by the chemical species) graphs. For crystals, bonds across the unit cell boundaries of periodic materials are accounted for, allowing us to find subgraph isomorphisms when the fragment is split across a unit cell boundary.
@@ -24,9 +26,6 @@ infer_bonds!(parent_xtal, true)
 
 query = moiety("p-phenylene.xyz")
 ```
-
-then, we execute a search:
-
 
 With a `parent` and `query` loaded, execute a search:
 
@@ -67,7 +66,7 @@ search.search.query.name
 "p-phenylene.xyz"
 ```
 ```jldoctest find
-search.results
+size(search.results)
 # output
 24-element Vector{Vector{Vector{Int64}}}:
  [[233, 306, 318, 245, 185, 197, 414, 329, 402, 341], [245, 318, 306, 233, 197, 185, 402, 341, 414, 329], [306, 233, 245, 318, 185, 197, 341, 402, 329, 414], [318, 245, 233, 306, 197, 185, 329, 414, 341, 402]]
@@ -151,8 +150,6 @@ Bravais unit cell of a crystal.
 	symmetry Operations:
 		'x, y, z'
 ```
-
-![find graphic](../../assets/find/s_moty-in-xtal.png)
 
 ## Molecular and Graph Symmetry
 

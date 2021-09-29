@@ -14,7 +14,7 @@ First, we perform a search using a `query` with `!`-tagged atom(s), to direct th
 In this case, we should use [2-!-p-phenylene.xyz](../../../assets/replace/2-!-p-phenylene.xyz).
 Having performed a search and chosen one or more isomorphisms from the results, we have the 1-to-1 correspondence(s) we need to perform OP to align the coordinate systems of the `parent` and `query`.  
 Such a correspondence will be termed $q→p′$. 
-We also need to align the `replacement` moiety, 2-acetylamido-*p*-phenylene, with the `query`, so we perform a second UA.
+We also need to align the `replacement` moiety, 2-acetylamido-*p*-phenylene, with the `query`, so we perform a second substructure search.
 
 The `query` in this case is the original search moiety minus the subset of atoms tagged with `!`. 
 For 2-!-*p*-phenylene, this new search term is 1,2,4-dehydro-benzene, by deletion of the `:H!` at the 2 position of *p*-phenylene.
