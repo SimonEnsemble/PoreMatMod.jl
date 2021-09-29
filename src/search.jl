@@ -1,34 +1,22 @@
 """
-    `SearchTerms(parent, query)`
-
-Stores the `Crystal` inputs used to generate a `Search`
-"""
-struct SearchTerms
-    parent::Crystal
-    query::Crystal
-end
-
-Base.show(io::IO, q::SearchTerms) = print(io, q.query.name, " ∈ ", q.parent.name)
-
-
-"""
     `search = Search(search_terms, results)`
 
-Stores the `SearchTerms` used for a substructure search, and the results returned by carrying out the search.
+Stores the `parent` and `query` used for a substructure search, and the results returned by carrying out the search.
 Results are grouped by location in the parent `Crystal` and can be examined using `nb_isomorphisms`, `nb_locations`, and `nb_ori_at_loc`.
 Subgraph isomorphisms are encoded like
 
-    `isom = search.results[i][j] = [7, 21, 9]`
+    `isom = search.isomorphisms[i][j] = [7, 21, 9]`
 
-where `isom[k]` is the index of the atom in `search.search.parent` corresponding to atom `k` in `search.search.query` for location `i` and orientation `j`.
+where `isom[k]` is the index of the atom in `search.parent` corresponding to atom `k` in `search.query` for location `i` and orientation `j`.
 """
 struct Search
-    search::SearchTerms # the search terms (query ∈ parent)
-    results::Vector{Vector{Vector{Int}}} # isomorphisms
+    parent::Crystal
+    query::Crystal
+    isomorphisms::Vector{Vector{Vector{Int}}}
 end
 
 Base.show(io::IO, s::Search) = begin
-    println(io, s.search)
+    println(io, s.query.name, " ∈ ", s.parent.name)
     print(io, nb_isomorphisms(s), " hits in ", nb_locations(s), " locations.")
 end
 
@@ -42,7 +30,7 @@ Returns the number of isomorphisms found in the specified `Search`
 - `search::Search` a substructure `Search` object
 """
 function nb_isomorphisms(search::Search)::Int
-    return sum(length.(search.results))
+    return sum(nb_ori_at_loc(search))
 end
 
 
@@ -56,7 +44,7 @@ specified `Search` results contain isomorphisms.
 - `search::Search` a substructure `Search` object
 """
 function nb_locations(search::Search)::Int
-    return length(search.results)
+    return length(search.isomorphisms)
 end
 
 
@@ -71,11 +59,11 @@ contain isomorphisms.
 - `search::Search` a substructure `Search` object
 """
 function nb_ori_at_loc(search::Search)::Array{Int}
-    return length.(search.results)
+    return length.(search.isomorphisms)
 end
 
 
-# extension of infix `in` operator for expressive searching
+# extension of infix `in` operator for syntactic sugar
 # this allows all of the following:
 #    s ∈ g                   →    find the moiety in the crystal
 #    [s1, s2] .∈ [g]         →    find each moiety in a crystal
@@ -90,7 +78,7 @@ end
 Returns a crystal consisting of the atoms involved in subgraph isomorphisms in the search `s`
 """
 function isomorphic_substructures(s::Search)::Crystal
-    return s.search.parent[reduce(vcat, [s.results[i][1] for i in 1:nb_locations(s)])]
+    return s.parent[reduce(vcat, [s.isomorphisms[i][1] for i in 1:nb_locations(s)])]
 end
 
 
@@ -125,5 +113,5 @@ function substructure_search(query::Crystal, parent::Crystal; disconnected_compo
     end
     gdf = groupby(DataFrame(location=locs, isomorphism=isoms), :location)
     results = [loc.isomorphism for loc in gdf]
-    return Search(SearchTerms(parent, query), results)
+    return Search(parent, query, results)
 end

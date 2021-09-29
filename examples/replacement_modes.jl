@@ -107,7 +107,7 @@ search = query ∈ parent
 md"""
 #### Default: optimal orientation at all locations
 
-Optimal configurations will be chosen for each location in `search.results`, so that each occurrence of the `query` in the `parent` is replaced with minimal perturbation of the conserved atoms from the parent structure.
+Optimal configurations will be chosen for each location in `search.isomorphisms`, so that each occurrence of the `query` in the `parent` is replaced with minimal perturbation of the conserved atoms from the parent structure.
 """
 
 # ╔═╡ 74aa19d2-b1a4-4333-9ff9-e6ea74e7d989

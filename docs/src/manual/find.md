@@ -29,7 +29,7 @@ query = moiety("p-phenylene.xyz")
 
 With a `parent` and `query` loaded, execute a search:
 
-```jldoctest
+```jldoctest find
 search = substructure_search(query, parent)
 # output
 p-phenylene.xyz ∈ IRMOF-1.cif
@@ -39,34 +39,15 @@ p-phenylene.xyz ∈ IRMOF-1.cif
 !!! note "Syntactic sugar for substructure search"
     The `∈` (`in` then hit `Tab` for this Unicode character) infix operator will also execute the search:
 
-    ```jldoctest find
+    ```julia
     search = query ∈ parent
-    # output
-    p-phenylene.xyz ∈ IRMOF-1.cif
-    96 hits in 24 locations.
     ```
 
 
-This returns a `Search` object.  
-Its `search` attribute stores the `Crystal` data for the `query` and `parent` structures, and its `results` attribute is a vector listing the subgraph isomorphisms grouped by location.
+This returns a `Search` object. It stores the `Crystal` data for the `query` and `parent` structures, and its `isomorphisms` attribute is a nested vector.
 
 ```jldoctest find
-search.search
-# output
-p-phenylene.xyz ∈ IRMOF-1.cif
-```
-```jldoctest find
-typeof(search.search.query)
-# output
-Crystal
-```
-```jldoctest find
-search.search.query.name
-# output
-"p-phenylene.xyz"
-```
-```jldoctest find
-size(search.results)
+search.isomorphisms
 # output
 24-element Vector{Vector{Vector{Int64}}}:
  [[233, 306, 318, 245, 185, 197, 414, 329, 402, 341], [245, 318, 306, 233, 197, 185, 402, 341, 414, 329], [306, 233, 245, 318, 185, 197, 341, 402, 329, 414], [318, 245, 233, 306, 197, 185, 329, 414, 341, 402]]
@@ -94,13 +75,16 @@ size(search.results)
 In this example, the `query` fragment (*p*-phenylene) occurs 24 times in the provided structure of the `parent` crystal (IRMOF-1), with 4 symmetry-equivalent search hits at each site, for a total of 96 subgraph isomorphisms.
 
 
-Helper functions count the number of locations where the `query` occurs, the number of configurations at each location, and the total number of isomorphisms.
+The number of locations is the same as the number of unique subsets in the `parent` to which `query` is isomorphic, and is also the size of the first indexing dimension of `search.isomorphisms`
 
 ```jldoctest find
-nb_locations(search) 
+nb_locations(search)
 # output
 24
 ```
+
+Each element `search.isomorphisms[loc]` is a vector of isomorphisms that share a common subset of atoms in the `parent`.
+
 ```jldoctest find; output=false
 nb_ori_at_loc(search)  # 24-element Vector{Int64}: [4, 4, 4, ..., 4]
 # output
@@ -126,6 +110,12 @@ nb_ori_at_loc(search)  # 24-element Vector{Int64}: [4, 4, 4, ..., 4]
  4
  4
 ```
+
+The individual isomorphisms `isom = search.isomorphisms[loc][ori]` for a specific `loc` and orientation `ori` are vectors of atom indices in the parent.
+If atom $q$ of the `query` maps to atom $p$ of the parent, then `isom[q] = p`.
+
+The total number of isomorphisms is given by `nb_isomorphisms(search)`; this is the same as `sum(nb_ori_at_loc(search))`.
+
 ```jldoctest find
 nb_isomorphisms(search) 
 # output
@@ -173,20 +163,10 @@ nb_locations(search)
 24
 ```
 
-### Details on our implementation of Ulmann's algorithm
-The algorithm is a depth-first search of the permutation tree for all possible one-to-one correspondences between the nodes of one graph (the `query`) and any subset of nodes of another graph (the `parent`). 
-The search tree is greatly reduced in size by imposing several constraints on possible node-to-node correspondences. 
-At each branch of the search tree, additional pruning further reduces the search space by comparing the immediate neighborhoods of potentially-corresponding nodes.
-
-`PoreMatMod.jl` augments Ullmann's algorithm to include the requirement that potentially-corresponding nodes be of the same atomic species, as required by the chemical
-structure application. 
-Additionally, the number of initial potential matches is reduced by further examination of each atom's local bonding neighborhood.  
-
 ## Documentation for functions
 
 ```@docs
 Search
-SearchTerms
 substructure_search
 nb_ori_at_loc
 nb_isomorphisms

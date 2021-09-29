@@ -101,8 +101,8 @@ end
 
 # generates data for effecting a series of replacements
 function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search, replacement::Crystal)
-    parent = q_in_p.search.parent
-    query = q_in_p.search.query
+    parent = q_in_p.parent
+    query = q_in_p.query
     # which atoms from query are in replacement?
     q_unmasked2q = idx_filter(query, r_group_indices(query)) ## TODO eliminate (if possible)
     # BitArray for identifying atoms as masked (false) or unmasked (true)
@@ -114,7 +114,7 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
         @warn "There should be a single subset of the replacement isomorphic to the unmasked query!"
     end
     # take arbitrary isom, if any
-    q_unmasked2r_isom = nb_isomorphisms(q_unmasked_in_r) ≠ 0 ? q_unmasked_in_r.results[1][1] : nothing
+    q_unmasked2r_isom = nb_isomorphisms(q_unmasked_in_r) ≠ 0 ? q_unmasked_in_r.isomorphisms[1][1] : nothing
     if !isnothing(q_unmasked2r_isom)
         q2r_isom′ = Dict([q => q_unmasked2r_isom[m] for (m, q) in enumerate(q_unmasked2q)])
     end
@@ -137,7 +137,7 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
         for ori′ in ori # choose best r2p by evaluating RMSD for all possibilities
             #### all variables w/ prime (e.g. ori′) are local to loop iteration
             # pull up specific isomorphism from query to parent
-            q2p_isom′ = q_in_p.results[loc][ori′]
+            q2p_isom′ = q_in_p.isomorphisms[loc][ori′]
             # orthog. Procrustes
             if !isnothing(q_unmasked2r_isom)
                 # determine mapping r2p
@@ -174,8 +174,8 @@ end
 
 ## Internal method for performing substructure replacements
 function _substructure_replace(q_in_p::Search, replacement::Crystal, configs::Array{Tuple{Int,Int}}, new_xtal_name::String)::Crystal
-    query = q_in_p.search.query
-    parent = q_in_p.search.parent
+    query = q_in_p.query
+    parent = q_in_p.parent
     # configs must all be unique
     @assert length(configs) == length(unique(configs)) "configs must be unique"
     # mutation guard
@@ -214,7 +214,7 @@ end
 Inserts `replacement` into a parent structure according to `search` and `kwargs`.
 Provide a replacement style `kwarg` to direct the location and orientation of replacements.
 Default behavior is to seek the replacement operation with lowest RMSD on spatial alignment.
-Returns a new `Crystal` with the specified modifications (returns `search.search.parent` if no replacements are made)
+Returns a new `Crystal` with the specified modifications (returns `search.parent` if no replacements are made)
 
 # Arguments
 - `search::Search` the `Search` for a substructure moiety in the parent crystal

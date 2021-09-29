@@ -14,9 +14,11 @@ end
 
 
 export
-    # findreplace.jl
-    substructure_search, SearchResult, SearchTerms, Search, nb_isomorphisms,
-    nb_locations, nb_ori_at_loc, substructure_replace, isomorphic_substructures,
+    # search.jl
+    Search, substructure_search, nb_isomorphisms, nb_locations, nb_ori_at_loc, isomorphic_substructures,
+
+    # replace.jl
+    substructure_replace, 
 
     # moiety.jl
     moiety
