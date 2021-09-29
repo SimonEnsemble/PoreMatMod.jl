@@ -25,7 +25,7 @@ N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline m
 `PoreMatMod.jl` is licensed under the [MIT license](./LICENSE).
 
 ## Installation
-`PoreMatMod.jl` is a registered pakcage and can be installed by entering the following the in package manager.
+`PoreMatMod.jl` is a registered Julia package and can be installed by entering the following line in the Julia REPL when in package mode (type `]` to enter package mode):
 
 ```
 (v1.6) pkg> add PoreMatMod
