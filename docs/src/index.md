@@ -38,7 +38,7 @@ child_xtal = replace(parent_xtal, query_fragment => replacement_fragment)
 
 !!! example "Further examples"
 
-    See the [examples page](../../examples) for links to Pluto notebooks with `PoreMatMod.jl` code to accomplish various find-and-replace tasks.
+    See the [examples page](../../../examples) for links to Pluto notebooks with `PoreMatMod.jl` code to accomplish various find-and-replace tasks.
 
 !!! note "Please cite our paper!"
 
