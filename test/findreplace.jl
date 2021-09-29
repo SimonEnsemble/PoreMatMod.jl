@@ -29,19 +29,19 @@ search3 = p_phenylene_w_R_grp ∈ timil125
 @test nb_ori_at_loc(search3)[1] == 4
 @test search3.results[1][1] ==
     [8, 140, 144, 141, 7, 133, 185, 190, 189, 186]
-s_moty = moiety("!-S-bromochlorofluoromethane.xyz")
+query = moiety("!-S-bromochlorofluoromethane.xyz")
 parent = moiety("S-bromochlorofluoromethane.xyz")
-search = s_moty ∈ parent
+search = query ∈ parent
 @test search.results[1][1] == [1, 2, 3, 4, 5]
 @test parent.atoms.species[search.results[1][1]][1:4] ==
-    s_moty.atoms.species[1:4] &&
-    s_moty.atoms.species[5] == :H! &&
+    query.atoms.species[1:4] &&
+    query.atoms.species[5] == :H! &&
     parent.atoms.species[search.results[1][1]][5] == :H
-s_moty = moiety("p-phenylene.xyz")
+query = moiety("p-phenylene.xyz")
 parent = Crystal("IRMOF-1_one_ring.cif")
 strip_numbers_from_atom_labels!(parent)
 infer_bonds!(parent, true)
-search = s_moty ∈ parent
+search = query ∈ parent
 @test search.results[1][1] == [34, 38, 39, 36, 26, 27, 51, 46, 50, 48]
 end # test set: substructure_search
 
@@ -49,34 +49,34 @@ end # test set: substructure_search
 parent = Crystal("IRMOF-1.cif")
 strip_numbers_from_atom_labels!(parent)
 infer_bonds!(parent, true)
-s_moty = moiety("2-!-p-phenylene.xyz")
+query = moiety("2-!-p-phenylene.xyz")
 replacement = moiety("2-acetylamido-p-phenylene.xyz")
-new_xtal = replace(parent, s_moty => replacement)
+new_xtal = replace(parent, query => replacement)
 @test new_xtal.atoms.n == 592
-new_xtal = replace(parent, s_moty => replacement, nb_loc=1)
+new_xtal = replace(parent, query => replacement, nb_loc=1)
 @test new_xtal.atoms.n == 431
-new_xtal = replace(parent, s_moty => replacement, loc=[2,3])
+new_xtal = replace(parent, query => replacement, loc=[2,3])
 @test new_xtal.atoms.n == 438
-new_xtal = replace(parent, s_moty => replacement, loc=[2,3,4], ori=[1,1,1])
+new_xtal = replace(parent, query => replacement, loc=[2,3,4], ori=[1,1,1])
 @test new_xtal.atoms.n == 445
 replacement = moiety("p-phenylene.xyz")
-new_xtal = replace(parent, s_moty => replacement)
+new_xtal = replace(parent, query => replacement)
 @test ne(new_xtal.bonds) == ne(parent.bonds)
 replacement = moiety("2-acetylamido-p-phenylene.xyz")
-new_xtal = replace(parent, s_moty => replacement, nb_loc=1)
-@test ne(new_xtal.bonds) == (ne(parent.bonds) - ne(s_moty.bonds) + ne(replacement.bonds))
+new_xtal = replace(parent, query => replacement, nb_loc=1)
+@test ne(new_xtal.bonds) == (ne(parent.bonds) - ne(query.bonds) + ne(replacement.bonds))
 xtal = Crystal("IRMOF-1.cif")
 strip_numbers_from_atom_labels!(xtal)
 infer_bonds!(xtal, true)
-s_moty = moiety("2-!-p-phenylene.xyz")
+query = moiety("2-!-p-phenylene.xyz")
 nb_bonds(xtal) = ne(xtal.bonds)
 # test that a "no-op" leaves the number of bonds unchanged
 replacement = moiety("p-phenylene.xyz")
-@test nb_bonds(replace(xtal, s_moty => replacement)) == nb_bonds(xtal)
+@test nb_bonds(replace(xtal, query => replacement)) == nb_bonds(xtal)
 # test that adding a new moiety increases the number of bonds correctly
 replacement = moiety("2-acetylamido-p-phenylene.xyz")
-@test ne((replace(xtal, s_moty => replacement, nb_loc=1)).bonds) ==
-    (ne(xtal.bonds) - ne(s_moty.bonds) + ne(replacement.bonds))
+@test ne((replace(xtal, query => replacement, nb_loc=1)).bonds) ==
+    (ne(xtal.bonds) - ne(query.bonds) + ne(replacement.bonds))
 # test that the coordinates resulting from a specific replacement are the same as a verified test run
 parent = Crystal("IRMOF-1.cif")
 infer_bonds!(parent, true)

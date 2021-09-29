@@ -44,7 +44,7 @@ $(Resource("https://simonensemble.github.io/osu_logo.jpg", :width => 250))
 
 # ╔═╡ 50269ffe-02ef-11eb-0614-f11975d991fe
 begin load_inputs
-    # input fields: s_moty, replacement, xtal
+    # input fields: query, replacement, xtal
     md"""
     ##### Input Files
 
@@ -60,18 +60,18 @@ end
 # write file input strings to files in temp directory
 begin
     # dict for tracking load status of inputs
-    isloaded = Dict([:replacement => false, :s_moty => false, :parent => false])
+    isloaded = Dict([:replacement => false, :query => false, :parent => false])
     # replacement loader
     if !isnothing(replace_moiety)
         write("replacement.xyz", replace_moiety["data"])
         replacement = moiety("replacement.xyz")
         isloaded[:replacement] = true
     end
-    # s_moty loader
+    # query loader
     if !isnothing(search_moiety)
-        write("s_moty.xyz", search_moiety["data"])
-        s_moty = moiety("s_moty.xyz")
-        isloaded[:s_moty] = true
+        write("query.xyz", search_moiety["data"])
+        query = moiety("query.xyz")
+        isloaded[:query] = true
     end
     # xtal loader
     if !isnothing(parent_crystal)
@@ -82,8 +82,8 @@ begin
         isloaded[:parent] = true
     end
     # run search and display terminal message
-    if isloaded[:s_moty] && isloaded[:parent]
-        search = s_moty ∈ xtal
+    if isloaded[:query] && isloaded[:parent]
+        search = query ∈ xtal
         with_terminal() do
             @info "Search Results" isomorphisms=nb_isomorphisms(search) locations=nb_locations(search)
         end
