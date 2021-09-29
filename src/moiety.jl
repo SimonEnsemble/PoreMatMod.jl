@@ -67,23 +67,31 @@ Atoms appended with '!' are tagged for replacement via `substructure_replace`.
 Bonds are inferred automatically via `infer_bonds!`.
 
 # Arguments
-- `xyz_filename::String` the moiety input file name, an `.xyz` file.
+- `xyz_filename::Union{String,Nothing}` the moiety input file name, an `.xyz` file; if set to `nothing` the moiety is the null set.
+- `bonding_rules::Union{Vector{BondingRule},Nothing}` (optional) a list of rules to use for inferring the bonding network of the atoms loaded from the XYZ file. If set to `nothing`, the default rules are used.
 """
-function moiety(name::Union{String,Nothing})::Crystal
-    # generate Crystal from moiety XYZ coords
+function moiety(name::Union{String,Nothing}; bonding_rules::Union{Vector{BondingRule},Nothing}=nothing)::Crystal
+    # make box (arbitrary unit cube)
     box = unit_cube()
+    # handle deletion option (replace-with-nothing)
     if !isnothing(name)
         fx = Frac(read_xyz("$(rc[:paths][:moieties])/$name"), box)
     else
         name = "nothing"
         fx = Atoms{Frac}(0)
     end
+    # generate Crystal from moiety XYZ coords
     charges = Charges{Frac}(0)
     moiety = Crystal(name, box, fx, charges)
     # ID R group
     R_group_indices = r_group_indices(moiety)
+    # handle custom vs. default bonding rules
+    if isnothing(bonding_rules)
+        infer_bonds!(moiety, false)
+    else
+        infer_bonds!(moiety, false; bonding_rules=bonding_rules)
+    end
     # sort by node degree
-    infer_bonds!(moiety, false)
     order = sortperm(degree(moiety.bonds), rev=true)
     # ordered atoms
     if length(R_group_indices) > 0
