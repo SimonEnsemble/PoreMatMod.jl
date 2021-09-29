@@ -30,8 +30,10 @@ Base.show(io::IO, s::Search) = begin
 end
 
 
-@doc raw"""
-    `nb_isomorphisms(search::Search)`
+"""
+    ```julia
+    nb_isomorphisms(search::Search)
+    ```
 
 Returns the number of isomorphisms found in the specified `Search`
 
@@ -43,8 +45,10 @@ function nb_isomorphisms(search::Search)::Int
 end
 
 
-@doc raw"""
-    `nb_locations(search::Search)`
+"""
+    ```julia
+    nb_locations(search::Search)
+    ```
 
 Returns the number of unique locations in the `parent` (sets of atoms in the `parent`) at which the
 specified `Search` results contain isomorphisms.
@@ -57,8 +61,10 @@ function nb_locations(search::Search)::Int
 end
 
 
-@doc raw"""
-    `nb_ori_at_loc(search)`
+"""
+    ```julia
+    nb_ori_at_loc(search)
+    ```
 
 Returns a array containing the number of isomorphic configurations at a given
 location (collection of atoms) for which the specified `Search` results
@@ -82,7 +88,9 @@ end
 
 
 """
-`iso_structs = isomorphic_substructures(s::Search)::Crystal`
+    ```julia
+    iso_structs = isomorphic_substructures(s::Search)::Crystal
+    ```
 
 Returns a crystal consisting of the atoms of the `parent` involved in subgraph isomorphisms in the search `s`
 """
@@ -91,8 +99,10 @@ function isomorphic_substructures(s::Search)::Crystal
 end
 
 
-@doc raw"""
-    `substructure_search(query, parent; disconnected_component=false)`
+"""
+    ```julia
+    substructure_search(query, parent; disconnected_component=false)
+    ```
 
 Searches for a substructure within a `Crystal` and returns a `Search` struct
 containing all identified subgraph isomorphisms.  Matches are made on the basis
