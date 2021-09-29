@@ -13,7 +13,7 @@ end
 
 `PoreMatMod.jl` conducts subgraph matching, i.e. searches for subgraphs of a `parent` graph isomorphic to a `query` graph, using [Ullmann's algorithm for subgraph isomorphisms](https://doi.org/10.1145/321921.321925).
 
-Both the `parent` crystal structure and `query` fragment are represented by node-labeled (by the chemical species) graphs. For crystals, bonds across the unit cell boundaries of periodic materials are accounted for, allowing us to find subgraph isomorphisms when the fragment is split across a unit cell boundary.
+During subgraph matching, both the `parent` crystal structure and `query` fragment are represented by node-labeled (by the chemical species) graphs. For crystals, bonds across the unit cell boundaries of periodic materials are accounted for, allowing us to find subgraph isomorphisms when the fragment is split across a unit cell boundary.
 
 # Substructure Searches: how to
 
@@ -22,7 +22,7 @@ To learn by example, suppose we wish to search the IRMOF-1 crystal structure for
 First, we load the `query` fragment and `parent` structure:
 ```julia
 parent = Crystal("IRMOF-1.cif")
-infer_bonds!(parent_xtal, true)
+infer_bonds!(parent_xtal, true) # true to infer bonds across the periodic boundary
 
 query = moiety("p-phenylene.xyz")
 ```
@@ -37,14 +37,14 @@ p-phenylene.xyz ∈ IRMOF-1.cif
 ```
 
 !!! note "Syntactic sugar for substructure search"
-    The `∈` (`in` then hit `Tab` for this Unicode character) infix operator will also execute the search:
+    The `∈` (`\in` then hit `Tab` for this Unicode character) infix operator will also execute the search:
 
     ```julia
     search = query ∈ parent
     ```
 
 
-This returns a `Search` object. It stores the `Crystal` data for the `query` and `parent` structures, and its `isomorphisms` attribute is a nested vector.
+Both functions `substructure_search` and `∈`` return a `Search` object which stores the `query` and `parent` structures and the result of the search, `isomorphisms`, a nested vector giving the query-to-parent correpondences.
 
 ```jldoctest find
 search.isomorphisms
@@ -72,18 +72,17 @@ search.isomorphisms
  [[288, 311, 326, 301, 228, 229, 422, 384, 407, 397], [301, 326, 311, 288, 229, 228, 407, 397, 422, 384], [311, 288, 301, 326, 228, 229, 397, 407, 384, 422], [326, 301, 288, 311, 229, 228, 384, 422, 397, 407]]
 ```
 
-In this example, the `query` fragment (*p*-phenylene) occurs 24 times in the provided structure of the `parent` crystal (IRMOF-1), with 4 symmetry-equivalent search hits at each site, for a total of 96 subgraph isomorphisms.
+In this example, the `query` fragment (*p*-phenylene) occurs in 24 different location in the `parent` crystal structure, with 4 symmetry-equivalent isomorphisms at each location, for a total of 96 subgraph isomorphisms.
 
-
-The number of locations is the same as the number of unique subsets in the `parent` to which `query` is isomorphic, and is also the size of the first indexing dimension of `search.isomorphisms`
+The number of locations---the number of unique substructures of the `parent` to which the `query` is isomorphic---is the length of `search.isomorphisms`
 
 ```jldoctest find
-nb_locations(search)
+nb_locations(search) # = length(search.isomorphisms)
 # output
 24
 ```
 
-Each element `search.isomorphisms[loc]` is a vector of isomorphisms that share a common subset of atoms in the `parent`.
+Element `i_loc` of `search.isomorphisms`, `search.isomorphisms[i_loc]`, is a vector of isomorphisms that share the same subset of atoms in the `parent`, each of which correspond to a different orientation of the `query` overlaying that `parent` substructure. The function `nb_ori_at_loc` outputs a vector whose element `i_loc` is the number of overlay orientations at that location.
 
 ```jldoctest find; output=false
 nb_ori_at_loc(search)  # 24-element Vector{Int64}: [4, 4, 4, ..., 4]
@@ -111,20 +110,20 @@ nb_ori_at_loc(search)  # 24-element Vector{Int64}: [4, 4, 4, ..., 4]
  4
 ```
 
-The individual isomorphisms `isom = search.isomorphisms[loc][ori]` for a specific `loc` and orientation `ori` are vectors of atom indices in the parent.
-If atom $q$ of the `query` maps to atom $p$ of the parent, then `isom[q] = p`.
+The individual isomorphisms `isom = search.isomorphisms[i_loc][i_ori]` for a specific location `i_loc` and orientation `i_ori` indicate the correspondence from the `query` to the `parent` struture.
+If atom `q` of the `query` maps to atom `p` of the parent, then `isom[q] == p`.
 
-The total number of isomorphisms is given by `nb_isomorphisms(search)`; this is the same as `sum(nb_ori_at_loc(search))`.
+The total number of isomorphisms is given by `nb_isomorphisms(search)`.
 
 ```jldoctest find
-nb_isomorphisms(search) 
+nb_isomorphisms(search) # = sum(nb_ori_at_loc(search))
 # output
 96
 ```
 
-To generate a `Crystal` containing only the substructures of the `parent` which are isomorphic to the `query`, use:
+N.b. to generate a `Crystal` containing only the substructures of the `parent` which are isomorphic to the `query`, use:
 
-```jldoctest find; output=false
+```jldoctest find
 isomorphic_substructures(search)
 # output
 Name: IRMOF-1.cif
@@ -143,12 +142,13 @@ Bravais unit cell of a crystal.
 
 ## Molecular and Graph Symmetry
 
-Due to the representation of molecules as graphs, `PoreMatMod.jl` may yield "extra" search results corresponding to different spatial isomers or moiety orientations.
-In some applications this may be advantageous, but in most cases it is advisable to search using the most minimal structure which uniquely matches the targeted parent moiety.
+Due to the representation of molecules as graphs, `PoreMatMod.jl` may find more subgraph matches than you may at first expect. For example, searching for CH$_3$ in C$_2$H$_6$ yields not two matches, but six matches because there are three ways we can overlay CH$_3$ on each CH$_4$ group of the ethane.
+Sometimes, these subgraphs correspond to distinct spatial isomers or orientations.
+We advise to define the `query` using the most minimal structure that matches the targeted `parent` substructure.
 
-An example is searching for [BDC.xyz](../../../assets/find/BDC.xyz) in IRMOF-1 instead of the more minimal *p*-phenylene.
+An example is searching for [BDC.xyz](../../../assets/find/BDC.xyz) `query` in IRMOF-1 `parent` instead of the more minimal *p*-phenylene fragment.
 Thanks to the two carboxyl groups, the total number of isomorphisms is multiplied by a factor of 4, due to the graph-equivalence of the oxygen atoms in each group.  
-The number of locations at which the isomorphisms are found, however, is unchanged.
+The number of _locations_ at which the isomorphisms are found, however, is unchanged.
 
 ```jldoctest find
 query = moiety("BDC.xyz")

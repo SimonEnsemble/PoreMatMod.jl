@@ -24,7 +24,9 @@ Crystal structure files (`.cif`, `.cssr`) are read from the path `rc[:paths][:cr
     true
     ```
 
-the `Crystal` constructor returns a [`Crystal`](@ref) data structure, inherited from `Xtals.jl` (see the [`docs`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal)).
+The `Crystal` constructor returns a [`Crystal`](@ref) data structure.
+The `infer_bonds!` function is necessary because it infers the bonding graph of the crystal structure (nodes: atoms, edges: bonds) based on interatomic distances.
+Both `Crystal` and `infer_bonds!` are inherited from `Xtals.jl` (see the [`docs`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal)). 
 
 ## Query and Replacement Fragments
 
@@ -54,13 +56,13 @@ N.b. masked atoms of query fragments must be labeled with `!` for [`replace` ope
     		'x, y, z'
     ```
 
-the [`moiety`](@ref) reader also returns a `Crystal` data structure but with an arbitrary unit cube unit cell.
+The [`moiety`](@ref) reader also returns a `Crystal` data structure but with an arbitrary unit cube unit cell.
 
 ## Changing the Data Directories
 
 `rc[:paths][:crystals]` and `rc[:paths][:moieties]` default to `./data/crystals` and `./data/moieties`, respectively.
 
-change the paths to where the files are read from by changing `rc[:paths][:crystals]` and `rc[:paths][:moieties]`.
+To change the paths from where the files are read, change `rc[:paths][:crystals]` and `rc[:paths][:moieties]`.
 
 !!! example
     Suppose we wish to store our `.cif` files in `~/my_xtals` and our `.xyz` files in our present working directory.

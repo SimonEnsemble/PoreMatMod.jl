@@ -1,13 +1,22 @@
 """
-    `search = Search(search_terms, results)`
+```julia
+search = Search(parent, query, results)
+```
 
-Stores the `parent` and `query` used for a substructure search, and the results returned by carrying out the search.
-Results are grouped by location in the parent `Crystal` and can be examined using `nb_isomorphisms`, `nb_locations`, and `nb_ori_at_loc`.
+Stores the `parent` and `query` used for a substructure search and the results (isomorphisms) of the subgraph matching algorithm.
+
+## attributes
+* `search.parent::Crystal`                           # the parent in the search
+* `search.query::Crystal`                            # the query in the search
+* `search.isomorphisms::Vector{Vector{Vector{Int}}}` # the query-to-parent correspondences
+
+The isomorphisms are grouped by location in the parent `Crystal` and can be examined using `nb_isomorphisms`, `nb_locations`, and `nb_ori_at_loc`.
+
 Subgraph isomorphisms are encoded like
 
-    `isom = search.isomorphisms[i][j] = [7, 21, 9]`
+    `isom = search.isomorphisms[i_loc][i_ori] = [7, 21, 9]`
 
-where `isom[k]` is the index of the atom in `search.parent` corresponding to atom `k` in `search.query` for location `i` and orientation `j`.
+where `isom[k]` is the index of the atom in `search.parent` corresponding to atom `k` in `search.query` for the isomorphism at location `i_loc` and orientation `i_ori`.
 """
 struct Search
     parent::Crystal
@@ -37,7 +46,7 @@ end
 @doc raw"""
     `nb_locations(search::Search)`
 
-Returns the number of unique locations (collections of atoms) at which the
+Returns the number of unique locations in the `parent` (sets of atoms in the `parent`) at which the
 specified `Search` results contain isomorphisms.
 
 # Arguments
@@ -75,7 +84,7 @@ end
 """
 `iso_structs = isomorphic_substructures(s::Search)::Crystal`
 
-Returns a crystal consisting of the atoms involved in subgraph isomorphisms in the search `s`
+Returns a crystal consisting of the atoms of the `parent` involved in subgraph isomorphisms in the search `s`
 """
 function isomorphic_substructures(s::Search)::Crystal
     return s.parent[reduce(vcat, [s.isomorphisms[i][1] for i in 1:nb_locations(s)])]

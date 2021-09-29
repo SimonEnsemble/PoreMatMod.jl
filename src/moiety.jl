@@ -54,18 +54,20 @@ end
 
 ## moiety import function (exposed)
 @doc raw"""
-    `moiety(name)`
+```julia
+moiety(xyz_filename)
+```
 
-Generates a moiety (`Crystal`) from an .xyz file found in `rc[:paths][:moieties]`
+Generates a moiety (`Crystal`) from an .xyz file found in `rc[:paths][:moieties]`.
 
-Use `set_path_to_data` or set `rc[:paths][:moieties]` to change the input path.
+Use `set_path_to_data` or set `rc[:paths][:moieties]` to change the path from which the XYZ file is read.
 
 Atoms appended with '!' are tagged for replacement via `substructure_replace`.
 
-Bonds are inferred automatically.
+Bonds are inferred automatically via `infer_bonds!`.
 
 # Arguments
-- `name::String` the moiety input file name.
+- `xyz_filename::String` the moiety input file name, an `.xyz` file.
 """
 function moiety(name::Union{String,Nothing})::Crystal
     # generate Crystal from moiety XYZ coords
