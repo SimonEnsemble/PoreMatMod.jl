@@ -1,10 +1,9 @@
 ![logo.JPG](logo.jpg)
 ---
 
-`PoreMatMod.jl` is a [Julia](https://julialang.org/) package for working with graph representations of and modifying crystal structures of porous crystals.
+`PoreMatMod.jl` is a [Julia](https://julialang.org/) package for (i) subgraph matching and (ii) modifying crystal structures such as metal-organic frameworks (MOFs).
 
-Use cases:
-
+Functioning as a "find-and-replace" tool on atomistic structure models of porous materials, `PoreMatMod.jl` is useful for:
 :hammer: subgraph matching to filter databases of crystal structures
 
 :hammer: create hypothetical crystal structure models of functionalized structures
@@ -15,7 +14,7 @@ Use cases:
 
 See documentation [here](https://SimonEnsemble.github.io/PoreMatMod.jl/) and examples (in [Pluto](https://github.com/fonsp/Pluto.jl) notebooks) [here](https://github.com/SimonEnsemble/PoreMatMod.jl/tree/master/examples).
 
-N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline materials, it works with discrete molecular structures as well.
+N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline materials, its find-and-replace operations can be applied to discrete, molecular structures as well by assigning an arbitrary unit cell.
 
 | **Documentation** | **Build Status** | 
 |:---:|:---:|
