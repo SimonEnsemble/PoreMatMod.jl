@@ -111,7 +111,7 @@ PoreMatMod = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 [compat]
 Bio3DView = "~0.1.3"
 PlutoUI = "~0.7.14"
-PoreMatMod = "~0.1.0"
+PoreMatMod = "~0.2.0"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -522,7 +522,7 @@ version = "1.3.0"
 
 [[PoreMatMod]]
 deps = ["Bio3DView", "Blink", "CSV", "DataFrames", "FIGlet", "LightGraphs", "LinearAlgebra", "MetaGraphs", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
-git-tree-sha1 = "eab3debf15f72b59baa0d4051ceb489b43e68f40"
+git-tree-sha1 = "e159b06034ebf5912c900540e7c6763d4d862bbb"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 version = "0.2.0"
 
