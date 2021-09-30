@@ -314,9 +314,9 @@ version = "0.1.4"
 
 [[HTTP]]
 deps = ["Base64", "Dates", "IniFile", "Logging", "MbedTLS", "NetworkOptions", "Sockets", "URIs"]
-git-tree-sha1 = "24675428ca27678f003414a98c9e473e45fe6a21"
+git-tree-sha1 = "14eece7a3308b4d8be910e265c724a6ba51a9798"
 uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
-version = "0.9.15"
+version = "0.9.16"
 
 [[Hiccup]]
 deps = ["MacroTools", "Test"]
@@ -515,9 +515,9 @@ version = "0.2.5"
 
 [[PlutoUI]]
 deps = ["Base64", "Dates", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "Markdown", "Random", "Reexport", "UUIDs"]
-git-tree-sha1 = "f35ae11e070dbf123d5a6f54cbda45818d765ad2"
+git-tree-sha1 = "d1fb76655a95bf6ea4348d7197b22e889a4375f4"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.12"
+version = "0.7.14"
 
 [[PooledArrays]]
 deps = ["DataAPI", "Future"]
@@ -527,9 +527,9 @@ version = "1.3.0"
 
 [[PoreMatMod]]
 deps = ["Bio3DView", "Blink", "CSV", "DataFrames", "FIGlet", "LightGraphs", "LinearAlgebra", "MetaGraphs", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
-git-tree-sha1 = "4234ac253ba7c16a30ee8dc562960e509ff456c6"
+git-tree-sha1 = "eab3debf15f72b59baa0d4051ceb489b43e68f40"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
-version = "0.1.2"
+version = "0.2.0"
 
 [[PrettyTables]]
 deps = ["Crayons", "Formatting", "Markdown", "Reexport", "Tables"]
@@ -706,9 +706,9 @@ version = "0.6.4"
 
 [[Xtals]]
 deps = ["Bio3DView", "CSV", "DataFrames", "JLD2", "LightGraphs", "LinearAlgebra", "Logging", "MetaGraphs", "Printf", "PyCall", "UUIDs"]
-git-tree-sha1 = "c2cf3eea05391f316210e3b9b6037e5b4721f8c6"
+git-tree-sha1 = "345604daffc6812d79a1c4e252ab2015c9ac3fd0"
 uuid = "ede5f01d-793e-4c47-9885-c447d1f18d6d"
-version = "0.3.4"
+version = "0.3.5"
 
 [[Zlib_jll]]
 deps = ["Libdl"]

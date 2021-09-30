@@ -18,7 +18,6 @@ after_success:
     - julia --project -e 'import Pkg; Pkg.add("Documenter"); Pkg.add("Coverage")'
     - julia --project -e 'using Coverage; Codecov.submit(process_folder())'
     - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-    - julia --project=docs/ -e 'using Pkg; Pkg.status("PoreMatMod")'
     - julia --project=docs/ ./docs/make.jl
 
 notifications:
