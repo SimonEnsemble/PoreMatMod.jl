@@ -8,10 +8,10 @@ end
 
 # Find/Replace Operations
 
-To do a find-and-replace, we perform a search using a `query` with masked atoms.
-A masked atom is treated as a normal atom when performing a search between `query` and parent, and is denoted by appending `!` to its chemical species label.
-Atoms in the `parent` that are mapped to atoms in the `query` are either deleted or replaced with atoms from the `replacement` fragment (see below).
-The masked atoms are needed so that `PoreMatMod` can determine how to align the `replacement` with the targeted subset of the `parent`--masked atoms are ignored when searching for a mapping between the `query` and the `replacement`.
+![replacement scheme](../../assets/replace/s_moty-to-r_moty.png)
+
+To do a find-and-replace, we perform a search using a `query` with masked atoms, denoted by appending their chemical species label with `!` (see above).
+Masking an atom allows its species to change or for it to be deleted during the replacement.
 
 ## Inputs
 
@@ -25,7 +25,8 @@ In the example of finding and replacing the 2 position H of the *p*-phenylene mo
 H!         1.06706        0.70670        1.48683
 ```
 
-Load the new file in like before.
+Load the new file in like before and execute the search.
+The `!` tag does not affect the outcome of `substructure_search`.
 
 ```jldoctest replace_md; output=false
 query = moiety("2-!-p-phenylene.xyz")
@@ -33,19 +34,6 @@ search = query in parent
 # output
 2-!-p-phenylene.xyz ∈ IRMOF-1.cif
 96 hits in 24 locations.
-```
-
-The `!` tag does not affect the outcome of `substructure_search`.
-
-```jldoctest
-s1 = substructure_search(moiety("p-phenylene.xyz"), parent) 
-s2 = substructure_search(moiety("2-!-p-phenylene.xyz"), parent)
-
-nb_isomorphisms(s1) == nb_isomorphisms(s2) &&
-nb_locations(s1) == nb_locations(s2) &&
-isequal(nb_ori_at_loc(s1), nb_ori_at_loc(s2))
-# output
-true
 ```
 
 To replace *p*-phenylene moieties with 2-acetylamido-*p*-phenylene moieties, load [2-acetylamido-p-phenylene.xyz](../../../assets/replace/2-acetylamido-p-phenylene.xyz):
@@ -72,7 +60,7 @@ Bravais unit cell of a crystal.
 
 Generally, it is advisable to perform the `search` and use `substructure_replace`, as multiple replacement tasks can be performed with a single searching step.
 The search is usually the slowest step, and it is desirable not to perform it repeatedly.
-However, for one-shot find-and-replace operations, the `replace` function syntax from standard `Julia` may be used:
+However, for one-shot find-and-replace operations, the standard `replace` function syntax may be used:
 
 ```jldoctest replace_md; output=false
 replace(parent, query => replacement)
@@ -91,7 +79,7 @@ Bravais unit cell of a crystal.
 		'x, y, z'
 ```
 
-To direct the number, location, and orientation of the replacements made, use the keyword arguments.  These are described in the docstrings and demonstrated in the [examples](../../../examples).
+To direct the number, location, and orientation of the replacements made, use the keyword arguments for [`substructure_replace`](@ref).
 
 ## Documentation of functions
 
