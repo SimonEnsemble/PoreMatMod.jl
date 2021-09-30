@@ -22,4 +22,9 @@ end
     @test true
 end
 
+@testset "replacement_modes" begin
+    include("../examples/replacement_modes.jl")
+    @test true
+end
+
 end
