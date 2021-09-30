@@ -12,7 +12,7 @@ The isomorphisms are grouped by location in the parent `Crystal` and can be exam
 
 Subgraph isomorphisms are encoded like
 
-    `isom = search.isomorphisms[i_loc][i_ori] = [7, 21, 9]`
+    isom = search.isomorphisms[i_loc][i_ori] = [7, 21, 9]
 
 where `isom[k]` is the index of the atom in `search.parent` corresponding to atom `k` in `search.query` for the isomorphism at location `i_loc` and orientation `i_ori`.
 """
