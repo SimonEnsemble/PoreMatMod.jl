@@ -1,7 +1,5 @@
 """
-```julia
-search = Search(parent, query, results)
-```
+    search = Search(parent, query, results)
 
 Stores the `parent` and `query` used for a substructure search and the results (isomorphisms) of the subgraph matching algorithm.
 
@@ -31,9 +29,7 @@ end
 
 
 """
-    ```julia
     nb_isomorphisms(search::Search)
-    ```
 
 Returns the number of isomorphisms found in the specified `Search`
 
@@ -46,9 +42,7 @@ end
 
 
 """
-    ```julia
     nb_locations(search::Search)
-    ```
 
 Returns the number of unique locations in the `parent` (sets of atoms in the `parent`) at which the
 specified `Search` results contain isomorphisms.
@@ -62,9 +56,7 @@ end
 
 
 """
-    ```julia
     nb_ori_at_loc(search)
-    ```
 
 Returns a array containing the number of isomorphic configurations at a given
 location (collection of atoms) for which the specified `Search` results
@@ -88,9 +80,7 @@ end
 
 
 """
-    ```julia
     iso_structs = isomorphic_substructures(s::Search)::Crystal
-    ```
 
 Returns a crystal consisting of the atoms of the `parent` involved in subgraph isomorphisms in the search `s`
 """
@@ -100,9 +90,7 @@ end
 
 
 """
-    ```julia
     substructure_search(query, parent; disconnected_component=false)
-    ```
 
 Searches for a substructure within a `Crystal` and returns a `Search` struct
 containing all identified subgraph isomorphisms.  Matches are made on the basis

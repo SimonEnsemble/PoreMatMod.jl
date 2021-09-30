@@ -54,9 +54,9 @@ end
 
 ## moiety import function (exposed)
 @doc raw"""
-```julia
-moiety(xyz_filename)
-```
+
+    q = moiety(xyz_filename)
+
 
 Generates a moiety (`Crystal`) from an .xyz file found in `rc[:paths][:moieties]`.
 
