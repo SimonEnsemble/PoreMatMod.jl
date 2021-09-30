@@ -3,7 +3,7 @@
 To make `PoreMatMod.jl` more accessible, an express graphical interface, `PoreMatModGO`, is provided.  
 The `PoreMatModGO` interface, built on `Pluto.jl`, enables interactive application of chemical substructure find/replace operations with minimal setup and no code provided by the user.
 
-Follow the steps in [Getting Started](../start).
+Follow the steps in [Getting Started](../manual/start).
 
 Then, add the required dependencies and launch `Pluto.jl`:
 
@@ -20,5 +20,5 @@ box on the `Pluto` main page.
 
 [https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/src/PoreMatModGO.jl](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/src/PoreMatModGO.jl?token=AD3TMGCN5XHK3VKRRIFAHV3BGBIE4)
 
-Prepare file inputs per the [manual](../inputs) and load them into `PoreMatModGO` using the graphical interface.  
-All [replacement](../replace) modes are available with interactive visual previews and outputs are downloadable in `.cif`, `.xyz`, and `.vtk` file formats.
+Prepare file inputs per the [manual](../manual/inputs) and load them into `PoreMatModGO` using the graphical interface.  
+All [replacement](../manual/replace) modes are available with interactive visual previews and outputs are downloadable in `.cif`, `.xyz`, and `.vtk` file formats.
