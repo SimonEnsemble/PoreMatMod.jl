@@ -140,13 +140,18 @@ Bravais unit cell of a crystal.
 		'x, y, z'
 ```
 
-## Molecular and Graph Symmetry
+## Stereochemistry and Isomorphism
 
-Due to the representation of molecules as graphs, `PoreMatMod.jl` may find more subgraph matches than you may at first expect. For example, searching for CH$_3$ in C$_2$H$_6$ yields not two matches, but six matches because there are three ways we can overlay CH$_3$ on each CH$_4$ group of the ethane.
-Sometimes, these subgraphs correspond to distinct spatial isomers or orientations.
-We advise to define the `query` using the most minimal structure that matches the targeted `parent` substructure.
+An undirected labeled graph representation of a bonding network is invariant with respect to stereochemistry.
+In other words, every rotational/conformational state and stereoisomer of a structure shares the same graph representation.
+What this means is that `PoreMatMod.jl` may find more subgraph matches than you first expect. 
 
-An example is searching for [BDC.xyz](../../../assets/find/BDC.xyz) `query` in IRMOF-1 `parent` instead of the more minimal *p*-phenylene fragment.
+![symmetry viz](../../assets/find/symmetry.png)
+
+The *p*-phenylene case (above) shows us how 4-fold symmetry in the point cloud representation (mirror planes shown at left) translates to multiple isomorphisms for a single occurence of the fragment in a structure.
+The isomorphisms in this case all represent different orientations of the fragment (hydrogen labels shown at right).
+
+Example 2: searching for [BDC.xyz](../../../assets/find/BDC.xyz) `query` in IRMOF-1 `parent` instead of the more minimal *p*-phenylene fragment.
 Thanks to the two carboxyl groups, the total number of isomorphisms is multiplied by a factor of 4, due to the graph-equivalence of the oxygen atoms in each group.  
 The number of _locations_ at which the isomorphisms are found, however, is unchanged.
 
@@ -162,6 +167,10 @@ nb_locations(search)
 # output
 24
 ```
+
+Example 3: searching for CH$_3$ in C$_2$H$_6$ yields not two matches, but twelve matches because there are six mappings between the graph of CH$_3$ and each methyl group of the ethane molecule that satisfy the subgraph isomorphism problem.  Why six?  There are three rotational states and a plane of symmetry.
+
+**Note**: We advise to define the `query` using the most minimal structure that matches the targeted `parent` substructure.
 
 ## Documentation for functions
 
