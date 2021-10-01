@@ -15,7 +15,7 @@ Accepted file formats for crystal structures (containing atomic coordinates and 
 Crystal structure files (`.cif`, `.cssr`) are read from the path `rc[:paths][:crystals]`.
 
 !!! example
-    Read in the crystal structure of [IRMOF-1.cif](../../../assets/inputs/IRMOF-1.cif) and infer its bonding network:
+    Read in the crystal structure of [IRMOF-1.cif](../../../assets/inputs/IRMOF-1.cif) and infer its bonding graph:
 
     ```jldoctest; output=false
     parent = Crystal("IRMOF-1.cif")
@@ -25,7 +25,7 @@ Crystal structure files (`.cif`, `.cssr`) are read from the path `rc[:paths][:cr
     ```
 
 The `Crystal` constructor returns a [`Crystal`](@ref) data structure.
-The `infer_bonds!` function is necessary because it infers the bonding graph of the crystal structure (nodes: atoms, edges: bonds) based on interatomic distances.
+The [`infer_bonds!`](@ref) function infers the bonding graph of the crystal structure (nodes: atoms, edges: bonds) based on interatomic distances---necessary for subgraph matching.
 Both `Crystal` and `infer_bonds!` are inherited from `Xtals.jl` (see the [`docs`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal)). 
 
 ## Query and Replacement Fragments
@@ -56,7 +56,7 @@ N.b. masked atoms of query fragments must be labeled with `!` for [`replace` ope
     		'x, y, z'
     ```
 
-The [`moiety`](@ref) reader also returns a `Crystal` data structure but with an arbitrary unit cube unit cell.
+The [`moiety`](@ref) reader also returns a `Crystal` data structure but with a (arbitrary) unit cube unit cell.
 
 ## Changing the Data Directories
 
