@@ -17,7 +17,7 @@ Click on the images or descriptions below to see Pluto notebooks demonstrating e
     
     [
         ![example 1](../assets/examples/example1.png)
-    ](../../examples/make_hypothetical_MOF.jl.html)
+    ](../examples/make_hypothetical_MOF.jl.html)
 
 
 !!! example "Example: Using different replacement modes"
@@ -27,7 +27,7 @@ Click on the images or descriptions below to see Pluto notebooks demonstrating e
 
     [
         ![example1.5](../assets/examples/example1.5.png)
-    ](../../examples/replacement_modes.jl.html)
+    ](../examples/replacement_modes.jl.html)
 
 !!! example "Example: Insert missing hydrogen atoms"
      Insert missing H atoms in IRMOF-1.
@@ -36,7 +36,7 @@ Click on the images or descriptions below to see Pluto notebooks demonstrating e
 
     [
         ![example 2](../assets/examples/example2.png)
-    ](../../examples/correct_missing_Hs.jl.html)
+    ](../examples/correct_missing_Hs.jl.html)
 
 
 !!! example "Example: Repair Disorder and Remove Adsorbates"
@@ -46,7 +46,7 @@ Click on the images or descriptions below to see Pluto notebooks demonstrating e
 
     [
         ![example 3](../assets/examples/example3.png)
-    ](../../examples/disorder_and_guests.jl.html)
+    ](../examples/disorder_and_guests.jl.html)
 
 !!! example "Example: Generate Missing-Linker Defects"
     Create a new channel in UiO-66 by introducing missing-linker defects and formate ion capping.
@@ -55,4 +55,4 @@ Click on the images or descriptions below to see Pluto notebooks demonstrating e
 
     [
         ![example 4](../assets/examples/example4.png)
-    ](../../examples/missing_linker_defect.jl.html)
+    ](../examples/missing_linker_defect.jl.html)
