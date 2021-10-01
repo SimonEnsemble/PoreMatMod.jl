@@ -13,13 +13,13 @@ end
 
 `PoreMatMod.jl` conducts subgraph matching, i.e. searches for subgraphs of a `parent` graph isomorphic to a `query` graph, using [Ullmann's algorithm for subgraph isomorphisms](https://doi.org/10.1145/321921.321925).
 
-During subgraph matching, both the `parent` crystal structure and `query` fragment are represented by node-labeled (by the chemical species) graphs. For crystals, bonds across the unit cell boundaries of periodic materials are accounted for, allowing us to find subgraph isomorphisms when the fragment is split across a unit cell boundary.
+For subgraph matching, both the `parent` crystal structure and `query` fragment are represented by node-labeled (by the chemical species) graphs. For crystals, bonds across the unit cell boundaries of periodic materials are accounted for, allowing us to find subgraph isomorphisms when the fragment is split across a unit cell boundary.
 
 # Substructure Searches: how to
 
 To learn by example, suppose we wish to search the IRMOF-1 crystal structure for *p*-phenylene fragments.
 
-First, we load the `query` fragment and `parent` structure:
+First, we load the `query` fragment and `parent` crystal structure:
 ```julia
 parent = Crystal("IRMOF-1.cif")
 infer_bonds!(parent_xtal, true) # true to infer bonds across the periodic boundary
@@ -27,7 +27,7 @@ infer_bonds!(parent_xtal, true) # true to infer bonds across the periodic bounda
 query = moiety("p-phenylene.xyz")
 ```
 
-With a `parent` and `query` loaded, execute a search:
+then execute a search for subgraphs of the `parent` that "match" (are isomorphic to) the graph of the `query` fragment:
 
 ```jldoctest find
 search = substructure_search(query, parent)
@@ -44,7 +44,10 @@ p-phenylene.xyz ∈ IRMOF-1.cif
     ```
 
 
-Both functions `substructure_search` and `∈`` return a `Search` object which stores the `query` and `parent` structures and the result of the search, `isomorphisms`, a nested vector giving the query-to-parent correpondences.
+Both functions `substructure_search` and `∈` return a `Search` object with attributes:
+* `search.query`: the query in the search
+* `search.parent`: the parent in the search
+* `search.isomorphisms`: the result of a search---a nested vector giving the query-to-parent correpondences.
 
 ```jldoctest find
 search.isomorphisms
@@ -74,7 +77,7 @@ search.isomorphisms
 
 In this example, the `query` fragment (*p*-phenylene) occurs in 24 different location in the `parent` crystal structure, with 4 symmetry-equivalent isomorphisms at each location, for a total of 96 subgraph isomorphisms.
 
-The number of locations---the number of unique substructures of the `parent` to which the `query` is isomorphic---is the length of `search.isomorphisms`
+The number of locations---the number of unique substructures of the `parent` to which the `query` is isomorphic---is the length of `search.isomorphisms`.
 
 ```jldoctest find
 nb_locations(search) # = length(search.isomorphisms)
@@ -110,8 +113,7 @@ nb_ori_at_loc(search)  # 24-element Vector{Int64}: [4, 4, 4, ..., 4]
  4
 ```
 
-The individual isomorphisms `isom = search.isomorphisms[i_loc][i_ori]` for a specific location `i_loc` and orientation `i_ori` indicate the correspondence from the `query` to the `parent` struture.
-If atom `q` of the `query` maps to atom `p` of the parent, then `isom[q] == p`.
+Each individual isomorphism `isom = search.isomorphisms[i_loc][i_ori]` for a specific location `i_loc` and orientation `i_ori` indicates the correspondence from the `query` to the `parent` struture: if atom `q` of the `query` maps to atom `p` of the `parent`, then `isom[q] == p`.
 
 The total number of isomorphisms is given by `nb_isomorphisms(search)`.
 
@@ -142,13 +144,13 @@ Bravais unit cell of a crystal.
 
 ## Stereochemistry and Isomorphism
 
-An undirected labeled graph representation of a bonding network is invariant with respect to stereochemistry.
-In other words, every rotational/conformational state and stereoisomer of a structure shares the same graph representation.
-What this means is that `PoreMatMod.jl` may find more subgraph matches than you first expect. 
+An undirected, node-labeled graph representation of a molecule/crystal structure is invariant with respect to stereochemistry.
+In other words, every rotational/conformational state and stereoisomer of a structure share the same graph representation.
+What this means is that `PoreMatMod.jl` may find more subgraph matches than you may first expect. 
 
 ![symmetry viz](../../assets/find/symmetry.png)
 
-The *p*-phenylene case (above) shows us how 4-fold symmetry in the point cloud representation (mirror planes shown at left) translates to multiple isomorphisms for a single occurence of the fragment in a structure.
+For example, the *p*-phenylene case (above) shows us how 4-fold symmetry in the point cloud representation (mirror planes shown at left) translates to multiple isomorphisms for a single occurence of the fragment in a structure.
 The isomorphisms in this case all represent different orientations of the fragment (hydrogen labels shown at right).
 
 Example 2: searching for [BDC.xyz](../../../assets/find/BDC.xyz) `query` in IRMOF-1 `parent` instead of the more minimal *p*-phenylene fragment.
