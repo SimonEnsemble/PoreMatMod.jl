@@ -4,9 +4,14 @@ using Documenter, PoreMatMod, PlutoSliderServer
 cd("examples") # next line fails if not actually in examples/
 PlutoSliderServer.export_directory() # runs each notebook in examples/ and exports to HTML
 rm("index.html") # previous line makes additional table-of-contents page (not needed)
+export_path = "../docs/src/examples/"
+if !isdir(export_path)
+    mkdir(export_path)
+end
 for file in readdir() # loop over files in examples/
     if length(split(file, ".html")) > 1 # select only the HTML files
-        mv(file, "../docs/src/examples/$file", force=true) # move HTML files to docs source folder for build
+        @info "Staging file $file"
+        mv(file, export_path * file, force=true) # move HTML files to docs source folder for build
     end
 end
 cd("..") # return to root for running makedocs

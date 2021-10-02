@@ -6,4 +6,4 @@ docs/*.cif
 temp*
 test/*.cif
 examples/*.cif
-examples/*.html
+docs/src/examples/*.html
