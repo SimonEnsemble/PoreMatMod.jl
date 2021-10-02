@@ -148,12 +148,7 @@ An undirected, node-labeled graph representation of a molecule/crystal structure
 In other words, every rotational/conformational state and stereoisomer of a structure share the same graph representation.
 What this means is that `PoreMatMod.jl` may find more subgraph matches than you may first expect. 
 
-![symmetry viz](../../assets/find/symmetry.png)
-
-Example 1: the *p*-phenylene case (above) shows us how 4-fold symmetry in the point cloud representation (mirror planes shown at left) translates to multiple isomorphisms for a single occurence of the fragment in a structure.
-The isomorphisms in this case all represent different orientations of the fragment (hydrogen labels shown at right).
-
-Example 2: searching for [BDC.xyz](../../../assets/find/BDC.xyz) `query` in IRMOF-1 `parent` instead of the more minimal *p*-phenylene fragment.
+Example 1: searching for [BDC.xyz](../../../assets/find/BDC.xyz) `query` in IRMOF-1 `parent` instead of the more minimal *p*-phenylene fragment.
 Thanks to the two carboxyl groups, the total number of isomorphisms is multiplied by a factor of 4, due to the graph-equivalence of the oxygen atoms in each group.  
 The number of _locations_ at which the isomorphisms are found, however, is unchanged.
 
@@ -170,7 +165,13 @@ nb_locations(search)
 24
 ```
 
-Example 3: searching for CH$_3$ in C$_2$H$_6$ yields not two matches, but twelve matches because there are six mappings between the graph of CH$_3$ and each methyl group of the ethane molecule that satisfy the subgraph isomorphism problem.  Why six?  There are three rotational states and a plane of symmetry.
+Example 2: searching for *p*-benzoate in 1,4-benzene-dicarboxylate (BDC).
+
+![symmetry viz](../../assets/find/symmetry.png)
+
+The above image gives a closer look at how these degenerate representations translate to multiple isomorphisms for a single occurence of a fragment in a structure.
+There are clearly two subgraphs of BDC that are isomorphic to *p*-benzoate (since there are two carboxyl groups on BDC).
+However, there are four total isomorphisms, because the labeling of the two oxygen atoms can be swapped to give a new point cloud for each of the two obvious alignments, and all four point clouds share a single graph representation.
 
 **Note**: We advise to define the `query` using the most minimal structure that matches the targeted `parent` substructure.
 
