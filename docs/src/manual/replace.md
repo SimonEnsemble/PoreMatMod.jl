@@ -63,7 +63,7 @@ The search is usually the slowest step, and it is desirable not to perform it re
 However, for one-shot find-and-replace operations, the standard `replace` function syntax may be used:
 
 ```jldoctest replace_md; output=false
-replace(parent, query => replacement)
+child = replace(parent, query => replacement)
 # output
 Name: new_xtal
 Bravais unit cell of a crystal.
@@ -80,6 +80,11 @@ Bravais unit cell of a crystal.
 ```
 
 To direct the number, location, and orientation of the replacements made, use the keyword arguments for [`substructure_replace`](@ref).
+Location `loc` and orientation `ori` specify a particular isomorphism to use when setting up the replacement operation.
+
+![loc/ori example](../../assets/replace/loc_ori_example.png)
+
+For more details, see the [search docs](../../manual/find) and the [replacement modes example](../../examples/replacement_modes.html).
 
 ## Documentation of functions
 

@@ -150,7 +150,7 @@ What this means is that `PoreMatMod.jl` may find more subgraph matches than you 
 
 ![symmetry viz](../../assets/find/symmetry.png)
 
-For example, the *p*-phenylene case (above) shows us how 4-fold symmetry in the point cloud representation (mirror planes shown at left) translates to multiple isomorphisms for a single occurence of the fragment in a structure.
+Example 1: the *p*-phenylene case (above) shows us how 4-fold symmetry in the point cloud representation (mirror planes shown at left) translates to multiple isomorphisms for a single occurence of the fragment in a structure.
 The isomorphisms in this case all represent different orientations of the fragment (hydrogen labels shown at right).
 
 Example 2: searching for [BDC.xyz](../../../assets/find/BDC.xyz) `query` in IRMOF-1 `parent` instead of the more minimal *p*-phenylene fragment.
