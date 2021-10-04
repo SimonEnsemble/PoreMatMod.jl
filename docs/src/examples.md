@@ -21,7 +21,7 @@ Click on the images or descriptions below to see Pluto notebooks demonstrating e
 
 
 !!! example "Example: Using different replacement modes"
-    Replace BDC with nitro-BDC in IRMOF-1 using the different replacement modes to obtain different results.
+    Replace BDC with nitro-BDC in IRMOF-1 using the different replacement modes to control (i) which linkers are functionalized and (ii) the substitution site on each linker.
 
     [link](../examples/replacement_modes.html)
 
