@@ -10,7 +10,7 @@ This section details how to load data into `PoreMatMod.jl`, including the handli
 
 ## Crystal structures
 
-Accepted file formats for crystal structures (containing atomic coordinates and unit cell information) are `.cif` and `.cssr`. See [here](https://en.wikipedia.org/wiki/Crystallographic_Information_File) for information about CIF files.
+Accepted file formats for crystal structures (containing atomic coordinates and unit cell information) are `.cif` (see [here](https://en.wikipedia.org/wiki/Crystallographic_Information_File)) and `.cssr`.
 
 Crystal structure files (`.cif`, `.cssr`) are read from the path `rc[:paths][:crystals]`.
 
@@ -30,7 +30,7 @@ Both `Crystal` and `infer_bonds!` are inherited from `Xtals.jl` (see the [`docs`
 
 ## Query and Replacement Fragments
 
-Accepted file formats for chemical fragments (list of atoms and their Cartesian coordinates) are `.xyz`. See [here](https://en.wikipedia.org/wiki/XYZ_file_format) for information about XYZ files. 
+Accepted file formats for chemical fragments (list of atoms and their Cartesian coordinates) are `.xyz` (see [here](https://en.wikipedia.org/wiki/XYZ_file_format)).
 
 Query and replacement fragment files (`.xyz`) are read from the path `rc[:paths][:moieties]`.
 
@@ -62,13 +62,13 @@ The [`moiety`](@ref) reader also returns a `Crystal` data structure but with a (
 
 `rc[:paths][:crystals]` and `rc[:paths][:moieties]` default to `./data/crystals` and `./data/moieties`, respectively.
 
-To change the paths from where the files are read, change `rc[:paths][:crystals]` and `rc[:paths][:moieties]`.
+To change the paths from where the input files are read, change `rc[:paths][:crystals]` and `rc[:paths][:moieties]`.
 
 !!! example
     Suppose we wish to store our `.cif` files in `~/my_xtals` and our `.xyz` files in our present working directory.
 
     ```julia
-    rc[:paths][:crystals] = joinpath(homedir(), "my_xtals_folder")
+    rc[:paths][:crystals] = joinpath(homedir(), "my_xtals")
     rc[:paths][:moiety] = pwd()                                  
     ```
 
