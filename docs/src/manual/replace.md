@@ -88,7 +88,7 @@ The code below will, at each location in the `parent` where a substructure match
 child = substructure_replace(search, replacement)
 ```
 
-To direct the number, location, and orientation of the replacements, use the keyword arguments for [`substructure_replace`](@ref). Particularly, the location `loc` and orientation `ori` keyword arguments specify a particular isomorphism to use when conducting a replacement operation. The figure below illustrates.
+To direct the number, location, and orientation of the replacements, use the keyword arguments for [`substructure_replace`](@ref). Particularly, the location `loc` and orientation `ori` keyword arguments specify a particular isomorphism to use (in reference to `search.isomorphisms`) when conducting a replacement operation. The figure below illustrates.
 
 ![loc/ori example](../../assets/replace/loc_ori_example.png)
 
