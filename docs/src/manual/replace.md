@@ -25,7 +25,7 @@ The atom property viewer feature in [iRASPA](https://iraspa.org/) is useful for 
 !!! note
     A masked atom (marked with `!`) in the `query` fragment implies that the corresponding atom of the `parent` crystal structure (i) must be removed [e.g., to make room for replacement with a different functionality] but (ii) does not correspond with an atom on the `replacement` fragment and thus cannot be used in the process of aligning the `replacement` fragment onto the `parent` crystal. 
 
-In our example, in `2-!-p-phenylene.xyz` input file describing our *p*-phenylene `query` fragment, one H atom is masked (see figure):
+In our example, in `2-!-p-phenylene.xyz` input file describing our *p*-phenylene `query` fragment, one H atom is masked (see figure above):
 
 ```
 10
@@ -82,7 +82,7 @@ search = query in parent
 ```
 
 #### the replace step
-The code below will, at each location, choose a random orientation and effect the replacement, giving the `child` structure shown in the figure above.
+The code below will, at each location in the `parent` where a substructure matched the `query` fragment, choose a random orientation (corresponding to an overlay of the `query` with the substructure), align and install the replacement fragment, then remove the original substructure, giving the `child` structure shown in the figure above.
 
 ```jldoctest replace_md; output=false
 child = substructure_replace(search, replacement)
