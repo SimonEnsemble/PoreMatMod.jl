@@ -9,15 +9,16 @@ end
 
 # Subgraph matching (substructure searches)
 
-![find graphic](../../assets/find/s_moty-in-xtal.png)
 
 `PoreMatMod.jl` conducts subgraph matching, i.e. searches for subgraphs of a `parent` graph isomorphic to a `query` graph, using [Ullmann's algorithm for subgraph isomorphisms](https://doi.org/10.1145/321921.321925).
 
-For subgraph matching, both the `parent` crystal structure and `query` fragment are represented by node-labeled (by the chemical species) graphs. For crystals, bonds across the unit cell boundaries of periodic materials are accounted for, allowing us to find subgraph isomorphisms when the fragment is split across a unit cell boundary.
+For subgraph matching, both the `parent` crystal structure and `query` fragment are represented by node-labeled (by the chemical species) graphs (nodes = atoms, edges = bonds). For crystals, bonds across the unit cell boundaries of periodic materials are accounted for, allowing us to find subgraph isomorphisms when the fragment is split across a unit cell boundary.
 
 # Substructure Searches: how to
 
 To learn by example, suppose we wish to search the IRMOF-1 crystal structure for *p*-phenylene fragments.
+
+![find graphic](../../assets/find/s_moty-in-xtal.png)
 
 First, we load the `query` fragment and `parent` crystal structure:
 ```julia
@@ -144,12 +145,20 @@ Bravais unit cell of a crystal.
 
 ## Stereochemistry and Isomorphism
 
-An undirected, node-labeled graph representation of a molecule/crystal structure is invariant with respect to stereochemistry.
+The node-labeled graph representation of a molecule/crystal structure is invariant with respect to stereochemistry.
 In other words, every rotational/conformational state and stereoisomer of a structure share the same graph representation.
 What this means is that `PoreMatMod.jl` may find more subgraph matches than you may first expect. 
 
-Example 1: searching for [BDC.xyz](../../../assets/find/BDC.xyz) `query` in IRMOF-1 `parent` instead of the more minimal *p*-phenylene fragment.
-Thanks to the two carboxyl groups, the total number of isomorphisms is multiplied by a factor of 4, due to the graph-equivalence of the oxygen atoms in each group.  
+*Example 1*: Suppose we search for *p*-benzoate in 1,4-benzene-dicarboxylate (BDC).
+
+![symmetry viz](../../assets/find/symmetry.png)
+
+There are clearly two distinct substructures of BDC that match *p*-benzoate (since there are two carboxyl groups on BDC).
+However, there are four subgraph isomorphisms. 
+The above image gives a closer look at how these degenerate representations translate to multiple isomorphisms for a single occurence of a fragment in a structure.
+
+*Example 2*: Suppose we search the IRMOF-1 `parent` structure for the [BDC.xyz](../../../assets/find/BDC.xyz) linker as the `query` instead of the more minimal *p*-phenylene `query` fragment.
+Thanks to the two carboxyl groups, the total number of isomorphisms is multiplied by a factor of 4, due to the 180 degree rotation of these groups having no effect on the graph representation.
 The number of _locations_ at which the isomorphisms are found, however, is unchanged.
 
 ```jldoctest find
@@ -164,14 +173,6 @@ nb_locations(search)
 # output
 24
 ```
-
-Example 2: searching for *p*-benzoate in 1,4-benzene-dicarboxylate (BDC).
-
-![symmetry viz](../../assets/find/symmetry.png)
-
-The above image gives a closer look at how these degenerate representations translate to multiple isomorphisms for a single occurence of a fragment in a structure.
-There are clearly two subgraphs of BDC that are isomorphic to *p*-benzoate (since there are two carboxyl groups on BDC).
-However, there are four total isomorphisms, because the labeling of the two oxygen atoms can be swapped to give a new point cloud for each of the two obvious alignments, and all four point clouds share a single graph representation.
 
 **Note**: We advise to define the `query` using the most minimal structure that matches the targeted `parent` substructure.
 
