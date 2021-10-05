@@ -90,7 +90,7 @@ We search for subgraphs of the `parent` structure that match the `query` fragmen
 Note the `!` tags are ignored during the `substructure_search`.
 
 ```jldoctest replace_md; output=false
-search = query in parent
+search = query in parent # equivalent to substructure_search(query, parent)
 # output
 2-!-p-phenylene.xyz ∈ IRMOF-1.cif
 96 hits in 24 locations.
