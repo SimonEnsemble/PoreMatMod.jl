@@ -1,4 +1,10 @@
-# extension of Base.replace to allow for simple and syntactically obvious find-replace
+"""
+    child = replace(parent, query => replacement)
+
+Generates a `child` structure by replacing the `query` fragment with the `replacement` fragment in the `parent`.
+Equivalent to calling `substructure_replace(query ∈ parent, replacement)`.
+Accepts the same keyword args as `substructure_replace`.
+"""
 replace(p::Crystal, pair::Pair; kwargs...) = substructure_replace(pair[1] ∈ p, pair[2]; kwargs...)
 
 # Gets the rotation matrix for aligning the replacement moiety onto a subset (isomorphic to masked query) of parent atoms
@@ -209,12 +215,11 @@ end
 
 
 @doc raw"""
-`substructure_replace(search, replacement, nb_loc=2)`
+    child = substructure_replace(search, replacement)
 
 Inserts `replacement` into a parent structure according to `search` and `kwargs`.
-Provide a replacement style `kwarg` to direct the location and orientation of replacements.
-Default behavior is to seek the replacement operation with lowest RMSD on spatial alignment.
-Returns a new `Crystal` with the specified modifications (returns `search.parent` if no replacements are made)
+Default behavior is to seek the replacement operation with lowest RMSD on spatial alignment at all "hit" locations in the parent structure.
+Returns a new `Crystal` with the specified modifications (returns `search.parent` if no replacements are made).
 
 # Arguments
 - `search::Search` the `Search` for a substructure moiety in the parent crystal
