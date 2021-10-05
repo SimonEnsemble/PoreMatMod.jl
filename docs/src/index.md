@@ -2,7 +2,7 @@
 
 `PoreMatMod.jl` is a software package in [Julia](https://julialang.org/) for (i) subgraph matching and (ii) modifying crystal structures. 
 
-Functioning as a "find-and-replace" tool on atomistic structure models of porous materials, `PoreMatMod.jl` can:
+Functioning as a "find-and-replace" tool on atomistic crystal structure models of porous materials, `PoreMatMod.jl` can:
 * search crystals for chemical substructures
 * create libraries of hypothetical structures by e.g. decoration with functional groups
 * correct artifacts of X-ray structure determination (missing H, disorder, guests)
