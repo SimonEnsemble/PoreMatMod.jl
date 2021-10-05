@@ -156,12 +156,12 @@ The node-labeled graph representation of a molecule/crystal structure is invaria
 In other words, every rotational/conformational state and stereoisomer of a structure share the same graph representation.
 What this means is that `PoreMatMod.jl` may find more subgraph matches than you may first expect. 
 
-*Example 1*: Suppose we search for *p*-benzoate in 1,4-benzene-dicarboxylate (BDC).
+*Example 1*: Suppose we search for a carboxylate with beta hydrogen in acrylate.
 
 ![symmetry viz](../../assets/find/symmetry.png)
 
-There are clearly two distinct substructures of BDC that match *p*-benzoate (since there are two carboxyl groups on BDC).
-However, there are four subgraph isomorphisms. 
+There is clearly only one substructure of acrylate that matches the query.
+However, there are two subgraph isomorphisms, because swapping the oxygen atoms in the point cloud representation results in the same graph representation. 
 The above image gives a closer look at how these degenerate representations translate to multiple isomorphisms for a single occurence of a fragment in a structure.
 
 *Example 2*: Suppose we search the IRMOF-1 `parent` structure for the [BDC.xyz](../../../assets/find/BDC.xyz) linker as the `query` instead of the more minimal *p*-phenylene `query` fragment.
