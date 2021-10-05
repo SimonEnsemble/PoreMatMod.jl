@@ -38,10 +38,17 @@ p-phenylene.xyz ∈ IRMOF-1.cif
 ```
 
 !!! note "Syntactic sugar for substructure search"
-    The `∈` (`\in` then hit `Tab` for this Unicode character) infix operator will also execute the search:
+    The `∈` (`\in` then hit `Tab` for this Unicode character) or `in` infix operators will also execute the search:
 
-    ```julia
+    ```jldoctest find; output=false
     search = query ∈ parent
+    # or
+    search = query in parent
+    # or
+    search = substructure_search(query, parent)
+    # output
+    p-phenylene.xyz ∈ IRMOF-1.cif
+    96 hits in 24 locations.
     ```
 
 

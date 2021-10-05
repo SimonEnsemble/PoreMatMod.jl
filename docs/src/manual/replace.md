@@ -15,6 +15,8 @@ First, we load the `parent` IRMOF-1 structure and infer its bonds.
 ```jldoctest replace_md; output=false
 parent = Crystal("IRMOF-1.cif")
 infer_bonds!(parent, true)
+# output
+true
 ```
 
 #### the `query` fragment
@@ -46,6 +48,19 @@ We then read the input file for the `query` fragment.
 
 ```jldoctest replace_md; output=false
 query = moiety("2-!-p-phenylene.xyz")
+# output
+Name: 2-!-p-phenylene.xyz
+Bravais unit cell of a crystal.
+	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
+	Unit cell dimensions a = 1.000000 Å. b = 1.000000 Å, c = 1.000000 Å
+	Volume of unit cell: 1.000000 Å³
+
+	# atoms = 10
+	# charges = 0
+	chemical formula: Dict(:H => 3, :H! => 1, :C => 6)
+	space Group: P1
+	symmetry Operations:
+		'x, y, z'
 ```
 
 #### the `replacement` fragment
@@ -86,13 +101,26 @@ The code below will, at each location in the `parent` where a substructure match
 
 ```jldoctest replace_md; output=false
 child = substructure_replace(search, replacement)
+# output
+Name: new_xtal
+Bravais unit cell of a crystal.
+	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
+	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
+	Volume of unit cell: 17237.492730 Å³
+
+	# atoms = 592
+	# charges = 0
+	chemical formula: Dict(:N => 3, :Zn => 4, :H => 21, :O => 16, :C => 30)
+	space Group: P1
+	symmetry Operations:
+		'x, y, z'
 ```
 
 To direct the number, location, and orientation of the replacements, use the keyword arguments for [`substructure_replace`](@ref). Particularly, the location `loc` and orientation `ori` keyword arguments specify a particular isomorphism to use (in reference to `search.isomorphisms`) when conducting a replacement operation. The figure below illustrates.
 
 ![loc/ori example](../../assets/replace/loc_ori_example.png)
 
-For more details, see the [search docs](../../manual/find) and the [replacement modes example](../../examples/replacement_modes.html).
+For more details, see the [search docs](../../find) and the [replacement modes example](../../../examples/replacement_modes.html).
 
 ### quick find-and-replace syntax
 
@@ -122,4 +150,5 @@ Bravais unit cell of a crystal.
 
 ```@docs
 substructure_replace
+replace
 ```
