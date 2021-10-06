@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.16.0
+# v0.16.1
 
 using Markdown
 using InteractiveUtils
@@ -34,7 +34,7 @@ end
 
 # ╔═╡ 5dc43a20-10b8-11eb-26dc-7fb98e9aeb1a
 md"""
-Adrian Henle, [Simon Ensemble](http://simonensemble.github.io), 2020
+Adrian Henle, [Simon Ensemble](http://simonensemble.github.io), 2021
 
 $(Resource("https://simonensemble.github.io/osu_logo.jpg", :width => 250))
 """

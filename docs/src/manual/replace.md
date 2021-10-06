@@ -7,7 +7,7 @@ end
 
 Suppose we wish to conduct the find-and-replace operations illustrated in the figure below, to produce an acetylamido-functionalized IRMOF-1 structure.
 
-![replacement scheme](../../assets/replace/s_moty-to-r_moty.png)
+![replacement scheme](../../assets/replace/rep_header.png)
 
 #### the `parent` structure
 First, we load the `parent` IRMOF-1 structure and infer its bonds.

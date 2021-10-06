@@ -215,7 +215,7 @@ end
 
 
 @doc raw"""
-    child = substructure_replace(search, replacement)
+    child = substructure_replace(search, replacement; random=false, nb_loc=0, loc=Int[], ori=Int[], name="new_xtal", verbose=false)
 
 Inserts `replacement` into a parent structure according to `search` and `kwargs`.
 Default behavior is to seek the replacement operation with lowest RMSD on spatial alignment at all "hit" locations in the parent structure.
