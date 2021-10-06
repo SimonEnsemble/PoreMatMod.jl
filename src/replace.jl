@@ -218,10 +218,16 @@ end
 
 
 @doc raw"""
-    child = substructure_replace(search, replacement; random=false, nb_loc=0, loc=Int[], ori=Int[], name="new_xtal", verbose=false)
+    child = substructure_replace(search, replacement; 
+                                 random=false, nb_loc=0, 
+                                 loc=Int[], ori=Int[], 
+                                 name="new_xtal", verbose=false)
 
-Inserts `replacement` into a parent structure according to `search` and `kwargs`.
-Default behavior is to seek the replacement operation with lowest RMSD on spatial alignment at all "hit" locations in the parent structure.
+Replace the substructures of `search.parent` matching the `search.query` fragment with the `replacement` fragment,
+at locations and orientations specified by the keyword arguments `random`, `nb_loc`, `loc`, and `ori`.
+Default behavior is to effect replacements at all "hit" locations in the parent structure and, at each location,
+choose the orientation giving the optimal (lowest error) spatial aligment.
+                
 Returns a new `Crystal` with the specified modifications (returns `search.parent` if no replacements are made).
 
 # Arguments
