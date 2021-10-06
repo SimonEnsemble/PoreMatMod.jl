@@ -1,9 +1,12 @@
 """
     child = replace(parent, query => replacement)
 
-Generates a `child` structure by replacing the `query` fragment with the `replacement` fragment in the `parent`.
+Generates a `child` crystal structure by (i) searches the `parent` crystal structure for subgraphs that match the `query` then 
+(ii) replaces the substructures of the `parent` matching the `query` fragment with the `replacement` fragment.
+
 Equivalent to calling `substructure_replace(query ∈ parent, replacement)`.
-Accepts the same keyword args as `substructure_replace`.
+
+Accepts the same keyword arguments as [`substructure_replace`](@ref).
 """
 replace(p::Crystal, pair::Pair; kwargs...) = substructure_replace(pair[1] ∈ p, pair[2]; kwargs...)
 
