@@ -37,7 +37,7 @@ Link to examples [here](https://simonensemble.github.io/PoreMatMod.jl/examples/)
 
 ## Citing
 
-If you found `PoreMatMod.jl` useful, please cite our paper. :point_down:
+If you found `PoreMatMod.jl` useful, please cite our paper [here](https://doi.org/10.33774/chemrxiv-2021-vx5r3). :point_down:
 
 ```latex
 @misc{henle2021pmm,
