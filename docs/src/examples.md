@@ -10,6 +10,15 @@ The [Pluto notebooks](https://github.com/fonsp/Pluto.jl) (`.jl`) containing the 
 
 Click on the images or descriptions below to see Pluto notebooks demonstrating each use case.
 
+!!! example "Example: Find substructures in a crystal"
+    Identify the *p*-phenylene fragments in IRMOF-1.
+
+    [link](../examples/substructure_search.html)
+
+    [
+        ![search example](../assets/examples/search.png)
+    ](../examples/substructure_search.html)
+
 !!! example "Example: Generate hypothetical structures"
     Decorate IRMOF-1 with a functional group: *ortho* substitution with an acetylamido group at one quarter of the *p*-phenylene moieties.
 
