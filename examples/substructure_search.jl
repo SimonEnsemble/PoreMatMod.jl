@@ -81,7 +81,7 @@ search = query ∈ parent
 hits = isomorphic_substructures(search)
 
 # ╔═╡ ec84ba70-b83e-4a46-9037-aed54bb07b07
-view_crystal(hits)
+view_structure(hits)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -688,9 +688,9 @@ version = "0.6.4"
 
 [[Xtals]]
 deps = ["Bio3DView", "CSV", "DataFrames", "JLD2", "LightGraphs", "LinearAlgebra", "Logging", "MetaGraphs", "Printf", "PyCall", "UUIDs"]
-git-tree-sha1 = "345604daffc6812d79a1c4e252ab2015c9ac3fd0"
+git-tree-sha1 = "a40db3ec7ac5c1d4a08d97e8d577a18672008b73"
 uuid = "ede5f01d-793e-4c47-9885-c447d1f18d6d"
-version = "0.3.5"
+version = "0.3.6"
 
 [[Zlib_jll]]
 deps = ["Libdl"]
