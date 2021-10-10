@@ -43,4 +43,4 @@ child_xtal = replace(parent_xtal, query_fragment => replacement_fragment)
 !!! note "Please cite our paper!"
 
     If you found `PoreMatMod.jl` useful, please cite our paper:
-    > A. Henle, N. Gantzler, P. Thallapally, X. Fern, C. Simon. `PoreMatMod.jl`: Julia package for _in silico_ post-synthetic modification of crystal structure models. _ChemRxiv_. (2021)
+    > A. Henle, N. Gantzler, P. Thallapally, X. Fern, C. Simon. `PoreMatMod.jl`: Julia package for _in silico_ post-synthetic modification of crystal structure models. [_ChemRxiv_](https://doi.org/10.33774/chemrxiv-2021-vx5r3). (2021)
