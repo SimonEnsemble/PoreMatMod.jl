@@ -5,7 +5,6 @@ version = "0.2.3"
 
 [deps]
 Bio3DView = "99c8bb3a-9d13-5280-9740-b4880ed9c598"
-Blink = "ad839575-38b3-5650-b840-f874b8c74a25"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 FIGlet = "3064a664-84fe-4d92-92c7-ed492f3d8fae"
@@ -20,7 +19,6 @@ Xtals = "ede5f01d-793e-4c47-9885-c447d1f18d6d"
 
 [compat]
 Bio3DView = "^0.1.0"
-Blink = "^0.12.0"
 CSV = "^0.8.0"
 DataFrames = "^0.22.0"
 FIGlet = "^0.2.0"
