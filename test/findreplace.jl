@@ -84,7 +84,7 @@ query = moiety("2-!-p-phenylene.xyz")
 replacement = moiety("2-acetylamido-p-phenylene.xyz")
 xtal1 = replace(parent, query => replacement, loc=[2,4,6,8], ori=[1,2,3,4])
 xtal2 = Crystal("verified_acetamido_IRMOF-1.cif")
-@test all(isapprox.(xtal1.atoms.coords.xf, xtal2.atoms.coords.xf, rtol=1e-4))
+@test all(isapprox.(xtal1.atoms.coords.xf, xtal2.atoms.coords.xf, rtol=1e-3))
 end # test set: find_repalce
 
 end # module
