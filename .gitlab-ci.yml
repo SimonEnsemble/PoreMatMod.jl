@@ -19,7 +19,7 @@ unit-testing:
   artifacts:
     when: always
     paths:
-      - test_acetamido_IRMOF-1.cif
+      - test/test_acetamido_IRMOF-1.cif
 
 # # # DEPLOY STAGE
 
