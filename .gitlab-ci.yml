@@ -16,6 +16,9 @@ unit-testing:
   stage: test
   script:
     - julia --project -e 'import Pkg; Pkg.test("PoreMatMod")'
+  artifacts:
+    paths:
+      - test_acetamido_IRMOF-1.cif
 
 # # # DEPLOY STAGE
 
