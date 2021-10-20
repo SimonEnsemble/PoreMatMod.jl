@@ -15,8 +15,8 @@ stages:
 unit-testing:
   stage: test
   script:
-    - julia --project -e 'import Pkg; Pkg.test("PoreMatMod")'
-  artifacts:
+    - julia --project -e 'ENV["CI_BUILD"] = "true"; import Pkg; Pkg.test()'
+  artifacts: # save test output for debugging
     when: always
     paths:
       - test/test_acetamido_IRMOF-1.cif

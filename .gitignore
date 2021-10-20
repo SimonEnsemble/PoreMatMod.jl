@@ -8,3 +8,4 @@ test/*.cif
 examples/*.cif
 docs/src/examples/*.html
 examples/*.html
+.PoreMatMod_CI
