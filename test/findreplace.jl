@@ -98,9 +98,6 @@ if "CI_BUILD" in keys(ENV) && ENV["CI_BUILD"] == "true"
 else
     tolerance = local_atol
 end
-
-# If this test fails when running locally (i.e. not a CI build) it may not mean there is a real issue.
-# visually inspect
 @test all(isapprox.(xtal1.atoms.coords.xf, xtal2.atoms.coords.xf, atol=tolerance))
 end
 
