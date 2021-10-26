@@ -17,7 +17,7 @@ N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline m
 
 | **Documentation** | **Build Status** | 
 |:---:|:---:|
-| [![Docs Badge](https://img.shields.io/badge/docs-latest-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/) | [![Build](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml/badge.svg)](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml) |
+| [![Docs Badge](https://img.shields.io/badge/docs-latest-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/dev) | [![Build Status](https://travis-ci.org/SimonEnsemble/PoreMatMod.jl.svg?branch=master)](https://app.travis-ci.com/github/SimonEnsemble/PoreMatMod.jl) |
 
 
 ## Installation
@@ -29,11 +29,11 @@ N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline m
 
 ## Documentation
 
-Link to documentation [here](https://simonensemble.github.io/PoreMatMod.jl/).
+Link to documentation [here](https://simonensemble.github.io/PoreMatMod.jl/dev).
 
 ## Gallery of examples
 
-Link to examples [here](https://simonensemble.github.io/PoreMatMod.jl/examples/) with raw [Pluto](https://github.com/fonsp/Pluto.jl) notebooks [here](https://github.com/SimonEnsemble/PoreMatMod.jl/tree/master/examples).
+Link to examples [here](https://simonensemble.github.io/PoreMatMod.jl/dev/examples/) with raw [Pluto](https://github.com/fonsp/Pluto.jl) notebooks [here](https://github.com/SimonEnsemble/PoreMatMod.jl/tree/master/examples).
 
 ## Citing
 
