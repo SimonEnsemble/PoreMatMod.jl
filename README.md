@@ -17,7 +17,7 @@ N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline m
 
 | **Documentation** | **Build Status** | 
 |:---:|:---:|
-| [![Docs Badge](https://img.shields.io/badge/docs-latest-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/) | [![Build Status](https://travis-ci.org/SimonEnsemble/PoreMatMod.jl.svg?branch=master)](https://app.travis-ci.com/github/SimonEnsemble/PoreMatMod.jl) |
+| [![Docs Badge](https://img.shields.io/badge/docs-latest-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/) | [![Build](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml/badge.svg)](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml) |
 
 
 ## Installation
