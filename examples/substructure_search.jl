@@ -6,7 +6,7 @@ using InteractiveUtils
 
 # ╔═╡ 37939a7a-0651-11ec-11c1-6b5ef0a19ec2
 # load required packages (Pluto.jl will automatically install them)
-using PoreMatMod, PlutoUI, Bio3DView, Logging, LightGraphs, MetaGraphs
+using PoreMatMod, PlutoUI, Bio3DView, Logging, Graphs, MetaGraphs
 
 # ╔═╡ 8ca1eb06-df90-4837-87b1-2e76e1670504
 # helper functions for viewing molecules and crystals and gathering input files
@@ -87,7 +87,7 @@ view_structure(hits)
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 Bio3DView = "99c8bb3a-9d13-5280-9740-b4880ed9c598"
-LightGraphs = "093fc24a-ae57-5d10-9952-331d41423f4d"
+Graphs = "093fc24a-ae57-5d10-9952-331d41423f4d"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
 MetaGraphs = "626554b9-1ddb-594c-aa3c-2596fe9399a5"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
@@ -95,7 +95,7 @@ PoreMatMod = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 
 [compat]
 Bio3DView = "~0.1.3"
-LightGraphs = "~1.3.5"
+Graphs = "~1.3.5"
 MetaGraphs = "~0.6.8"
 PlutoUI = "~0.7.14"
 PoreMatMod = "~0.2.0"
@@ -385,7 +385,7 @@ uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
 [[Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
-[[LightGraphs]]
+[[Graphs]]
 deps = ["ArnoldiMethod", "DataStructures", "Distributed", "Inflate", "LinearAlgebra", "Random", "SharedArrays", "SimpleTraits", "SparseArrays", "Statistics"]
 git-tree-sha1 = "432428df5f360964040ed60418dd5601ecd240b6"
 uuid = "093fc24a-ae57-5d10-9952-331d41423f4d"
@@ -419,7 +419,7 @@ deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
 
 [[MetaGraphs]]
-deps = ["JLD2", "LightGraphs", "Random"]
+deps = ["JLD2", "Graphs", "Random"]
 git-tree-sha1 = "81c0488104fb0dc977f38b4acaff81e6e79efc4d"
 uuid = "626554b9-1ddb-594c-aa3c-2596fe9399a5"
 version = "0.6.8"
@@ -508,7 +508,7 @@ uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
 version = "1.3.0"
 
 [[PoreMatMod]]
-deps = ["Bio3DView", "Blink", "CSV", "DataFrames", "FIGlet", "LightGraphs", "LinearAlgebra", "MetaGraphs", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
+deps = ["Bio3DView", "Blink", "CSV", "DataFrames", "FIGlet", "Graphs", "LinearAlgebra", "MetaGraphs", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
 git-tree-sha1 = "e159b06034ebf5912c900540e7c6763d4d862bbb"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 version = "0.2.0"
@@ -687,7 +687,7 @@ uuid = "cc8bc4a8-27d6-5769-a93b-9d913e69aa62"
 version = "0.6.4"
 
 [[Xtals]]
-deps = ["Bio3DView", "CSV", "DataFrames", "JLD2", "LightGraphs", "LinearAlgebra", "Logging", "MetaGraphs", "Printf", "PyCall", "UUIDs"]
+deps = ["Bio3DView", "CSV", "DataFrames", "JLD2", "Graphs", "LinearAlgebra", "Logging", "MetaGraphs", "Printf", "PyCall", "UUIDs"]
 git-tree-sha1 = "a40db3ec7ac5c1d4a08d97e8d577a18672008b73"
 uuid = "ede5f01d-793e-4c47-9885-c447d1f18d6d"
 version = "0.3.6"

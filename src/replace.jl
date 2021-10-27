@@ -63,7 +63,7 @@ function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, q2p_isom::Array{Int},
             break
         end
         # find neighbors of parent_subset atoms
-        n = LightGraphs.neighbors(parent.bonds, p)
+        n = Graphs.neighbors(parent.bonds, p)
         # loop over neighbors
         for nᵢ in n
             # if neighbor not in q2p_isom, must bond it to replacement replacement
