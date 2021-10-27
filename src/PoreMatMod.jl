@@ -1,6 +1,6 @@
 module PoreMatMod
 
-using StatsBase, LightGraphs, MetaGraphs, LinearAlgebra, DataFrames, Reexport
+using StatsBase, Graphs, MetaGraphs, LinearAlgebra, DataFrames, Reexport
 @reexport using Xtals
 
 import Base.(∈), Base.show, Base.replace

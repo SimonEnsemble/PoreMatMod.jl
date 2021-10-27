@@ -1,6 +1,6 @@
 module Ullmann_Test
 
-using Test, LightGraphs, MetaGraphs, PoreMatMod
+using Test, Graphs, MetaGraphs, PoreMatMod
 
 
 # add a list of edges to a graph
