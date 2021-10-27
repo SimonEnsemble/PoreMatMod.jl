@@ -1,6 +1,6 @@
 # Retuns the geometric center of an Array, Frac/Atoms object, or Crystal.
 function geometric_center(xf::Array{Float64,2})::Array{Float64}
-    return sum(xf, dims=2)[:] / size(xf, 2)
+    return @views sum(xf, dims=2)[:] / size(xf, 2)
 end
 
 geometric_center(coords::Frac)::Array{Float64} = geometric_center(coords.xf)

@@ -14,7 +14,7 @@ replace(p::Crystal, pair::Pair; kwargs...) = substructure_replace(pair[1] ∈ p,
 function r2p_op(replacement::Crystal, parent::Crystal, r2p_isom::Dict{Int,Int})
     @assert replacement.atoms.n ≥ 3 && parent.atoms.n ≥ 3 "Parent and replacement must each be at least 3 atoms for SVD alignment."
     # get matrix A (replacement fragment coordinates)
-    A = replacement.box.f_to_c * replacement.atoms[[r for (r,p) in r2p_isom]].coords.xf
+    A = @views replacement.box.f_to_c * replacement.atoms[[r for (r,p) in r2p_isom]].coords.xf
     # prepare parent subset
     parent_subset = deepcopy(parent.atoms[[p for (r,p) in r2p_isom]].coords.xf)
     adjust_for_pb!(parent_subset)
