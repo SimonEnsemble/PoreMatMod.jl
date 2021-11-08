@@ -15,9 +15,9 @@ Functioning as a "find-and-replace" tool on atomistic crystal structure models o
 
 N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline materials, its find-and-replace operations can be applied to discrete, molecular structures as well by assigning an arbitrary unit cell.
 
-| **Documentation** | **Build Status** | 
-|:---:|:---:|
-| [![Docs Badge](https://img.shields.io/badge/docs-latest-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/latest) [![Docs Badge](https://img.shields.io/badge/docs-dev-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/dev) | [![build](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml/badge.svg)](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml) | 
+| **Documentation** | **Build Status** | **Test Coverage** |
+|:---:|:---:|:---:|
+| [![Docs Badge](https://img.shields.io/badge/docs-latest-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/latest) [![Docs Badge](https://img.shields.io/badge/docs-dev-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/dev) | [![build](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml/badge.svg)](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml) | [![codecov](https://codecov.io/gh/SimonEnsemble/PoreMatMod.jl/branch/master/graph/badge.svg?token=Z9VMLXS3U9)](https://codecov.io/gh/SimonEnsemble/PoreMatMod.jl) |
 
 
 ## Installation
