@@ -15,9 +15,9 @@ Functioning as a "find-and-replace" tool on atomistic crystal structure models o
 
 N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline materials, its find-and-replace operations can be applied to discrete, molecular structures as well by assigning an arbitrary unit cell.
 
-| **Documentation** | **Build Status** | 
-|:---:|:---:|
-| [![Docs Badge](https://img.shields.io/badge/docs-latest-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/dev) | [![Build Status](https://travis-ci.org/SimonEnsemble/PoreMatMod.jl.svg?branch=master)](https://app.travis-ci.com/github/SimonEnsemble/PoreMatMod.jl) |
+| **Documentation** | **Build Status** | **Test Coverage** |
+|:---:|:---:|:---:|
+| [![Docs Badge](https://img.shields.io/badge/docs-latest-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/latest) [![Docs Badge](https://img.shields.io/badge/docs-dev-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/dev) | [![Build Status](https://travis-ci.org/SimonEnsemble/PoreMatMod.jl.svg?branch=master)](https://app.travis-ci.com/github/SimonEnsemble/PoreMatMod.jl) |
 
 
 ## Installation

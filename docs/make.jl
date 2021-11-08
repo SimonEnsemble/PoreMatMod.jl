@@ -38,4 +38,4 @@ makedocs( # to test docs, run this call to `makedocs` in the REPL
 )
 
 # deploy the docs
-deploydocs(repo = "github.com/SimonEnsemble/PoreMatMod.jl.git")
+deploydocs(repo = "github.com/SimonEnsemble/PoreMatMod.jl.git", versions = ["latest" => "v^", "v#.#.#", "dev" => "master"])

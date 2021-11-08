@@ -35,7 +35,7 @@ jobs:
         uses: julia-actions/julia-buildpkg@latest
       
       - name: install dependencies
-        run: julia --project -e 'import Pkg; Pkg.add.(["Documenter", "FIGlet", "Codecov"])'
+        run: julia --project -e 'import Pkg; Pkg.add.(["Documenter", "FIGlet", "Coverage"])'
       
       - name: run tests
         run: julia --project --code-coverage -e 'ENV["CI_BUILD"] = "true"; import Pkg; Pkg.test()'
