@@ -43,8 +43,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
       
-      - name: upload coverage report
+      - name: process test coverage
         uses: julia-actions/julia-processcoverage@v1
+      
+      - name: upload coverage report
         uses: codecov/codecov-action@v2
         with:
           verbose: true
