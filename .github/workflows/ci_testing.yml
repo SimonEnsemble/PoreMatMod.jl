@@ -13,14 +13,15 @@ concurrency:
 
 env:
   julia_version: '1.6.3'
-
+  os_list: [ubuntu-latest, macos-latest, windows-latest]
+  official_os: ubuntu-latest
 
 
 jobs:
 
 
   unit-and-doc-tests:
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.official_os }}
     
     steps:
       - name: checkout commit
@@ -52,13 +53,47 @@ jobs:
           verbose: true
 
 
+  
+  cross-platform:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ${{ env.os_list }}
+        exclude:
+          os: ${{ env.official_os }}
+    
+    steps:
+      - name: BLAS Info
+        run: julia -e 'using LinearAlgebra; @info "BLAS" LinearAlgebra.BLAS.libblas LinearAlgebra.BLAS.openblas_get_config();'
+
+      - name: LAPACK Info
+        run: julia -e 'using LinearAlgebra; @info "LAPACK" LinearAlgebra.LAPACK.liblapack LinearAlgebra.LAPACK.version()'
+
+      - name: checkout commit
+        uses: actions/checkout@master
+
+      - name: set up Julia
+        uses: julia-actions/setup-julia@latest
+        with:
+          version: ${{ env.julia_version }}
+      
+      - name: build package
+        uses: julia-actions/julia-buildpkg@latest
+      
+      - name: install dependencies
+        run: julia --project --color=yes -e 'import Pkg; Pkg.add.(["Documenter", "FIGlet"])'
+      
+      - name: run tests
+        run: julia --project --color=yes -e 'import Pkg; Pkg.test()'
+
+
 
   deploy-docs:
-    runs-on: ubuntu-latest
+    runs-on:  ${{ env.official_os }}
 
     env:
-      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      DOCUMENTER_KEY: ${{secrets.DOCUMENTER_KEY}}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
     
     steps:
       - name: checkout commit
@@ -67,7 +102,7 @@ jobs:
       - name: set up Julia
         uses: julia-actions/setup-julia@latest
         with:
-          version: ${{env.julia_version}}
+          version: ${{ env.julia_version }}
       
       - name: build package
         uses: julia-actions/julia-buildpkg@latest
