@@ -13,16 +13,15 @@ concurrency:
 
 env:
   julia_version: '1.6.3'
+  os_list: ubuntu-latest, macos-latest, windows-latest
+  development_os: ubuntu-20.04
 
 
 jobs:
 
 
   unit-and-doc-tests:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+    runs-on: $development_os #ubuntu-20.04
     
     steps:
       - name: checkout commit
@@ -59,7 +58,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     
     steps:
       - name: BLAS Info
@@ -88,7 +87,7 @@ jobs:
 
 
   deploy-docs:
-    runs-on:  ${{ env.development_os }}
+    runs-on: ubuntu-20.04
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
