@@ -21,7 +21,7 @@ jobs:
 
 
   unit-and-doc-tests:
-    runs-on: ${{ env.development_os }}
+    runs-on: ${{ development_os }}
     
     steps:
       - name: checkout commit
