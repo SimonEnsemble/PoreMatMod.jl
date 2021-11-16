@@ -1,6 +1,6 @@
 module PoreMatMod_Test
 
-using Test, Graphs, PoreMatMod
+using Test, Graphs, PoreMatMod, LinearAlgebra
 
 @testset "substructure_search" begin
 irmof1 = Crystal("IRMOF-1.cif")
@@ -15,20 +15,17 @@ search1 = p_phenylene ∈ irmof1
 @test nb_isomorphisms(search1) == 96
 @test nb_locations(search1) == 24
 @test nb_ori_at_loc(search1)[1] == 4
-@test search1.isomorphisms[1][1] ==
-    [233, 306, 318, 245, 185, 197, 414, 329, 402, 341]
+@test search1.isomorphisms[1][1] == [233, 306, 318, 245, 185, 197, 414, 329, 402, 341]
 search2 = p_phenylene ∈ timil125
 @test nb_isomorphisms(search2) == 48
 @test nb_locations(search2) == 12
 @test nb_ori_at_loc(search2)[1] == 4
-@test search2.isomorphisms[1][1] ==
-    [8, 140, 144, 141, 7, 133, 186, 185, 190, 189]
+@test search2.isomorphisms[1][1] == [8, 140, 144, 141, 7, 133, 186, 185, 190, 189]
 search3 = p_phenylene_w_R_grp ∈ timil125
 @test nb_isomorphisms(search3) == 48
 @test nb_locations(search3) == 12
 @test nb_ori_at_loc(search3)[1] == 4
-@test search3.isomorphisms[1][1] ==
-    [8, 140, 144, 141, 7, 133, 185, 190, 189, 186]
+@test search3.isomorphisms[1][1] == [8, 140, 144, 141, 7, 133, 185, 190, 189, 186]
 query = moiety("!-S-bromochlorofluoromethane.xyz")
 parent = moiety("S-bromochlorofluoromethane.xyz")
 search = query ∈ parent
@@ -77,7 +74,37 @@ replacement = moiety("p-phenylene.xyz")
 replacement = moiety("2-acetylamido-p-phenylene.xyz")
 @test ne((replace(xtal, query => replacement, nb_loc=1)).bonds) ==
     (ne(xtal.bonds) - ne(query.bonds) + ne(replacement.bonds))
+end
 
+@testset "platform-specific output consistency" begin
+"""
+        !!! DEVELOPER NOTE !!!
+
+    This test is weird. The exact coordinates that come out of the find/replace operation being tested depend on the system in use.
+    Specifically, Intel Haswell CPUs give slightly different results than Intel SkylakeX. Why? Not sure. They are visually indiscernible.
+    So, different manually-authenticated outputs are used for the test.
+    If the machine is running OpenBLAS 0.3.10 and LAPACK 3.9.0 on a SkylakeX CPU, the test is vs. skylakex_acetamido_IRMOF-1.cif.
+    If the machine is running those OpenBLAS/LAPACK versions on a Haswell CPU, the test is vs. haswell_acetamido_IRMOF-1.cif.
+    The Haswell coords are used as a fallback on machines matching neither description, and the test's results are displayed but ignored.
+"""
+
+environment = :default
+libblas = LinearAlgebra.BLAS.libblas
+blas_vendor, blas_version, _, _, _, architecture, _ = split(LinearAlgebra.BLAS.openblas_get_config())
+liblapack = LinearAlgebra.LAPACK.liblapack
+lapack_version = LinearAlgebra.LAPACK.version()
+
+if libblas == liblapack == "libopenblas64_" && blas_vendor == "OpenBLAS" && blas_version == "0.3.10" && lapack_version == v"3.9.0"
+    if architecture == "SkylakeX"
+        environment = :SkylakeX
+    elseif architecture == "Haswell"
+        environment = :Haswell
+    end
+end
+
+if environment == :default
+    @warn "The present environment has undefined behavior for this test. The test will run and its results will be displayed, but ignored."
+end
 
 # test that the coordinates resulting from a specific replacement are the same as a verified test run
 parent = Crystal("IRMOF-1.cif")
@@ -85,20 +112,23 @@ infer_bonds!(parent, true)
 query = moiety("2-!-p-phenylene.xyz")
 replacement = moiety("2-acetylamido-p-phenylene.xyz")
 xtal1 = replace(parent, query => replacement, loc=[2,4,6,8], ori=[1,2,3,4])
-xtal2 = Crystal("verified_acetamido_IRMOF-1.cif")
 write_cif(xtal1, "test_acetamido_IRMOF-1.cif") # for CI artifact collection
 
-local_atol  = 0.001 # tolerance for local runs
-ci_atol     = 0.066 # tolerance for CI runs
-
-# determine if running locally or on CI and set `atol` accordingly
-if "CI_BUILD" in keys(ENV) && ENV["CI_BUILD"] == "true"
-    @warn "Running in CI mode"
-    tolerance = ci_atol
+if environment == :SkylakeX
+    xtal2 = Crystal("skylake_acetamido_IRMOF-1.cif")
 else
-    tolerance = local_atol
+    xtal2 = Crystal("haswell_acetamido_IRMOF-1.cif")
 end
-@test all(isapprox.(xtal1.atoms.coords.xf, xtal2.atoms.coords.xf, atol=tolerance))
+
+result = all(isapprox.(xtal1.atoms.coords.xf, xtal2.atoms.coords.xf, atol=0.001))
+
+if environment ≠ :default
+    @test result
+elseif result
+    @info "Test passed."
+else
+    @warn "Test failed!"
+end
 end
 
 end
