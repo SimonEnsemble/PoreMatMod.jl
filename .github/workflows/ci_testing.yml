@@ -21,10 +21,10 @@ jobs:
 
 
   unit-and-doc-tests:
-    runs-on: ${{ env.development_os }}
-
-    env:
-      development_os: ${{ env.development_os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ${{ env.development_os }}
     
     steps:
       - name: checkout commit
