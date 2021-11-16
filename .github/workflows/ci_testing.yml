@@ -21,7 +21,7 @@ jobs:
 
 
   unit-and-doc-tests:
-    runs-on: $development_os #ubuntu-20.04
+    runs-on: ${os_list}
     
     steps:
       - name: checkout commit
