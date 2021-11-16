@@ -14,7 +14,7 @@ concurrency:
 env:
   julia_version: '1.6.3'
   official_os: 'ubuntu-latest'
-  #os_list: ubuntu-latest, macos-latest, windows-latest
+  os_list: 'ubuntu-latest', 'macos-latest', 'windows-latest'
 
 
 jobs:
