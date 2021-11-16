@@ -4,11 +4,18 @@ on:
 
 jobs:
   get-versions:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, ubuntu-20.04, macos-11, macos-10.15, windows-2019]
+
     steps:
       - uses: julia-actions/setup-julia@latest
         with:
           version: "1.6.3"
 
-      - name: Display Versions
-        run: julia -e 'using LinearAlgebra; @info "BLAS" LinearAlgebra.BLAS.libblas LinearAlgebra.BLAS.openblas_get_config(); @info "LAPACK" LinearAlgebra.LAPACK.liblapack LinearAlgebra.LAPACK.version()'
+      - name: BLAS Info
+        run: julia -e 'using LinearAlgebra; @info "BLAS" LinearAlgebra.BLAS.libblas LinearAlgebra.BLAS.openblas_get_config();'
+
+      - name: LAPACK Info
+        run: julia -e 'using LinearAlgebra; @info "LAPACK" LinearAlgebra.LAPACK.liblapack LinearAlgebra.LAPACK.version()'
