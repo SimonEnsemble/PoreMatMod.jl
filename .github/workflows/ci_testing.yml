@@ -60,9 +60,11 @@ jobs:
     steps:
       - name: BLAS Info
         run: julia -e 'using LinearAlgebra; @info "BLAS" LinearAlgebra.BLAS.libblas LinearAlgebra.BLAS.openblas_get_config();'
+        shell: bash
 
       - name: LAPACK Info
         run: julia -e 'using LinearAlgebra; @info "LAPACK" LinearAlgebra.LAPACK.liblapack LinearAlgebra.LAPACK.version()'
+        shell: bash
 
       - name: checkout commit
         uses: actions/checkout@master
@@ -77,9 +79,11 @@ jobs:
       
       - name: install dependencies
         run: julia --project --color=yes -e 'import Pkg; Pkg.add.(["Documenter", "FIGlet"])'
+        shell: bash
       
       - name: run tests
         run: julia --project --color=yes -e 'import Pkg; Pkg.test()'
+        shell: bash
 
 
 
