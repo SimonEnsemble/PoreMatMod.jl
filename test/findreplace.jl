@@ -88,22 +88,22 @@ end
     The Haswell coords are used as a fallback on machines matching neither description, and the test's results are displayed but ignored.
 """
 
-environment = :default
+environment = :unknown
 libblas = LinearAlgebra.BLAS.libblas
-blas_vendor, blas_version, _, _, _, architecture, _ = split(LinearAlgebra.BLAS.openblas_get_config())
+blas_string = LinearAlgebra.BLAS.openblas_get_config()
 liblapack = LinearAlgebra.LAPACK.liblapack
 lapack_version = LinearAlgebra.LAPACK.version()
 
-if libblas == liblapack == "libopenblas64_" && blas_vendor == "OpenBLAS" && blas_version == "0.3.10" && lapack_version == v"3.9.0"
-    if architecture == "SkylakeX"
+if libblas == liblapack == "libopenblas64_" && contains(blas_string, "OpenBLAS") && contains(blas_string, "0.3.10") && lapack_version == v"3.9.0"
+    if contains(blas_string, "SkylakeX")
         environment = :SkylakeX
-    elseif architecture == "Haswell"
+    elseif contains(blas_string, "Haswell")
         environment = :Haswell
     end
 end
 
-if environment == :default
-    @warn "The present environment has undefined behavior for this test. The test will run and its results will be displayed, but ignored."
+if environment == :unknown
+    @warn "The present environment has undefined behavior for this test. The test will run and its results will be displayed, but ignored. The user should visually inspect test_acetamido_IRMOF-1.cif"
 end
 
 # test that the coordinates resulting from a specific replacement are the same as a verified test run
@@ -122,12 +122,12 @@ end
 
 result = all(isapprox.(xtal1.atoms.coords.xf, xtal2.atoms.coords.xf, atol=0.001))
 
-if environment ≠ :default
+if environment ≠ :unknown
     @test result
 elseif result
     @info "Test passed."
 else
-    @warn "Test failed!"
+    @warn "Test failed on unknown environment. See github.com/SimonEnsemble/PoreMatMod.jl/issues/92 for more info."
 end
 end
 
