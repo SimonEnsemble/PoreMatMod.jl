@@ -90,7 +90,7 @@ end
 
 environment = :unknown
 libblas = LinearAlgebra.BLAS.libblas
-blas_string = split(LinearAlgebra.BLAS.openblas_get_config())
+blas_string = LinearAlgebra.BLAS.openblas_get_config()
 liblapack = LinearAlgebra.LAPACK.liblapack
 lapack_version = LinearAlgebra.LAPACK.version()
 
