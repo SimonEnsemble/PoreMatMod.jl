@@ -14,7 +14,11 @@ begin
 end
 
 # ╔═╡ 0087586d-0ac2-4558-b923-b5ceb62dde63
-mof = Crystal("mof.cif")
+begin
+	mof = Crystal("RUBTAK01_clean_h.cif")
+	mof = replicate(mof, (2, 2, 2))
+	write_cif(mof, "mof.cif")
+end
 
 # ╔═╡ ac94ddb2-314c-49a7-b0bb-4371f93c0429
 infer_bonds!(mof, true)
