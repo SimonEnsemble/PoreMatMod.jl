@@ -5,20 +5,14 @@ The `PoreMatModGO` interface, built on `Pluto.jl`, enables interactive applicati
 
 Follow the steps in [Getting Started](../manual/start).
 
-Then, add the required dependencies and launch `Pluto.jl`:
+Then, simply launch the GUI notebook via `Pluto`:
 
+```julia
+using PoreMatMod
+PoreMatModGO()
 ```
-pkg> add Pluto, PlutoUI, Bio3DView
-julia> using Pluto
-julia> Pluto.run()
-```
 
-`Pluto` should launch in a new tab in your default web browser.
-
-Load `PoreMatModGO.jl` by copying and pasting the URL below into the "Open from file"
-box on the `Pluto` main page.
-
-[https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/src/PoreMatModGO.jl](https://raw.githubusercontent.com/SimonEnsemble/PoreMatMod.jl/master/src/PoreMatModGO.jl?token=AD3TMGCN5XHK3VKRRIFAHV3BGBIE4)
+The notebook may take several minutes to launch the first time, especially on Windows.
 
 Prepare file inputs per the [manual](../manual/inputs) and load them into `PoreMatModGO` using the graphical interface.  
 All [replacement](../manual/replace) modes are available with interactive visual previews and outputs are downloadable in `.cif`, `.xyz`, and `.vtk` file formats.
