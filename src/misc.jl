@@ -38,3 +38,16 @@ adjust_for_pb!(xtal::Crystal) = adjust_for_pb!(xtal.atoms.coords.xf, xtal_name=x
 function idx_filter(xtal::Crystal, subset::Array{Int})::Array{Int,1}
     return [i for i in 1:xtal.atoms.n if !(i ∈ subset)]
 end
+
+
+"""
+    PoreMatModGO()
+
+Launches the GUI Pluto notebook.
+"""
+function PoreMatModGO()
+    # notebook path
+    pmmg_ntbk = joinpath(pathof(PoreMatMod), "..", "PoreMatModGO.jl")
+    # run the notebook in Pluto
+    Pluto.run(notebook=pmmg_ntbk)
+end
