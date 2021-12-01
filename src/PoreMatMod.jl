@@ -1,6 +1,6 @@
 module PoreMatMod
 
-using StatsBase, Graphs, MetaGraphs, LinearAlgebra, DataFrames, Reexport
+using StatsBase, Graphs, MetaGraphs, LinearAlgebra, DataFrames, Pluto, Reexport
 @reexport using Xtals
 
 import Base.(∈), Base.show, Base.replace
@@ -21,7 +21,10 @@ export
     substructure_replace, 
 
     # moiety.jl
-    moiety
+    moiety,
+
+    # misc.jl
+    PoreMatModGO
 
 include("Ullmann.jl")
 include("moiety.jl")
