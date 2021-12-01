@@ -30,20 +30,10 @@ query = moiety("adamantane_C5.xyz")
 replacement = moiety("nitrogen_vacancy.xyz")
 
 # ╔═╡ b835a642-0a24-4796-8e01-e3c4041a6bff
-child = replace(parent, query => replacement, loc=[1], ori=[3])
+child = replace(parent, query => replacement, loc=[5], ori=[1])
 
 # ╔═╡ caf947dc-11bd-455d-8fd6-434fa52edada
 write_cif(child, "with_vacancy.cif")
-
-# ╔═╡ 7b060d1c-7fbc-4fd7-9553-2702e811dab0
-begin
-	remove_bonds!(child)
-	supercell = replicate(child, (2,2,2))
-	infer_bonds!(supercell, true)
-end
-
-# ╔═╡ 2c370d98-7199-44d7-af15-d85f4ff9f7c3
-write_cif(supercell, "supercell.cif")
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -618,7 +608,5 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═58b79260-8a7a-4ca4-bdee-4c3c463334ba
 # ╠═b835a642-0a24-4796-8e01-e3c4041a6bff
 # ╠═caf947dc-11bd-455d-8fd6-434fa52edada
-# ╠═7b060d1c-7fbc-4fd7-9553-2702e811dab0
-# ╠═2c370d98-7199-44d7-af15-d85f4ff9f7c3
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
