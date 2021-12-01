@@ -15,7 +15,7 @@ end
 
 # ╔═╡ 6922e27b-b848-418b-bf1a-df17315baa80
 begin
-	parent = replicate(Crystal("diamond.cif", remove_duplicates=true), (2,2,2))
+	parent = replicate(Crystal("diamond.cif", remove_duplicates=true), (2,2,1))
 	strip_numbers_from_atom_labels!(parent)
 	infer_bonds!(parent, true)
 end
@@ -30,7 +30,7 @@ query = moiety("adamantane_C5.xyz")
 replacement = moiety("nitrogen_vacancy.xyz")
 
 # ╔═╡ b835a642-0a24-4796-8e01-e3c4041a6bff
-child = replace(parent, query => replacement, loc=[5], ori=[1])
+child = replace(parent, query => replacement, loc=[8])
 
 # ╔═╡ caf947dc-11bd-455d-8fd6-434fa52edada
 write_cif(child, "with_vacancy.cif")
