@@ -242,7 +242,7 @@ Returns a new `Crystal` with the specified modifications (returns `search.parent
 """
 function substructure_replace(search::Search, replacement::Crystal; random::Bool=false,
     nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[], name::String="new_xtal", verbose::Bool=false,
-    remove_duplicates::Bool=false, periodic_boundaries::Bool=true)::Crystal
+    remove_duplicates::Bool=false, periodic_boundaries::Bool=true, reinfer_bonds::Bool=false)::Crystal
     # replacement at all locations (default)
     if nb_loc == 0 && loc == Int[] && ori == Int[]
         nb_loc = nb_locations(search)
