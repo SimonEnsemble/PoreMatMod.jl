@@ -89,17 +89,21 @@ end
 """
 
 environment = :unknown
-libblas = LinearAlgebra.BLAS.libblas
-blas_string = LinearAlgebra.BLAS.openblas_get_config()
-liblapack = LinearAlgebra.LAPACK.liblapack
-lapack_version = LinearAlgebra.LAPACK.version()
 
-if libblas == liblapack == "libopenblas64_" && contains(blas_string, "OpenBLAS") && contains(blas_string, "0.3.10") && lapack_version == v"3.9.0"
-    if contains(blas_string, "SkylakeX")
-        environment = :SkylakeX
-    elseif contains(blas_string, "Haswell")
-        environment = :Haswell
+try
+    libblas = LinearAlgebra.BLAS.libblas
+    blas_string = LinearAlgebra.BLAS.openblas_get_config()
+    liblapack = LinearAlgebra.LAPACK.liblapack
+    lapack_version = LinearAlgebra.LAPACK.version()
+
+    if libblas == liblapack == "libopenblas64_" && contains(blas_string, "OpenBLAS") && contains(blas_string, "0.3.10") && lapack_version == v"3.9.0"
+        if contains(blas_string, "SkylakeX")
+            environment = :SkylakeX
+        elseif contains(blas_string, "Haswell")
+            environment = :Haswell
+        end
     end
+catch
 end
 
 if environment == :unknown
@@ -129,6 +133,21 @@ elseif result
 else
     @warn "Test failed on unknown environment. See github.com/SimonEnsemble/PoreMatMod.jl/issues/92 for more info."
 end
+end
+
+@testset "remove duplicates" begin
+    parent = moiety("ADC.xyz")
+	new_box = replicate(unit_cube(), (10, 10, 10))
+	new_atoms = Frac(Cart(parent.atoms, parent.box), new_box)
+	new_charges = Frac(Cart(parent.charges, parent.box), new_box)
+	parent = Crystal(parent.name, new_box, new_atoms, new_charges)
+	infer_bonds!(parent, false)
+    query = moiety("naphthyl_fragment.xyz")
+    replacement = moiety("F_naphthyl_fragment.xyz")
+    child = replace(parent, query => replacement, nb_loc=2, remove_duplicates=true, reinfer_bonds=true)
+
+    @test child.atoms.n == parent.atoms.n
+    @test nv(child.bonds) == nv(parent.bonds) && ne(child.bonds) == ne(parent.bonds)
 end
 
 end
