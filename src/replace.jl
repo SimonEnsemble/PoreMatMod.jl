@@ -218,7 +218,7 @@ end
 
 
 @doc raw"""
-    child = substructure_replace(search, replacement; random=false, nb_loc=0, loc=Int[], ori=Int[], name="new_xtal", verbose=false, combine_duplicates=false, periodic_boundaries=true)
+    child = substructure_replace(search, replacement; random=false, nb_loc=0, loc=Int[], ori=Int[], name="new_xtal", verbose=false, remove_duplicates=false, periodic_boundaries=true)
 
 Replace the substructures of `search.parent` matching the `search.query` fragment with the `replacement` fragment,
 at locations and orientations specified by the keyword arguments `random`, `nb_loc`, `loc`, and `ori`.
@@ -236,13 +236,13 @@ Returns a new `Crystal` with the specified modifications (returns `search.parent
 - `ori::Array{Int}` assign value(s) when `loc` is assigned to specify exact configurations for replacement. `0` values mean the configuration at that location should be selected for optimal alignment with the parent.
 - `name::String` assign to give the generated `Crystal` a name ("new_xtal" by default)
 - `verbose::Bool` set `true` to print console messages about the replacement(s) being performed
-- `combine_duplicates::Bool` set `true` to automatically combine overlapping atoms of the same species in generated structures.
+- `remove_duplicates::Bool` set `true` to automatically combine overlapping atoms of the same species in generated structures.
 - `reinfer_bonds::Bool` set `true` to re-infer bonds after producing a structure
 - `periodic_boundaries::Bool` set `false` to disable periodic boundary conditions when checking for atom duplication or re-inferring bonds
 """
 function substructure_replace(search::Search, replacement::Crystal; random::Bool=false,
     nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[], name::String="new_xtal", verbose::Bool=false,
-    combine_duplicates::Bool=false, periodic_boundaries::Bool=true, reinfer_bonds::Bool=false)::Crystal
+    remove_duplicates::Bool=false, periodic_boundaries::Bool=true, reinfer_bonds::Bool=false)::Crystal
     # replacement at all locations (default)
     if nb_loc == 0 && loc == Int[] && ori == Int[]
         nb_loc = nb_locations(search)
@@ -300,10 +300,10 @@ function substructure_replace(search::Search, replacement::Crystal; random::Bool
     # process replacements
     child = _substructure_replace(search, replacement, configs, name)
 
-    if combine_duplicates
+    if remove_duplicates
         child = Crystal(child.name, child.box, 
-            remove_duplicates(child.atoms, child.box, periodic_boundaries),
-            remove_duplicates(child.charges, child.box, periodic_boundaries)
+            Xtals.remove_duplicates(child.atoms, child.box, periodic_boundaries),
+            Xtals.remove_duplicates(child.charges, child.box, periodic_boundaries)
         )
     end
 

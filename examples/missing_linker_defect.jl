@@ -4,12 +4,6 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ ad9d903b-1b30-4b95-b141-85032a81f3e8
-begin
-	import Pkg
-	Pkg.develop("PoreMatMod")
-end
-
 # ╔═╡ 37939a7a-0651-11ec-11c1-6b5ef0a19ec2
 # load required packages (Pluto.jl will automatically install them)
 using PoreMatMod, PlutoUI, Bio3DView, Logging
@@ -117,7 +111,6 @@ The astute observer will note that a seemingly simpler pair of query/replacement
 
 # ╔═╡ Cell order:
 # ╟─8d523993-6e85-443a-9949-12030552b457
-# ╠═ad9d903b-1b30-4b95-b141-85032a81f3e8
 # ╠═37939a7a-0651-11ec-11c1-6b5ef0a19ec2
 # ╠═21bf7b62-1aef-45c6-9da4-db8d4d69604c
 # ╟─e2877131-2e59-4e00-b549-70529d8e71e4
