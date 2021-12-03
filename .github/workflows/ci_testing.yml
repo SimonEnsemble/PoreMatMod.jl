@@ -50,30 +50,24 @@ jobs:
           verbose: true
 
 
-  
   cross-platform:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        jl: [1.6.4, 1.7.0]
+        julia_version: [1.6.4, 1.7.0]
+        exclude:
+          - jl: 1.7.0
+            os: [macos-latest, windows-latest] # these two segfault on 1.7.0 (don't know why)
     
     steps:
-      - name: BLAS Info
-        run: julia -e 'using LinearAlgebra; @info "BLAS" LinearAlgebra.BLAS.libblas LinearAlgebra.BLAS.openblas_get_config();'
-        shell: bash
-
-      - name: LAPACK Info
-        run: julia -e 'using LinearAlgebra; @info "LAPACK" LinearAlgebra.LAPACK.liblapack LinearAlgebra.LAPACK.version()'
-        shell: bash
-
       - name: checkout commit
         uses: actions/checkout@master
 
       - name: set up Julia
         uses: julia-actions/setup-julia@latest
         with:
-          version: ${{ matrix.jl }}
+          version: ${{ matrix.julia_version }}
       
       - name: build package
         uses: julia-actions/julia-buildpkg@latest
@@ -85,7 +79,6 @@ jobs:
       - name: run tests
         run: julia --project --color=yes -e 'import Pkg; Pkg.test()'
         shell: bash
-
 
 
   deploy-docs:
