@@ -213,7 +213,13 @@ function _substructure_replace(q_in_p::Search, replacement::Crystal, configs::Ar
         cross_pb = dist != distance(new_xtal.atoms, new_xtal.box, src(bond), dst(bond), false)
         set_props!(new_xtal.bonds, bond, Dict(:distance => dist, :cross_boundary => cross_pb))
     end
-    return new_xtal
+    # handle symmetry
+    if parent.symmetry.is_p1
+        return new_xtal
+    else
+        @warn "Copying symmetry rules for non-P1 crystal"
+        return Crystal(new_xtal.name, new_xtal.box, new_xtal.atoms, new_xtal.charges, new_xtal.bonds, parent.symmetry)
+    end
 end
 
 

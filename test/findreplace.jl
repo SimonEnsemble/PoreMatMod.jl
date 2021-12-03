@@ -42,7 +42,7 @@ search = query ∈ parent
 @test search.isomorphisms[1][1] == [34, 38, 39, 36, 26, 27, 51, 46, 50, 48]
 end # test set: substructure_search
 
-@testset "find_repalce" begin
+@testset "find_replace" begin
 parent = Crystal("IRMOF-1.cif")
 strip_numbers_from_atom_labels!(parent)
 infer_bonds!(parent, true)
@@ -148,6 +148,21 @@ end
 
     @test child.atoms.n == parent.atoms.n
     @test nv(child.bonds) == nv(parent.bonds) && ne(child.bonds) == ne(parent.bonds)
+end
+
+@testset "non-p1 symmetry" begin
+    parent = Crystal("MOF-74.cif", convert_to_p1=false)
+    infer_bonds!(parent, true)
+    query = moiety("primitive_fragment.xyz")
+    #replacement = moiety("me_prim_frag.xyz")
+    replacement = moiety("nh2_prim_frag.xyz")
+    prim_child = replace(parent, query => replacement)
+
+    write_cif(prim_child, joinpath(rc[:paths][:crystals], "prim_child.cif"))
+    child = Crystal("prim_child.cif")
+
+    @test child.atoms.n == 0
+    @test prim_child.symmetry == parent.symmetry
 end
 
 end
