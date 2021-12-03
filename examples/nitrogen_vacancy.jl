@@ -1,16 +1,19 @@
 ### A Pluto.jl notebook ###
-# v0.17.1
+# v0.17.2
 
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ 4ca5ec9e-4bdf-11ec-2763-23eb8edd5ebb
-using PoreMatMod
+using PoreMatMod, Bio3DView
+
+# ╔═╡ 1d58256f-c200-4e83-8b98-f2feee47213b
+include("./ExampleHelper.jl");
 
 # ╔═╡ 52318187-a575-4864-8185-416faeea27ab
 begin
-	rc[:paths][:crystals] = joinpath(pwd(), "test", "data", "crystals")
-	rc[:paths][:moieties] = joinpath(pwd(), "test", "data", "moieties")
+	rc[:paths][:crystals] = realpath(joinpath(pwd(), "..", "test", "data", "crystals"))
+	rc[:paths][:moieties] = realpath(joinpath(pwd(), "..", "test", "data", "moieties"))
 end
 
 # ╔═╡ 6922e27b-b848-418b-bf1a-df17315baa80
@@ -23,6 +26,9 @@ end
 # ╔═╡ 418a7421-92ed-406f-9578-34187529c307
 write_cif(parent, "diamond_cell.cif")
 
+# ╔═╡ f7d3cb8c-9d12-4f78-94c6-30a308648e69
+view_structure(parent)
+
 # ╔═╡ 90f53a39-89b3-41c5-ad8b-c0683b96c9e4
 query = moiety("adamantane_C5.xyz")
 
@@ -32,15 +38,20 @@ replacement = moiety("nitrogen_vacancy.xyz")
 # ╔═╡ b835a642-0a24-4796-8e01-e3c4041a6bff
 child = replace(parent, query => replacement, loc=[8])
 
+# ╔═╡ 3c003a65-3983-42ed-b445-5618ae21a4a3
+write_cif(child, "child.cif")
+
 # ╔═╡ caf947dc-11bd-455d-8fd6-434fa52edada
-write_cif(child, "with_vacancy.cif")
+view_structure(child)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+Bio3DView = "99c8bb3a-9d13-5280-9740-b4880ed9c598"
 PoreMatMod = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 
 [compat]
+Bio3DView = "~0.1.3"
 PoreMatMod = "~0.2.6"
 """
 
@@ -601,12 +612,15 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 
 # ╔═╡ Cell order:
 # ╠═4ca5ec9e-4bdf-11ec-2763-23eb8edd5ebb
+# ╠═1d58256f-c200-4e83-8b98-f2feee47213b
 # ╠═52318187-a575-4864-8185-416faeea27ab
 # ╠═6922e27b-b848-418b-bf1a-df17315baa80
 # ╠═418a7421-92ed-406f-9578-34187529c307
+# ╠═f7d3cb8c-9d12-4f78-94c6-30a308648e69
 # ╠═90f53a39-89b3-41c5-ad8b-c0683b96c9e4
 # ╠═58b79260-8a7a-4ca4-bdee-4c3c463334ba
 # ╠═b835a642-0a24-4796-8e01-e3c4041a6bff
+# ╠═3c003a65-3983-42ed-b445-5618ae21a4a3
 # ╠═caf947dc-11bd-455d-8fd6-434fa52edada
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
