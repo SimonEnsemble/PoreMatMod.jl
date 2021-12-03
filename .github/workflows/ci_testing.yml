@@ -58,7 +58,9 @@ jobs:
         julia_version: [1.6.4, 1.7.0]
         exclude:
           - julia_version: 1.7.0
-            os: [macos-latest, windows-latest] # these two segfault on 1.7.0 (don't know why)
+            os: windows-latest
+          - julia_version: 1.7.0
+            os: macos-latest
       fail-fast: false
     
     steps:
