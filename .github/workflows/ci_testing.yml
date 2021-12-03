@@ -73,7 +73,7 @@ jobs:
       - name: set up Julia
         uses: julia-actions/setup-julia@latest
         with:
-          version: ${{ os.jl }}
+          version: ${{ matrix.jl }}
       
       - name: build package
         uses: julia-actions/julia-buildpkg@latest
