@@ -144,7 +144,7 @@ end
 	infer_bonds!(parent, false)
     query = moiety("naphthyl_fragment.xyz")
     replacement = moiety("F_naphthyl_fragment.xyz")
-    child = replace(parent, query => replacement, nb_loc=2, remove_duplicates=true, reinfer_bonds=true)
+    child = replace(parent, query => replacement, nb_loc=2, combine_duplicates=true, reinfer_bonds=true)
 
     @test child.atoms.n == parent.atoms.n
     @test nv(child.bonds) == nv(parent.bonds) && ne(child.bonds) == ne(parent.bonds)
