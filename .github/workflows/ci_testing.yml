@@ -54,10 +54,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-20.04, macos-latest, windows-latest]
         julia_version: [1.6.4, 1.7.0]
         exclude:
           - julia_version: 1.7.0 # stochastic segfauls on every os
+          - os: ubuntu-20.04 # don't repeat the work from unit-and-doc-tests
+            julia_version: ${{ env.julia_version }}
       fail-fast: false
     
     steps:
