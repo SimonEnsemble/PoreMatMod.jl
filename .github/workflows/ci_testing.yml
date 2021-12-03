@@ -55,7 +55,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        jl: [1.6.4, 1.7.0]
     
     steps:
       - name: BLAS Info
@@ -72,7 +73,7 @@ jobs:
       - name: set up Julia
         uses: julia-actions/setup-julia@latest
         with:
-          version: ${{ env.julia_version }}
+          version: ${{ os.jl }}
       
       - name: build package
         uses: julia-actions/julia-buildpkg@latest
