@@ -1,27 +1,29 @@
 ### A Pluto.jl notebook ###
-# v0.17.1
+# v0.17.2
 
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ ad3bbc34-4c50-11ec-3547-af5b753f9f3b
-using PoreMatMod
+using PoreMatMod, Bio3DView
 
-# ╔═╡ 06a428ea-e3a9-4b31-b68c-c4defd9031b6
-begin
-	rc[:paths][:crystals] = pwd()
-	rc[:paths][:moieties] = pwd()
-end
+# ╔═╡ 58929fec-7818-4db3-a67e-a30ba8a30a2a
+include("ExampleHelper.jl");
 
-# ╔═╡ 0087586d-0ac2-4558-b923-b5ceb62dde63
+# ╔═╡ 095d18b8-b8ab-4bd8-89dc-4382f9375b42
 begin
-	mof = Crystal("RUBTAK01_clean_h.cif")
-	mof = replicate(mof, (2, 2, 2))
-	write_cif(mof, "mof.cif")
+	parent = Crystal("UiO-66.cif")
+	for x in parent.atoms.coords.xf
+		if x == 1.
+			x -= eps(Float64)
+		elseif x == 0.
+			x += eps(Float64)
+		end
+	end
 end
 
 # ╔═╡ ac94ddb2-314c-49a7-b0bb-4371f93c0429
-infer_bonds!(mof, true)
+infer_bonds!(parent, true)
 
 # ╔═╡ ecb86319-1c5c-48f8-98b9-8bccca5e9953
 SBU = moiety("SBU.xyz")
@@ -30,17 +32,29 @@ SBU = moiety("SBU.xyz")
 bimetallic_SBU = moiety("bimetallic_SBU.xyz")
 
 # ╔═╡ 44b0cc75-036b-468f-9da7-04c2d97536a9
-multi_metal = replace(mof, SBU => bimetallic_SBU)
+begin
+	multi_metal = replace(parent, SBU => bimetallic_SBU)
+	translate_by!(multi_metal.atoms.coords, Frac([-0.25, -0.25, 0.]))
+end
 
 # ╔═╡ 780437f4-3a42-4aa2-b2e8-599d8d232dc2
 write_cif(multi_metal, "multi-metal.cif")
 
+# ╔═╡ ad888be3-2123-4d2f-865a-ff7a63cebf9e
+begin
+	shifted_uio66 = deepcopy(parent)
+	translate_by!(shifted_uio66.atoms.coords, Frac([-0.25, -0.25, 0.]))
+	write_cif(shifted_uio66, "shifted_parent.cif")
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+Bio3DView = "99c8bb3a-9d13-5280-9740-b4880ed9c598"
 PoreMatMod = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 
 [compat]
+Bio3DView = "~0.1.3"
 PoreMatMod = "~0.2.6"
 """
 
@@ -601,12 +615,13 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 
 # ╔═╡ Cell order:
 # ╠═ad3bbc34-4c50-11ec-3547-af5b753f9f3b
-# ╠═06a428ea-e3a9-4b31-b68c-c4defd9031b6
-# ╠═0087586d-0ac2-4558-b923-b5ceb62dde63
+# ╠═58929fec-7818-4db3-a67e-a30ba8a30a2a
+# ╠═095d18b8-b8ab-4bd8-89dc-4382f9375b42
 # ╠═ac94ddb2-314c-49a7-b0bb-4371f93c0429
 # ╠═ecb86319-1c5c-48f8-98b9-8bccca5e9953
 # ╠═d7b5abf5-13fb-4644-9502-6c54106be51a
 # ╠═44b0cc75-036b-468f-9da7-04c2d97536a9
 # ╠═780437f4-3a42-4aa2-b2e8-599d8d232dc2
+# ╠═ad888be3-2123-4d2f-865a-ff7a63cebf9e
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
