@@ -59,6 +59,7 @@ jobs:
         exclude:
           - jl: 1.7.0
             os: [macos-latest, windows-latest] # these two segfault on 1.7.0 (don't know why)
+      fail-fast: false
     
     steps:
       - name: checkout commit
