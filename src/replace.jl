@@ -98,6 +98,7 @@ function align(q_unmasked2r_isom::Vector{Int}, parent::Crystal, replacement::Cry
     # shift all replacement nodes according to center of isomorphic subset
     replacement′ = deepcopy(replacement)
     replacement′.atoms.coords.xf .-= geometric_center(replacement[q_unmasked2r_isom])
+    write_cif(replacement′, "shifted_replacement.cif")
     # get OP rotation matrix to align replacement onto parent
     rot_r2p = r2p_op(replacement′, parent, r2p_isom)
     # transform replacement by rot_r2p, and parent_subset_center (this is now a potential crystal to add)

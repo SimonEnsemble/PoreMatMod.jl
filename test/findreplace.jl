@@ -2,6 +2,21 @@ module PoreMatMod_Test
 
 using Test, Graphs, PoreMatMod, LinearAlgebra
 
+@testset "non-p1 symmetry" begin
+    parent = Crystal("NiPyC2_experiment.cif", convert_to_p1=false)
+    infer_bonds!(parent, true)
+
+    query = moiety("3-H!-4-pyridyl.xyz")
+    replacement = moiety("3-NH2-4-pyridyl.xyz")
+    prim_child = replace(parent, query => replacement) ## BUG alignment is totally wrong for multi-atom substitutions
+
+    write_cif(prim_child, joinpath(rc[:paths][:crystals], "prim_child.cif"))
+    child = Crystal("prim_child.cif")
+
+    @test child.atoms.n == 0
+    @test prim_child.symmetry == parent.symmetry
+end
+
 @testset "substructure_search" begin
 irmof1 = Crystal("IRMOF-1.cif")
 strip_numbers_from_atom_labels!(irmof1)
@@ -148,21 +163,6 @@ end
 
     @test child.atoms.n == parent.atoms.n
     @test nv(child.bonds) == nv(parent.bonds) && ne(child.bonds) == ne(parent.bonds)
-end
-
-@testset "non-p1 symmetry" begin
-    parent = Crystal("MOF-74.cif", convert_to_p1=false)
-    infer_bonds!(parent, true)
-    query = moiety("primitive_fragment.xyz")
-    #replacement = moiety("me_prim_frag.xyz")
-    replacement = moiety("nh2_prim_frag.xyz")
-    prim_child = replace(parent, query => replacement)
-
-    write_cif(prim_child, joinpath(rc[:paths][:crystals], "prim_child.cif"))
-    child = Crystal("prim_child.cif")
-
-    @test child.atoms.n == 0
-    @test prim_child.symmetry == parent.symmetry
 end
 
 end
