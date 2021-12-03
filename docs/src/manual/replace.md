@@ -146,9 +146,6 @@ Bravais unit cell of a crystal.
 !!! note
     Generally, it is advisable to perform the search using `substructure_replace` then pass it to `replace`, as multiple replacement tasks can then be performed on the basis of the search step as opposed to repeating it for each replacement. The search is usually the slowest step, and it is desirable not to perform it repeatedly.
 
-## overlapping atoms
-
-
 
 ## Documentation of functions
 
