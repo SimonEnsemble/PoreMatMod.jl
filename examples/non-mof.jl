@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.1
+# v0.17.2
 
 using Markdown
 using InteractiveUtils
@@ -8,60 +8,7 @@ using InteractiveUtils
 using PoreMatMod
 
 # ╔═╡ 5da0de46-a8fa-4843-90bc-58e52a6d1d61
-begin
-	rc[:paths][:crystals] = pwd()
-	rc[:paths][:moieties] = pwd()
-end
-
-# ╔═╡ 01df2894-2af1-47f6-bdd8-be72e2d1e720
-md"# COF"
-
-# ╔═╡ 2b34e560-e3ad-420c-908b-6c63baec3006
-begin
-	cof_parent = Crystal("cof.cif")
-	infer_bonds!(cof_parent, true)
-	cof_query = moiety("cof_linker.xyz")
-	cof_replacement = moiety("triazine_linker.xyz")
-end
-
-# ╔═╡ b20544b5-a8e7-49cd-9fbf-269f439ecc2f
-local search = cof_query in cof_parent
-
-# ╔═╡ 7b72d017-9c14-4d9f-98f8-1e5e5287e3c6
-cof_child = replace(cof_parent, cof_query => cof_replacement)
-
-# ╔═╡ e3a3366a-b7ca-4ba5-94b2-66d727d80b54
-write_cif(cof_child, "cof_child.cif")
-
-# ╔═╡ 007f45ff-560a-43c4-923a-be49ea9e3101
-md"# Peptide"
-
-# ╔═╡ 06db7c8d-1ed2-4cd4-8714-812735964cdf
-begin
-	peptide_parent = moiety("peptide.xyz")
-	remove_bonds!(peptide_parent)
-	local new_box = replicate(unit_cube(), (20, 20, 20))
-	local new_atoms = Frac(Cart(peptide_parent.atoms, peptide_parent.box), new_box)
-	local new_charges = Frac(Cart(peptide_parent.charges, peptide_parent.box), new_box)
-	peptide_parent = Crystal(peptide_parent.name, new_box, new_atoms, new_charges)
-	infer_bonds!(peptide_parent, false)
-	peptide_query = moiety("serine_residue.xyz")
-	peptide_replacement = moiety("serine_phosphate.xyz")
-end
-
-# ╔═╡ 62e8d9e4-7d28-45af-8263-735807c92810
-local search = peptide_query in peptide_parent
-
-# ╔═╡ 29d9579d-c443-4c8d-aff9-0fca1b4d0a15
-peptide_child = replace(peptide_parent, peptide_query => peptide_replacement)
-
-# ╔═╡ 929294c8-f105-4ddb-b840-898ae774aa76
-begin
-	local temp = deepcopy(peptide_child)
-	translate_by!(temp.atoms.coords, Frac([0.5, 0.5, 0.5]))
-	wrap!(temp)
-	write_cif(temp, "peptide_child.cif")
-end
+include("ExampleHelper.jl");
 
 # ╔═╡ 0b644231-c25a-4d9f-895d-16fc612613ec
 md"# Azepine"
@@ -122,7 +69,7 @@ end
 
 # ╔═╡ db771098-8097-4748-85c7-ece4faed4e43
 begin
-	poscar = read_poscar("POSCAR")
+	poscar = read_poscar("data/crystals/POSCAR")
 	infer_bonds!(poscar, true)
 end
 
@@ -130,25 +77,13 @@ end
 write_cif(poscar, "poscar.cif")
 
 # ╔═╡ b09ea1c5-67b5-4953-8fef-c5144f09186b
-begin
-	hydrated_Pd2 = moiety("hydrated_Pd2.xyz")
-	hydrogenated_Pd2 = moiety("hydrogenated_Pd2.xyz")
-end
-
-# ╔═╡ 6a1abb89-a91f-4cc9-9833-de3736c08d4e
-hydrogenated = replace(poscar, hydrated_Pd2 => hydrogenated_Pd2)
-
-# ╔═╡ 29edf2b3-f0f4-45bd-9091-387e6daa5207
-write_cif(hydrogenated, "hydrogenated.cif")
+hydrated_Pd2 = moiety("hydrated_Pd2.xyz")
 
 # ╔═╡ b7a6a162-39cc-4137-b803-94c2a5326b6e
-begin
-	H!_H2_Pd2 = moiety("H!_hydrogenated_Pd2.xyz")
-	OA_Pd2 = moiety("OA_Pd2.xyz")
-end
+OA_Pd2 = moiety("OA_Pd2.xyz")
 
 # ╔═╡ e232cfc8-a954-4089-be59-a9fa5b3a2736
-oxidative_addition = replace(hydrogenated, H!_H2_Pd2 => OA_Pd2)
+oxidative_addition = replace(poscar, hydrated_Pd2 => OA_Pd2)
 
 # ╔═╡ 908ab709-c12a-455b-994b-89e600d47b06
 write_cif(oxidative_addition, "oxidative_addition.cif")
@@ -720,16 +655,6 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╔═╡ Cell order:
 # ╠═89fba1c6-4c1e-11ec-2210-f1338e221699
 # ╠═5da0de46-a8fa-4843-90bc-58e52a6d1d61
-# ╟─01df2894-2af1-47f6-bdd8-be72e2d1e720
-# ╠═2b34e560-e3ad-420c-908b-6c63baec3006
-# ╠═b20544b5-a8e7-49cd-9fbf-269f439ecc2f
-# ╠═7b72d017-9c14-4d9f-98f8-1e5e5287e3c6
-# ╠═e3a3366a-b7ca-4ba5-94b2-66d727d80b54
-# ╟─007f45ff-560a-43c4-923a-be49ea9e3101
-# ╠═06db7c8d-1ed2-4cd4-8714-812735964cdf
-# ╠═62e8d9e4-7d28-45af-8263-735807c92810
-# ╠═29d9579d-c443-4c8d-aff9-0fca1b4d0a15
-# ╠═929294c8-f105-4ddb-b840-898ae774aa76
 # ╟─0b644231-c25a-4d9f-895d-16fc612613ec
 # ╠═916b9bc9-c6c9-444b-9281-e3709c248b75
 # ╠═da1f22fb-8e16-439b-934a-280ed31635df
@@ -739,8 +664,6 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═db771098-8097-4748-85c7-ece4faed4e43
 # ╠═35c1c1d5-ea01-4d15-80c3-63330744b037
 # ╠═b09ea1c5-67b5-4953-8fef-c5144f09186b
-# ╠═6a1abb89-a91f-4cc9-9833-de3736c08d4e
-# ╠═29edf2b3-f0f4-45bd-9091-387e6daa5207
 # ╠═b7a6a162-39cc-4137-b803-94c2a5326b6e
 # ╠═e232cfc8-a954-4089-be59-a9fa5b3a2736
 # ╠═908ab709-c12a-455b-994b-89e600d47b06
