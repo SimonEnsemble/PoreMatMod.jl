@@ -1,4 +1,4 @@
-using Logging
+using Bio3DView, Logging
 
 # list of required files for examples
 required_files = Dict(:crystals => ["IRMOF-1.cif", "SIFSIX-2-Cu-i.cif", "IRMOF-1_noH.cif", "UiO-66.cif"],
