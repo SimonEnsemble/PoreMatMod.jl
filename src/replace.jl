@@ -117,7 +117,7 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
     # BitArray for identifying atoms as masked (false) or unmasked (true)
     not_masked = map(species -> ! occursin(rc[:r_tag], String(species)), query.atoms.species) .== true
     # get isomrphism between query/mask and replacement
-    q_unmasked_in_r = query[not_masked] ∈ replacement
+    q_unmasked_in_r = substructure_search(query[not_masked], replacement, assertion_override=true)
     # check for good input
     if nb_locations(q_unmasked_in_r) > 1
         @warn "There should be a single subset of the replacement isomorphic to the unmasked query!"
