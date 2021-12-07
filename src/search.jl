@@ -103,7 +103,8 @@ designating atoms to replace with other moieties.
 - `parent::Crystal` the parent structure
 - `disconnected_component::Bool=false` if true, disables substructure searching (e.g. for finding guest molecules)
 """
-function substructure_search(query::Crystal, parent::Crystal; disconnected_component::Bool=false)::Search
+function substructure_search(query::Crystal, parent::Crystal; disconnected_component::Bool=false, assertion_override::Bool=false)::Search
+    @assert ne(parent.bonds) > 0 || assertion_override "The parent structure must have bonds."
     # Make a copy w/o R tags for searching
     moty = deepcopy(query)
     untag_r_group!(moty)
