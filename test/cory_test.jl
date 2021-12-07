@@ -10,6 +10,9 @@ import Pkg; Pkg.activate()
 # ╔═╡ 1860c789-ca2a-4d2e-be9f-af91fe544691
 using PoreMatMod, Bio3DView, PlutoUI, Graphs, LinearAlgebra, StatsBase
 
+# ╔═╡ cdaa8965-dd2f-4467-9458-cbbbf4650976
+include("ExampleHelper.jl")
+
 # ╔═╡ b6dea881-26f4-4a20-b916-026dcae240c3
 function viz(xtal::Crystal)
 	write_cif(xtal, "dude.cif")
@@ -161,9 +164,13 @@ write_cif(child)
 # ╔═╡ 6168b10b-40db-439e-86df-179ea2a1c506
 viz(child)
 
+# ╔═╡ eae2225c-40f0-4d68-a9a2-43a39a82f029
+view_structure(child)
+
 # ╔═╡ Cell order:
 # ╠═cdf8f316-54a1-11ec-0e6d-b1a485ca5fe8
 # ╠═1860c789-ca2a-4d2e-be9f-af91fe544691
+# ╠═cdaa8965-dd2f-4467-9458-cbbbf4650976
 # ╠═b6dea881-26f4-4a20-b916-026dcae240c3
 # ╠═536e88c0-3924-4cfb-a4f9-e5ad8c76ea88
 # ╠═f313cbbc-b39f-4ba1-ba25-6b106a9c5c0e
@@ -191,3 +198,4 @@ viz(child)
 # ╠═586f38c8-4bd5-4cd5-a748-896f795afc6f
 # ╠═d8ea8d5e-f17a-412b-8461-15ba6d9621ec
 # ╠═6168b10b-40db-439e-86df-179ea2a1c506
+# ╠═eae2225c-40f0-4d68-a9a2-43a39a82f029
