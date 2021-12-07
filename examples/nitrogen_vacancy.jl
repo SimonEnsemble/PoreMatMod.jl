@@ -4,11 +4,11 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 4ca5ec9e-4bdf-11ec-2763-23eb8edd5ebb
+# ╔═╡ 2065e50f-1bba-4182-ae16-70feecaa1942
 using PoreMatMod, Bio3DView
 
-# ╔═╡ 1d58256f-c200-4e83-8b98-f2feee47213b
-include("./ExampleHelper.jl");
+# ╔═╡ 5e702404-3665-411e-a4d2-cb7fba303c91
+using PoreMatMod.ExampleHelpers
 
 # ╔═╡ 52318187-a575-4864-8185-416faeea27ab
 begin
@@ -52,7 +52,7 @@ PoreMatMod = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 
 [compat]
 Bio3DView = "~0.1.3"
-PoreMatMod = "~0.2.6"
+PoreMatMod = "~0.2.7"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -66,9 +66,9 @@ version = "0.0.1"
 
 [[AbstractPlutoDingetjes]]
 deps = ["Pkg"]
-git-tree-sha1 = "0bc60e3006ad95b4bb7497698dd7c6d649b9bc06"
+git-tree-sha1 = "abb72771fd8895a7ebd83d5632dc4b989b022b5b"
 uuid = "6e696c72-6542-2067-7265-42206c756150"
-version = "1.1.1"
+version = "1.1.2"
 
 [[ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -111,9 +111,9 @@ version = "0.9.7"
 
 [[ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "f885e7e7c124f8c92650d61b9477b9ac2ee607dd"
+git-tree-sha1 = "4c26b4e9e91ca528ea212927326ece5918a04b47"
 uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-version = "1.11.1"
+version = "1.11.2"
 
 [[ChangesOfVariables]]
 deps = ["LinearAlgebra", "Test"]
@@ -128,10 +128,10 @@ uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
 version = "3.40.0"
 
 [[Conda]]
-deps = ["JSON", "VersionParsing"]
-git-tree-sha1 = "299304989a5e6473d985212c28928899c74e9421"
+deps = ["Downloads", "JSON", "VersionParsing"]
+git-tree-sha1 = "6cdc8832ba11c7695f494c9d9a1c31e90959ce0f"
 uuid = "8f4d0f93-b110-5947-807f-2305c1781a2d"
-version = "1.5.2"
+version = "1.6.0"
 
 [[Configurations]]
 deps = ["ExproniconLite", "OrderedCollections", "TOML"]
@@ -221,9 +221,9 @@ uuid = "59287772-0a20-5a39-b81b-1366585eb4c0"
 version = "0.4.2"
 
 [[FromFile]]
-git-tree-sha1 = "f4fce099f9e14cd12d91e29fd105ef891fb55297"
+git-tree-sha1 = "81e918d0ed5978fcdacd06b7c64c0c5074c4d55a"
 uuid = "ff7dd447-1dcb-4ce3-b8ac-22a812192de7"
-version = "0.1.1"
+version = "0.1.2"
 
 [[Future]]
 deps = ["Random"]
@@ -414,9 +414,9 @@ uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[Pluto]]
 deps = ["Base64", "Configurations", "Dates", "Distributed", "FileWatching", "FuzzyCompletions", "HTTP", "InteractiveUtils", "Logging", "Markdown", "MsgPack", "Pkg", "REPL", "Sockets", "TableIOInterface", "Tables", "UUIDs"]
-git-tree-sha1 = "a5b3fee95de0c0a324bab53a03911395936d15d9"
+git-tree-sha1 = "669c67f837da26719ff9102cd9b193e0d2114472"
 uuid = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
-version = "0.17.2"
+version = "0.17.3"
 
 [[PlutoSliderServer]]
 deps = ["Base64", "Configurations", "Distributed", "FromFile", "GitHubActions", "HTTP", "Logging", "Pkg", "Pluto", "SHA", "Sockets", "TOML", "UUIDs"]
@@ -426,9 +426,9 @@ version = "0.2.7"
 
 [[PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "Dates", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "Markdown", "Random", "Reexport", "UUIDs"]
-git-tree-sha1 = "e071adf21e165ea0d904b595544a8e514c8bb42c"
+git-tree-sha1 = "b68904528fd538f1cb6a3fbc44d2abdc498f9e8e"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.19"
+version = "0.7.21"
 
 [[PooledArrays]]
 deps = ["DataAPI", "Future"]
@@ -437,10 +437,10 @@ uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
 version = "1.4.0"
 
 [[PoreMatMod]]
-deps = ["Bio3DView", "CSV", "DataFrames", "FIGlet", "Graphs", "LinearAlgebra", "MetaGraphs", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
-git-tree-sha1 = "e4b40bedba7a4aadefe93b52b809de10539bc915"
+deps = ["Bio3DView", "CSV", "DataFrames", "FIGlet", "Graphs", "LinearAlgebra", "MetaGraphs", "Pluto", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
+git-tree-sha1 = "53bccf1b4a3c0b5e3c7d70cbc93a6bbda802edaa"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
-version = "0.2.6"
+version = "0.2.7"
 
 [[PrettyTables]]
 deps = ["Crayons", "Formatting", "Markdown", "Reexport", "Tables"]
@@ -611,8 +611,8 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 """
 
 # ╔═╡ Cell order:
-# ╠═4ca5ec9e-4bdf-11ec-2763-23eb8edd5ebb
-# ╠═1d58256f-c200-4e83-8b98-f2feee47213b
+# ╠═2065e50f-1bba-4182-ae16-70feecaa1942
+# ╠═5e702404-3665-411e-a4d2-cb7fba303c91
 # ╠═52318187-a575-4864-8185-416faeea27ab
 # ╠═6922e27b-b848-418b-bf1a-df17315baa80
 # ╠═418a7421-92ed-406f-9578-34187529c307

@@ -114,7 +114,7 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
     parent = q_in_p.parent
     query = q_in_p.query
     # which atoms from query are in replacement?
-    q_unmasked2q = idx_filter(query, r_group_indices(query)) ## TODO eliminate (if possible)
+    q_unmasked2q = idx_filter(query, r_group_indices(query))
     # BitArray for identifying atoms as masked (false) or unmasked (true)
     not_masked = map(species -> ! occursin(rc[:r_tag], String(species)), query.atoms.species) .== true
     # get isomrphism between query/mask and replacement

@@ -3,18 +3,21 @@ module PoreMatMod_Test
 using Test, Graphs, PoreMatMod, LinearAlgebra
 
 @testset "non-p1 symmetry" begin
-    parent = Crystal("NiPyC2_experiment.cif", convert_to_p1=false)
+    parent = Crystal("NiPyC_fragment_trouble.cif", convert_to_p1=false)
     infer_bonds!(parent, true)
 
-    query = moiety("3-H!-4-pyridyl.xyz")
-    replacement = moiety("3-NH2-4-pyridyl.xyz")
-    prim_child = replace(parent, query => replacement) ## BUG alignment is totally wrong for multi-atom substitutions
+    query = moiety("PyC.xyz")
+    replacement = moiety("PyC-CH3.xyz")
+    prim_child = replace(parent, query => replacement)
 
     write_cif(prim_child, joinpath(rc[:paths][:crystals], "prim_child.cif"))
     child = Crystal("prim_child.cif")
 
-    @test child.atoms.n == 0
-    @test prim_child.symmetry == parent.symmetry
+    @test child.atoms.n == 33
+    @test ne(prim_child.bonds) == 34
+    @test   prim_child.symmetry.operations == parent.symmetry.operations && 
+            prim_child.symmetry.space_group == parent.symmetry.space_group && 
+            prim_child.symmetry.is_p1 == parent.symmetry.is_p1
 end
 
 @testset "substructure_search" begin

@@ -7,8 +7,6 @@ import Base.(∈), Base.show, Base.replace
 
 
 function __init__()
-    rc[:paths][:moieties] = joinpath(rc[:paths][:data], "moieties")
-    rc[:r_tag] = '!'
     add_bonding_rules(tagged_bonding_rules())
 end
 
@@ -32,5 +30,6 @@ include("misc.jl")
 include("search.jl")
 include("replace.jl")
 include("examples.jl")
+include("ExampleHelpers.jl")
 
 end
