@@ -98,6 +98,7 @@ function align(q_unmasked2r_isom::Vector{Int}, parent::Crystal, replacement::Cry
     # shift all replacement nodes according to center of isomorphic subset
     replacement′ = deepcopy(replacement)
     replacement′.atoms.coords.xf .-= geometric_center(replacement[q_unmasked2r_isom])
+    write_cif(replacement′, "shifted_replacement.cif")
     # get OP rotation matrix to align replacement onto parent
     rot_r2p = r2p_op(replacement′, parent, r2p_isom)
     # transform replacement by rot_r2p, and parent_subset_center (this is now a potential crystal to add)
@@ -213,7 +214,13 @@ function _substructure_replace(q_in_p::Search, replacement::Crystal, configs::Ar
         cross_pb = dist != distance(new_xtal.atoms, new_xtal.box, src(bond), dst(bond), false)
         set_props!(new_xtal.bonds, bond, Dict(:distance => dist, :cross_boundary => cross_pb))
     end
-    return new_xtal
+    # handle symmetry
+    if parent.symmetry.is_p1
+        return new_xtal
+    else
+        @warn "Copying symmetry rules for non-P1 crystal"
+        return Crystal(new_xtal.name, new_xtal.box, new_xtal.atoms, new_xtal.charges, new_xtal.bonds, parent.symmetry)
+    end
 end
 
 
