@@ -11,3 +11,5 @@ examples/*.html
 .PoreMatMod_CI
 data/
 /*.cif
+examples/*.xyz
+examples/data/*
