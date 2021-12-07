@@ -1,1 +1,5 @@
 Manifest.toml
+examples/*.cif
+examples/*.xyz
+test/*.cif
+test/*.xyz
