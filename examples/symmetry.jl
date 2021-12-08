@@ -18,14 +18,13 @@ using PoreMatMod.ExampleHelpers
 
 # ╔═╡ 536e88c0-3924-4cfb-a4f9-e5ad8c76ea88
 begin
-	parent = replicate(Crystal("NiPyC_fragment_trouble.cif"), (2,2,2))
+	parent = Crystal("NiPyC_fragment_trouble.cif")
+	parent = replicate(parent, (2,2,2))
 	infer_bonds!(parent, true)
 	query = moiety("PyC.xyz")
 	replacement = moiety("PyC-CH3.xyz")
+	search = query in parent
 end
-
-# ╔═╡ cf65e65a-6d7a-45f1-bdb3-a08c77f00c80
-search = query in parent
 
 # ╔═╡ 4f8868ec-d566-4525-af7e-c54801e3d7b9
 begin
@@ -35,16 +34,8 @@ begin
 	ori_id = 1
 end
 
-# ╔═╡ 9585bd79-1fd6-4086-b4da-7e65d6400fea
-begin
-	# TODO make this a dict by default
-	q2p = Dict([q => search.isomorphisms[loc_id][ori_id][q] for q = 1:length(search.isomorphisms[loc_id][ori_id])])
-end
-
-# ╔═╡ b65a6988-40e1-4311-ac82-c9d6f03096ae
-function ids_not_masked(query::Crystal)
-	return filter(i -> ! occursin(rc[:r_tag], String(query.atoms.species[i])), 1:query.atoms.n)
-end
+# ╔═╡ ee7747cc-d5cf-46f3-807b-d3768621d11c
+q2p = search.isomorphisms[loc_id][ori_id]
 
 # ╔═╡ fe31629c-ce57-46ff-9f76-9b09b1257164
 nb_masked(query::Crystal) = sum(occursin.(rc[:r_tag], String.(query.atoms.species)))
@@ -55,11 +46,11 @@ nb_not_masked(query::Crystal) = sum(.! occursin.(rc[:r_tag], String.(query.atoms
 # ╔═╡ 0dfe1c41-cadd-4d56-bdf2-106ac17e8df4
 @assert nb_masked(query) + nb_not_masked(query) == query.atoms.n
 
-# ╔═╡ 3b81670a-b4d3-4d03-a42c-1d033edffb93
-@assert ids_not_masked(query) == 1:query.atoms.n-nb_masked(query)
+# ╔═╡ 690427dc-c25b-4f23-af11-3d47c132a6b5
+@assert ! any(occursin.(rc[:r_tag], String.(query.atoms.species))[1:nb_not_masked(query)]) "all masked atoms should be at the end"
 
 # ╔═╡ 21a25153-9ce8-419f-8c3d-69cdeb0a0d67
-q_unmasked_in_r = query[ids_not_masked(query)] ∈ replacement
+q_unmasked_in_r = query[1:nb_not_masked(query)] ∈ replacement
 
 # ╔═╡ a47dc0bd-73a9-49da-9253-9fc28b78be9f
 q2r = Dict([q => q_unmasked_in_r.isomorphisms[1][1][q] for q = 1:nb_not_masked(query)])
@@ -151,25 +142,29 @@ trim(parent::Crystal, q2p::Dict{Int, Int}) = parent[[p for p = 1:parent.atoms.n 
 # ╔═╡ 586f38c8-4bd5-4cd5-a748-896f795afc6f
 child = trim(parent, q2p) + replacement_to_install
 
+# ╔═╡ d1c4eccb-09ee-44b6-8f4a-199fadfeada1
+parent
+
 # ╔═╡ d8ea8d5e-f17a-412b-8461-15ba6d9621ec
 write_cif(child)
 
 # ╔═╡ eae2225c-40f0-4d68-a9a2-43a39a82f029
 view_structure(child)
 
+# ╔═╡ 7abad665-81e7-47be-832e-845aabfce518
+child.name
+
 # ╔═╡ Cell order:
 # ╠═cdf8f316-54a1-11ec-0e6d-b1a485ca5fe8
 # ╠═3bb3966e-a7dd-46c1-b649-33169ce424d2
 # ╠═d3eef6f4-ff15-47f3-8686-2c0cb0fb882d
 # ╠═536e88c0-3924-4cfb-a4f9-e5ad8c76ea88
-# ╠═cf65e65a-6d7a-45f1-bdb3-a08c77f00c80
 # ╠═4f8868ec-d566-4525-af7e-c54801e3d7b9
-# ╠═9585bd79-1fd6-4086-b4da-7e65d6400fea
-# ╠═b65a6988-40e1-4311-ac82-c9d6f03096ae
+# ╠═ee7747cc-d5cf-46f3-807b-d3768621d11c
 # ╠═fe31629c-ce57-46ff-9f76-9b09b1257164
 # ╠═cc9d44ed-2b90-48df-83e9-7181ca2f8286
 # ╠═0dfe1c41-cadd-4d56-bdf2-106ac17e8df4
-# ╠═3b81670a-b4d3-4d03-a42c-1d033edffb93
+# ╠═690427dc-c25b-4f23-af11-3d47c132a6b5
 # ╠═21a25153-9ce8-419f-8c3d-69cdeb0a0d67
 # ╠═a47dc0bd-73a9-49da-9253-9fc28b78be9f
 # ╠═96f583de-ff3b-4287-bf16-132eaf9adc05
@@ -182,5 +177,7 @@ view_structure(child)
 # ╠═0cbf3baa-24fc-4022-a08e-8b24379d1500
 # ╠═2b342469-8967-4817-9439-ea6625321c41
 # ╠═586f38c8-4bd5-4cd5-a748-896f795afc6f
+# ╠═d1c4eccb-09ee-44b6-8f4a-199fadfeada1
 # ╠═d8ea8d5e-f17a-412b-8461-15ba6d9621ec
 # ╠═eae2225c-40f0-4d68-a9a2-43a39a82f029
+# ╠═7abad665-81e7-47be-832e-845aabfce518
