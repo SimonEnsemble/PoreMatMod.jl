@@ -209,47 +209,7 @@ function aligned_replacement(replacement::Crystal, parent::Crystal, r2p_alignmen
 end
 
 
-function get_r2p_alignment(replacement::Crystal, parent::Crystal, r2p::Dict{Int, Int})
-    center = (X::Matrix{Float64}) -> sum(X, dims=2)[:] / size(X, 2)
-    # when both centered to origin
-    @assert replacement.atoms.n ≥ 3 && parent.atoms.n ≥ 3 "Parent and replacement must each be at least 3 atoms for SVD alignment."
-    ###
-    #   compute centered Cartesian coords of the atoms of 
-    #       replacement fragment involved in alignment
-    ###
-    atoms_r = Cart(replacement.atoms[[r for (r, p) in r2p]], replacement.box)
-    X_r = atoms_r.coords.x
-    x_r_center = center(X_r)
-    X_r = X_r .- x_r_center
-
-    ###
-    #   compute centered Cartesian coords of the atoms of 
-    #       parent involved in alignment
-    ###
-    parent_substructure = parent[[p for (r, p) in r2p]]
-    conglomerate!(parent_substructure)
-    atoms_p = Cart(parent_substructure.atoms, parent_substructure.box)
-    Xtals.write_xyz(atoms_p, "atoms_p.xyz")
-    X_p = atoms_p.coords.x
-    x_p_center = center(X_p)
-    X_p = X_p .- x_p_center
-
-    # solve the orthogonal procrustes probelm via SVD
-    F = svd(X_r * X_p')
-    # optimal rotation matrix
-    rot =  F.V * F.U'
-
-    err = norm(rot * X_r - X_p)
-
-    return Alignment(rot, - x_r_center, x_p_center, err)
-end
-
-
 # Internal method for performing substructure replacements
-function __substructure_replace(q_in_p::Search, replacement::Crystal, configs::Array{Tuple{Int,Int}}, new_xtal_name::String)::Crystal
-
-end
-
 function _substructure_replace(q_in_p::Search, replacement::Crystal, configs::Array{Tuple{Int,Int}}, new_xtal_name::String)::Crystal ## old version (deleteme)
     parent = q_in_p.parent
     # configs must all be unique
