@@ -10,6 +10,23 @@ Accepts the same keyword arguments as [`substructure_replace`](@ref).
 """
 replace(p::Crystal, pair::Pair; kwargs...) = substructure_replace(pair[1] ∈ p, pair[2]; kwargs...)
 
+
+"""
+    alignment = Alignment(rot::Matrix{Float64}, shift_1::Vector{Float64}, shift_2::Vector{Float64}, err::Float64)
+
+Data structure for tracking alignment in substructure find/replace operations.
+"""
+struct Alignment
+	rot::Matrix{Float64}
+	# before rotation
+	shift_1::Vector{Float64}
+	# after rotation
+	shift_2::Vector{Float64}
+	# error
+	err::Float64
+end
+
+
 # Gets the rotation matrix for aligning the replacement moiety onto a subset (isomorphic to masked query) of parent atoms
 function r2p_op(replacement::Crystal, parent::Crystal, r2p_isom::Dict{Int,Int})
     @assert replacement.atoms.n ≥ 3 && parent.atoms.n ≥ 3 "Parent and replacement must each be at least 3 atoms for SVD alignment."
@@ -182,14 +199,63 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
 end
 
 
-## Internal method for performing substructure replacements
-function _substructure_replace(q_in_p::Search, replacement::Crystal, configs::Array{Tuple{Int,Int}}, new_xtal_name::String)::Crystal
-    query = q_in_p.query
+function aligned_replacement(replacement::Crystal, parent::Crystal, r2p_alignment::Alignment)
+    # put replacement into cartesian space
+    atoms_r = Cart(replacement.atoms, replacement.box)
+    # rotate replacement to align with parent_subset
+    atoms_r.coords.x[:, :] = r2p_alignment.rot * (atoms_r.coords.x .+ r2p_alignment.shift_1) .+ r2p_alignment.shift_2
+    # cast atoms back to Frac
+    return Crystal(replacement.name, parent.box, Frac(atoms_r, parent.box), Charges{Frac}(0))
+end
+
+
+function get_r2p_alignment(replacement::Crystal, parent::Crystal, r2p::Dict{Int, Int})
+    center = (X::Matrix{Float64}) -> sum(X, dims=2)[:] / size(X, 2)
+    # when both centered to origin
+    @assert replacement.atoms.n ≥ 3 && parent.atoms.n ≥ 3 "Parent and replacement must each be at least 3 atoms for SVD alignment."
+    ###
+    #   compute centered Cartesian coords of the atoms of 
+    #       replacement fragment involved in alignment
+    ###
+    atoms_r = Cart(replacement.atoms[[r for (r, p) in r2p]], replacement.box)
+    X_r = atoms_r.coords.x
+    x_r_center = center(X_r)
+    X_r = X_r .- x_r_center
+
+    ###
+    #   compute centered Cartesian coords of the atoms of 
+    #       parent involved in alignment
+    ###
+    parent_substructure = parent[[p for (r, p) in r2p]]
+    conglomerate!(parent_substructure)
+    atoms_p = Cart(parent_substructure.atoms, parent_substructure.box)
+    Xtals.write_xyz(atoms_p, "atoms_p.xyz")
+    X_p = atoms_p.coords.x
+    x_p_center = center(X_p)
+    X_p = X_p .- x_p_center
+
+    # solve the orthogonal procrustes probelm via SVD
+    F = svd(X_r * X_p')
+    # optimal rotation matrix
+    rot =  F.V * F.U'
+
+    err = norm(rot * X_r - X_p)
+
+    return Alignment(rot, - x_r_center, x_p_center, err)
+end
+
+
+# Internal method for performing substructure replacements
+function __substructure_replace(q_in_p::Search, replacement::Crystal, configs::Array{Tuple{Int,Int}}, new_xtal_name::String)::Crystal
+
+end
+
+function _substructure_replace(q_in_p::Search, replacement::Crystal, configs::Array{Tuple{Int,Int}}, new_xtal_name::String)::Crystal ## old version (deleteme)
     parent = q_in_p.parent
     # configs must all be unique
     @assert length(configs) == length(unique(configs)) "configs must be unique"
     # mutation guard
-    query, replacement = deepcopy.([query, replacement])
+    replacement = deepcopy(replacement)
     # if there are no replacements to be made, just return the parent
     if nb_isomorphisms(q_in_p) == 0
         @warn "No replacements to be made."
