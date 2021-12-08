@@ -49,15 +49,15 @@ end
 
 # tracks which bonds need to be made between the parent and array
 # of transformed replacement's (xrms) along with the new fragments
-function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, q2p_isom::Array{Int},
-    parent::Crystal, q_unmasked2r_isom::Union{Array{Int},Nothing}, xrm::Union{Crystal,Nothing}, count_xrms::Int)
+function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, q2p_isom::Dict{Int,Int},
+    parent::Crystal, q_unmasked2r_isom::Union{Dict{Int,Int},Nothing}, xrm::Union{Crystal,Nothing}, count_xrms::Int)
     # skip bond accumulation for null replacement
     if q_unmasked2r_isom == Int[] || isnothing(q_unmasked2r_isom)
         return
     end
     # bonds between new fragments and parent
     # loop over q2p_isom
-    for (s, p) in enumerate(q2p_isom)
+    for (s, (q, p)) in enumerate(q2p_isom)
         # in case the replacement moiety is smaller than the search moiety
         if s > length(q_unmasked2r_isom)
             break
@@ -68,7 +68,7 @@ function accumulate_bonds!(bonds::Array{Tuple{Int,Int}}, q2p_isom::Array{Int},
         for nᵢ in n
             # if neighbor not in q2p_isom, must bond it to replacement replacement
             # of parent_subset atom
-            if !(nᵢ ∈ q2p_isom)
+            if !(nᵢ ∈ values(q2p_isom))
                 # ID the atom in replacement
                 r = q_unmasked2r_isom[s]
                 # add the index offset
@@ -88,23 +88,23 @@ end
 
 
 # align the replacement onto the parent subgraph using the mappings between q, p, q′, and r
-function align(q_unmasked2r_isom::Vector{Int}, parent::Crystal, replacement::Crystal, r2p_isom::Dict{Int, Int}, q_unmasked2p_isom::Vector{Int})
+function align(q_unmasked2r_isom::Dict{Int,Int}, parent::Crystal, replacement::Crystal, r2p_isom::Dict{Int, Int}, q_unmasked2p_isom::Dict{Int,Int})
     # find parent subset
-    parent_subset = deepcopy(parent[q_unmasked2p_isom])
+    parent_subset = deepcopy(parent[[q_unmasked2p_isom[q] for q in 1:length(q_unmasked2p_isom)]])
     # adjust coordinates for periodic boundaries
     adjust_for_pb!(parent_subset)
     # record the center of parent_subset so we can translate back later
     parent_subset_center = geometric_center(parent_subset)
     # shift all replacement nodes according to center of isomorphic subset
     replacement′ = deepcopy(replacement)
-    replacement′.atoms.coords.xf .-= geometric_center(replacement[q_unmasked2r_isom])
+    replacement′.atoms.coords.xf .-= geometric_center(replacement[[q_unmasked2r_isom[q] for q in 1:length(q_unmasked2r_isom)]])
     write_cif(replacement′, "shifted_replacement.cif")
     # get OP rotation matrix to align replacement onto parent
     rot_r2p = r2p_op(replacement′, parent, r2p_isom)
     # transform replacement by rot_r2p, and parent_subset_center (this is now a potential crystal to add)
     xrm = xform_replacement(replacement′, rot_r2p, parent_subset_center, parent)
     # calculate the alignment error
-    alignment_error = rmsd(xrm.atoms.coords.xf[:, q_unmasked2r_isom], parent.atoms.coords.xf[:, q_unmasked2p_isom])
+    alignment_error = rmsd(xrm.atoms.coords.xf[:, [q_unmasked2r_isom[q] for q in 1:length(q_unmasked2r_isom)]], parent.atoms.coords.xf[:, [q_unmasked2p_isom[q] for q in 1:length(q_unmasked2p_isom)]])
     return xrm, alignment_error
 end
 
@@ -114,7 +114,7 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
     parent = q_in_p.parent
     query = q_in_p.query
     # which atoms from query are in replacement?
-    q_unmasked2q = idx_filter(query, r_group_indices(query))
+    q_unmasked2q = [i for i in 1:query.atoms.n if !(i ∈ r_group_indices(query))]
     # BitArray for identifying atoms as masked (false) or unmasked (true)
     not_masked = map(species -> ! occursin(rc[:r_tag], String(species)), query.atoms.species) .== true
     # get isomrphism between query/mask and replacement
@@ -153,7 +153,7 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
                 # determine mapping r2p
                 r2p_isom = Dict([r => q2p_isom′[q] for (q,r) in q2r_isom′])
                 # determine isomorphism from masked query to parent
-                q_unmasked2p_isom = q2p_isom′[q_unmasked2q]
+                q_unmasked2p_isom = Dict([q => q2p_isom′[q] for q in q_unmasked2q])
                 # check error and keep xrm & q_unmasked2r_isom if better than previous best error
                 xrm′, alignment_err′ = align(q_unmasked2r_isom, parent, replacement, r2p_isom, q_unmasked2p_isom)
                 if alignment_err′ < alignment_err
@@ -170,7 +170,7 @@ function build_replacement_data(configs::Vector{Tuple{Int,Int}}, q_in_p::Search,
             push!(xrms, xrm)
         end
         # push obsolete atoms to array
-        for x in q2p_isom
+        for x in values(q2p_isom)
             push!(del_atoms, x) # this can create duplicates; remove them later
         end
         # clean up del_atoms

@@ -19,7 +19,7 @@ where `isom[k]` is the index of the atom in `search.parent` corresponding to ato
 struct Search
     parent::Crystal
     query::Crystal
-    isomorphisms::Vector{Vector{Vector{Int}}}
+    isomorphisms::Vector{Vector{Dict{Int,Int}}}
 end
 
 Base.show(io::IO, s::Search) = begin
@@ -111,15 +111,15 @@ function substructure_search(query::Crystal, parent::Crystal; disconnected_compo
     # Get array of configuration arrays
     configs = find_subgraph_isomorphisms(moty.bonds, moty.atoms.species, parent.bonds, parent.atoms.species, disconnected_component)
     df = DataFrame(p_subset=[sort(c) for c in configs], isomorphism=configs)
-    locs = Int[]
-    isoms = Array{Int}[]
-    for (i, loc) in enumerate(groupby(df, :p_subset))
-        for isom in loc.isomorphism
-            push!(locs, i)
-            push!(isoms, isom)
+    
+    results = Vector{Dict{Int,Int}}[]
+    for (i, df_loc) in enumerate(groupby(df, :p_subset))
+        q2p_loc = Dict{Int,Int}[]
+        for isomorphism in df_loc.isomorphism
+            q2p = Dict([q => p for (q, p) in enumerate(isomorphism)])
+            push!(q2p_loc, q2p)
         end
+        push!(results, q2p_loc)
     end
-    gdf = groupby(DataFrame(location=locs, isomorphism=isoms), :location)
-    results = [loc.isomorphism for loc in gdf]
     return Search(parent, query, results)
 end
