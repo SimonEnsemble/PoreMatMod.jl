@@ -34,12 +34,6 @@ end
 adjust_for_pb!(xtal::Crystal) = adjust_for_pb!(xtal.atoms.coords.xf, xtal_name=xtal.name)
 
 
-# returns an Array containing the indices
-function idx_filter(xtal::Crystal, subset::Array{Int})::Array{Int,1}
-    return [i for i in 1:xtal.atoms.n if !(i ∈ subset)]
-end
-
-
 """
     PoreMatModGO()
 
