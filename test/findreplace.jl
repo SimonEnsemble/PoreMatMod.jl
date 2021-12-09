@@ -93,65 +93,6 @@ replacement = moiety("2-acetylamido-p-phenylene.xyz")
     (ne(xtal.bonds) - ne(query.bonds) + ne(replacement.bonds))
 end
 
-@testset "platform-specific output consistency" begin
-"""
-        !!! DEVELOPER NOTE !!!
-
-    This test is weird. The exact coordinates that come out of the find/replace operation being tested depend on the system in use.
-    Specifically, Intel Haswell CPUs give slightly different results than Intel SkylakeX. Why? Not sure. They are visually indiscernible.
-    So, different manually-authenticated outputs are used for the test.
-    If the machine is running OpenBLAS 0.3.10 and LAPACK 3.9.0 on a SkylakeX CPU, the test is vs. skylakex_acetamido_IRMOF-1.cif.
-    If the machine is running those OpenBLAS/LAPACK versions on a Haswell CPU, the test is vs. haswell_acetamido_IRMOF-1.cif.
-    The Haswell coords are used as a fallback on machines matching neither description, and the test's results are displayed but ignored.
-"""
-
-environment = :unknown
-
-try
-    libblas = LinearAlgebra.BLAS.libblas
-    blas_string = LinearAlgebra.BLAS.openblas_get_config()
-    liblapack = LinearAlgebra.LAPACK.liblapack
-    lapack_version = LinearAlgebra.LAPACK.version()
-
-    if libblas == liblapack == "libopenblas64_" && contains(blas_string, "OpenBLAS") && contains(blas_string, "0.3.10") && lapack_version == v"3.9.0"
-        if contains(blas_string, "SkylakeX")
-            environment = :SkylakeX
-        elseif contains(blas_string, "Haswell")
-            environment = :Haswell
-        end
-    end
-catch
-end
-
-if environment == :unknown
-    @warn "The present environment has undefined behavior for this test. The test will run and its results will be displayed, but ignored. The user should visually inspect test_acetamido_IRMOF-1.cif"
-end
-
-# test that the coordinates resulting from a specific replacement are the same as a verified test run
-parent = Crystal("IRMOF-1.cif")
-infer_bonds!(parent, true)
-query = moiety("2-!-p-phenylene.xyz")
-replacement = moiety("2-acetylamido-p-phenylene.xyz")
-xtal1 = replace(parent, query => replacement, loc=[2,4,6,8], ori=[1,2,3,4])
-write_cif(xtal1, "test_acetamido_IRMOF-1.cif") # for CI artifact collection
-
-if environment == :SkylakeX
-    xtal2 = Crystal("skylake_acetamido_IRMOF-1.cif")
-else
-    xtal2 = Crystal("haswell_acetamido_IRMOF-1.cif")
-end
-
-result = all(isapprox.(xtal1.atoms.coords.xf, xtal2.atoms.coords.xf, atol=0.001))
-
-if environment ≠ :unknown
-    @test result
-elseif result
-    @info "Test passed."
-else
-    @warn "Test failed on unknown environment. See github.com/SimonEnsemble/PoreMatMod.jl/issues/92 for more info."
-end
-end
-
 @testset "remove duplicates" begin
     parent = moiety("ADC.xyz")
 	new_box = replicate(unit_cube(), (10, 10, 10))
