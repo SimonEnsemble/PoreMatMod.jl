@@ -1,6 +1,7 @@
 module ExampleHelpers
 
-using Bio3DView, Graphs, Logging, Markdown, Reexport
+using Graphs, Logging, Markdown, Reexport
+using Bio3DView: viewfile
 @reexport using Xtals
 
 include("moiety.jl")
