@@ -17,20 +17,20 @@ replace(p::Crystal, pair::Pair; kwargs...) = substructure_replace(pair[1] ∈ p,
 Data structure for tracking alignment in substructure find/replace operations.
 """
 struct Alignment
-	rot::Matrix{Float64}
-	# before rotation
-	shift_1::Vector{Float64}
-	# after rotation
-	shift_2::Vector{Float64}
-	# error
-	err::Float64
+    rot::Matrix{Float64}
+    # before rotation
+    shift_1::Vector{Float64}
+    # after rotation
+    shift_2::Vector{Float64}
+    # error
+    err::Float64
 end
 
 
 struct Installation
-	aligned_replacement::Crystal
-	q2p::Dict{Int, Int}
-	r2p::Dict{Int, Int}
+    aligned_replacement::Crystal
+    q2p::Dict{Int, Int}
+    r2p::Dict{Int, Int}
 end
 
 
@@ -71,39 +71,39 @@ end
 
 
 function conglomerate!(parent_substructure::Crystal)
-	# snip cross-PB bonds to generate multiple components
-	bonds = deepcopy(parent_substructure.bonds)
-	for e in edges(bonds) # loop over bonds
-		if get_prop(bonds, e, :cross_boundary) # find cross-PB bonds
-			rem_edge!(bonds, e)
-		end
-	end
-	# find conn comps
-	conn_comps = connected_components(bonds)
-	ref_comp_id = argmax(length.(conn_comps))
-	# set reference atom
-	ref_atom = conn_comps[ref_comp_id][1]
-	# loop over non-reference components and rectify images
-	for comp_id in 1:length(conn_comps)
-		if comp_id == ref_comp_id
-			continue
-		end
-		# get index of some atom in the non-reference comp
-		atom_idx = conn_comps[comp_id][1]
-		# find displacement vector for first atom
-		dx = parent_substructure.atoms.coords.xf[:, ref_atom] - 
-			 parent_substructure.atoms.coords.xf[:, atom_idx]
-		# get nearest image vector
-		nx = copy(dx)
-		nearest_image!(nx)
-		# if the norm of nx is less than that of dx, translate the atom
-		if norm(nx) < norm(dx)
-			for atom_idx in conn_comps[comp_id]
-				parent_substructure.atoms.coords.xf[:, atom_idx] .+= dx - nx
-			end
-		end
-	end
-	return
+    # snip cross-PB bonds to generate multiple components
+    bonds = deepcopy(parent_substructure.bonds)
+    for e in edges(bonds) # loop over bonds
+        if get_prop(bonds, e, :cross_boundary) # find cross-PB bonds
+            rem_edge!(bonds, e)
+        end
+    end
+    # find conn comps
+    conn_comps = connected_components(bonds)
+    ref_comp_id = argmax(length.(conn_comps))
+    # set reference atom
+    ref_atom = conn_comps[ref_comp_id][1]
+    # loop over non-reference components and rectify images
+    for comp_id in 1:length(conn_comps)
+        if comp_id == ref_comp_id
+            continue
+        end
+        # get index of some atom in the non-reference comp
+        atom_idx = conn_comps[comp_id][1]
+        # find displacement vector for first atom
+        dx = parent_substructure.atoms.coords.xf[:, ref_atom] - 
+             parent_substructure.atoms.coords.xf[:, atom_idx]
+        # get nearest image vector
+        nx = copy(dx)
+        nearest_image!(nx)
+        # if the norm of nx is less than that of dx, translate the atom
+        if norm(nx) < norm(dx)
+            for atom_idx in conn_comps[comp_id]
+                parent_substructure.atoms.coords.xf[:, atom_idx] .+= dx - nx
+            end
+        end
+    end
+    return
 end
 
 
@@ -118,18 +118,18 @@ end
 
 
 function effect_replacements(search::Search, replacement::Crystal, configs::Vector{Tuple{Int, Int}}, name::String)::Crystal
-	nb_not_masked = sum(.! occursin.(rc[:r_tag], String.(search.query.atoms.species)))
-	q_unmasked_in_r = substructure_search(search.query[1:nb_not_masked], replacement, assertion_override=true)
-	if length(q_unmasked_in_r.isomorphisms) > 0
+    nb_not_masked = sum(.! occursin.(rc[:r_tag], String.(search.query.atoms.species)))
+    if replacement.atoms.n > 0
+        q_unmasked_in_r = substructure_search(search.query[1:nb_not_masked], replacement)
         q2r = Dict([q => q_unmasked_in_r.isomorphisms[1][1][q] for q in 1:nb_not_masked])
     else
-        q2r = Dict([0 => 0])
+        q2r = Dict{Int, Int}()
     end
-	
-	installations = [optimal_replacement(search, replacement, q2r, loc_id, [ori_id]) for (loc_id, ori_id) in configs]
-	
-	child = install_replacements(search.parent, installations, name)
-	return child
+    
+    installations = [optimal_replacement(search, replacement, q2r, loc_id, [ori_id]) for (loc_id, ori_id) in configs]
+    
+    child = install_replacements(search.parent, installations, name)
+    return child
 end
 
 
@@ -175,10 +175,10 @@ end
 
 
 function optimal_replacement(search::Search, replacement::Crystal, q2r::Dict{Int,Int}, loc_id::Int, ori_ids::Vector{Int})
-	# unpack search arg
-	isomorphisms, parent = search.isomorphisms, search.parent
+    # unpack search arg
+    isomorphisms, parent = search.isomorphisms, search.parent
 
-    if q2r == Dict([0 => 0]) # "replace-with-nothing" operation
+    if q2r == Dict{Int, Int}() # "replace-with-nothing" operation
         q2p = isomorphisms[loc_id][1]
         r2p = Dict([0 => p for p in values(q2p)])
         return Installation(replacement, q2p, r2p)
@@ -188,29 +188,29 @@ function optimal_replacement(search::Search, replacement::Crystal, q2r::Dict{Int
         ori_ids = [1:nb_ori_at_loc(search)[loc_id]...]
     end
 
-	# loop over ori_ids to find best r2p_alignment
-	r2p_alignment = Alignment(zeros(1,1), [0.], [0.], Inf)
-	best_ori = 0
-	best_r2p = Dict{Int, Int}()
-	for ori_id in ori_ids
-		# find r2p isom
-		q2p = isomorphisms[loc_id][ori_id]
-		r2p = Dict([r => q2p[q] for (q, r) in q2r])
-		# calculate alignment
-		test_alignment = get_r2p_alignment(replacement, parent, r2p)
-		# keep best alignment and generating ori_id
-		if test_alignment.err < r2p_alignment.err
-			r2p_alignment = test_alignment
-			best_ori = ori_id
-			best_r2p = r2p
-		end
-	end
+    # loop over ori_ids to find best r2p_alignment
+    r2p_alignment = Alignment(zeros(1,1), [0.], [0.], Inf)
+    best_ori = 0
+    best_r2p = Dict{Int, Int}()
+    for ori_id in ori_ids
+        # find r2p isom
+        q2p = isomorphisms[loc_id][ori_id]
+        r2p = Dict([r => q2p[q] for (q, r) in q2r])
+        # calculate alignment
+        test_alignment = get_r2p_alignment(replacement, parent, r2p)
+        # keep best alignment and generating ori_id
+        if test_alignment.err < r2p_alignment.err
+            r2p_alignment = test_alignment
+            best_ori = ori_id
+            best_r2p = r2p
+        end
+    end
 
-	opt_aligned_replacement = aligned_replacement(replacement, parent, r2p_alignment)
-	
-	# return the replacement modified according to r2p_alignment
-	@assert ne(opt_aligned_replacement.bonds) == ne(replacement.bonds)
-	return Installation(opt_aligned_replacement, isomorphisms[loc_id][best_ori], best_r2p)
+    opt_aligned_replacement = aligned_replacement(replacement, parent, r2p_alignment)
+    
+    # return the replacement modified according to r2p_alignment
+    @assert ne(opt_aligned_replacement.bonds) == ne(replacement.bonds)
+    return Installation(opt_aligned_replacement, isomorphisms[loc_id][best_ori], best_r2p)
 end
 
 
