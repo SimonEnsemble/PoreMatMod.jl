@@ -75,6 +75,7 @@ function optimal_replacement(search::Search, replacement::Crystal, q2r::Dict{Int
 	opt_aligned_replacement = aligned_replacement(replacement, parent, r2p_alignment)
 	
 	# return the replacement modified according to r2p_alignment
+	@assert ne(opt_aligned_replacement.bonds) == ne(replacement.bonds)
 	return Installation(opt_aligned_replacement, isomorphisms[loc_id][best_ori], best_r2p)
 end
 
@@ -139,7 +140,7 @@ md"## output"
 @assert child.atoms.n - parent.atoms.n - replacement.atoms.n + query.atoms.n == 0
 
 # ╔═╡ 9976fb79-210d-4eac-a99a-b81e02586039
-@assert ne(child.bonds) - ne(parent.bonds) + ne(replacement.bonds) - ne(query.bonds) == 0 ne.([child.bonds, parent.bonds, replacement.bonds, query.bonds])
+@assert ne(child.bonds) - ne(parent.bonds) - ne(replacement.bonds) + ne(query.bonds) == 0 ne.([child.bonds, parent.bonds, replacement.bonds, query.bonds])
 
 # ╔═╡ d8ea8d5e-f17a-412b-8461-15ba6d9621ec
 write_cif(child)

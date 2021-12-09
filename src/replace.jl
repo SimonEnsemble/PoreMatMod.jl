@@ -286,7 +286,7 @@ function aligned_replacement(replacement::Crystal, parent::Crystal, r2p_alignmen
     # rotate replacement to align with parent_subset
     atoms_r.coords.x[:, :] = r2p_alignment.rot * (atoms_r.coords.x .+ r2p_alignment.shift_1) .+ r2p_alignment.shift_2
     # cast atoms back to Frac
-    return Crystal(replacement.name, parent.box, Frac(atoms_r, parent.box), Charges{Frac}(0))
+    return Crystal(replacement.name, parent.box, Frac(atoms_r, parent.box), Charges{Frac}(0), replacement.bonds, replacement.symmetry)
 end
 
 
