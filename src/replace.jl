@@ -34,35 +34,6 @@ struct Installation
 end
 
 
-function optimal_replacement(search::Search, replacement::Crystal, q2r::Dict{Int,Int}, loc_id::Int, ori_ids::Vector{Int}=[1:nb_ori_at_loc(search)[loc_id]...])
-	# unpack search arg
-	isomorphisms, parent, query = search.isomorphisms, search.parent, search.query
-
-	# loop over ori_ids to find best r2p_alignment
-	r2p_alignment = Alignment(zeros(1,1), [0.], [0.], Inf)
-	best_ori = 0
-	best_r2p = Dict{Int, Int}()
-	for ori_id in ori_ids
-		# find r2p isom
-		q2p = isomorphisms[loc_id][ori_id]
-		r2p = Dict([r => q2p[q] for (q, r) in q2r])
-		# calculate alignment
-		test_alignment = get_r2p_alignment(replacement, parent, r2p)
-		# keep best alignment and generating ori_id
-		if test_alignment.err < r2p_alignment.err
-			r2p_alignment = test_alignment
-			best_ori = ori_id
-			best_r2p = r2p
-		end
-	end
-
-	opt_aligned_replacement = aligned_replacement(replacement, parent, r2p_alignment)
-	
-	# return the replacement modified according to r2p_alignment
-	return Installation(opt_aligned_replacement, isomorphisms[loc_id][best_ori], best_r2p)
-end
-
-
 function get_r2p_alignment(replacement::Crystal, parent::Crystal, r2p::Dict{Int, Int})
     center = (X::Matrix{Float64}) -> sum(X, dims=2)[:] / size(X, 2)
     # when both centered to origin
