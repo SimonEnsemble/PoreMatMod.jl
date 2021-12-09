@@ -174,10 +174,7 @@ function optimal_replacement(search::Search, replacement::Crystal, q2r::Dict{Int
 end
 
 # ╔═╡ fe0ec889-fca4-4d88-ba33-f800f73cc023
-begin
-	#loc_id = 1
-	 installation = optimal_replacement(search, replacement, q2r, 1)
-end
+installation = optimal_replacement(search, replacement, q2r, 1)
 
 # ╔═╡ 94cfc1d5-5ee9-43d5-b936-0541d260f511
 function install_replacements(parent::Crystal,
@@ -225,40 +222,32 @@ end
 # ╔═╡ 586f38c8-4bd5-4cd5-a748-896f795afc6f
 child = install_replacements(parent, [installation])
 
-# ╔═╡ 5b164339-092f-4c5e-b37c-439697763c77
-md"## bonds"
-
-# ╔═╡ 686f97db-6553-43df-b908-4febe4626ac7
-md"""
-!!! missing
-	bonds not being introduced
-"""
-
-# ╔═╡ c96d21c8-da42-4460-ad53-d6bcaad16436
-## TODO
-
 # ╔═╡ f69bf2e7-87f8-403a-ae23-cf4b7bf7d9f1
 md"## output"
 
 # ╔═╡ 75e076ad-4cc0-42c3-9f2e-8138a810ae98
 @assert child.atoms.n - parent.atoms.n - replacement.atoms.n + query.atoms.n == 0
 
+# ╔═╡ 832d0c11-b3ec-498b-b2b1-cd2733c273de
+parent.bonds
+
+# ╔═╡ 0daa165f-dc4a-414f-bfb8-9a3716dca8c8
+parent[1:end].bonds
+
+# ╔═╡ 67aeb5ab-9dd6-481b-b1d5-ed214e3acfdc
++(parent, child, check_overlap=false).atoms.n
+
+# ╔═╡ 647f4fcc-c5fb-4571-a5ab-daff9f10fef4
++(child, parent, check_overlap=false).atoms.n
+
 # ╔═╡ 9976fb79-210d-4eac-a99a-b81e02586039
-@assert ne(child.bonds) - ne(parent.bonds) - ne(replacement.bonds) + ne(query.bonds) == 0
+@assert ne(child.bonds) - ne(parent.bonds) + ne(replacement.bonds) - ne(query.bonds) == 0 ne.([child.bonds, parent.bonds, replacement.bonds, query.bonds])
 
 # ╔═╡ d8ea8d5e-f17a-412b-8461-15ba6d9621ec
 write_cif(child)
 
 # ╔═╡ eae2225c-40f0-4d68-a9a2-43a39a82f029
 view_structure(child)
-
-# ╔═╡ 6b74fd76-ffdf-42e8-897e-3ccd1978f7aa
-md"""
-!!! results
-	On P1 structure, works (sans bonds)
-
-	On non-P1, fails to align replacement
-"""
 
 # ╔═╡ Cell order:
 # ╟─05ab6500-272c-43a9-8ee7-768145ef0c5c
@@ -280,12 +269,12 @@ md"""
 # ╠═a1cf7047-22dd-4747-82b9-2f1acfca730d
 # ╠═94cfc1d5-5ee9-43d5-b936-0541d260f511
 # ╠═586f38c8-4bd5-4cd5-a748-896f795afc6f
-# ╟─5b164339-092f-4c5e-b37c-439697763c77
-# ╟─686f97db-6553-43df-b908-4febe4626ac7
-# ╠═c96d21c8-da42-4460-ad53-d6bcaad16436
 # ╟─f69bf2e7-87f8-403a-ae23-cf4b7bf7d9f1
 # ╠═75e076ad-4cc0-42c3-9f2e-8138a810ae98
+# ╠═832d0c11-b3ec-498b-b2b1-cd2733c273de
+# ╠═0daa165f-dc4a-414f-bfb8-9a3716dca8c8
+# ╠═67aeb5ab-9dd6-481b-b1d5-ed214e3acfdc
+# ╠═647f4fcc-c5fb-4571-a5ab-daff9f10fef4
 # ╠═9976fb79-210d-4eac-a99a-b81e02586039
 # ╠═d8ea8d5e-f17a-412b-8461-15ba6d9621ec
 # ╠═eae2225c-40f0-4d68-a9a2-43a39a82f029
-# ╟─6b74fd76-ffdf-42e8-897e-3ccd1978f7aa

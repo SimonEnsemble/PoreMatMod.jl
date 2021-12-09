@@ -85,7 +85,7 @@ end
 Returns a crystal consisting of the atoms of the `parent` involved in subgraph isomorphisms in the search `s`
 """
 function isomorphic_substructures(s::Search)::Crystal
-    return s.parent[reduce(vcat, [s.isomorphisms[i][1] for i in 1:nb_locations(s)])]
+    return s.parent[reduce(vcat, collect.(values.([s.isomorphisms[i][1] for i in 1:nb_locations(s)])))]
 end
 
 
