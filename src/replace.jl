@@ -27,6 +27,116 @@ struct Alignment
 end
 
 
+struct Installation
+	aligned_replacement::Crystal
+	q2p::Dict{Int, Int}
+	r2p::Dict{Int, Int}
+end
+
+
+function optimal_replacement(search::Search, replacement::Crystal, q2r::Dict{Int,Int}, loc_id::Int, ori_ids::Vector{Int}=[1:nb_ori_at_loc(search)[loc_id]...])
+	# unpack search arg
+	isomorphisms, parent, query = search.isomorphisms, search.parent, search.query
+
+	# loop over ori_ids to find best r2p_alignment
+	r2p_alignment = Alignment(zeros(1,1), [0.], [0.], Inf)
+	best_ori = 0
+	best_r2p = Dict{Int, Int}()
+	for ori_id in ori_ids
+		# find r2p isom
+		q2p = isomorphisms[loc_id][ori_id]
+		r2p = Dict([r => q2p[q] for (q, r) in q2r])
+		# calculate alignment
+		test_alignment = get_r2p_alignment(replacement, parent, r2p)
+		# keep best alignment and generating ori_id
+		if test_alignment.err < r2p_alignment.err
+			r2p_alignment = test_alignment
+			best_ori = ori_id
+			best_r2p = r2p
+		end
+	end
+
+	opt_aligned_replacement = aligned_replacement(replacement, parent, r2p_alignment)
+	
+	# return the replacement modified according to r2p_alignment
+	return Installation(opt_aligned_replacement, isomorphisms[loc_id][best_ori], best_r2p)
+end
+
+
+function get_r2p_alignment(replacement::Crystal, parent::Crystal, r2p::Dict{Int, Int})
+    center = (X::Matrix{Float64}) -> sum(X, dims=2)[:] / size(X, 2)
+    # when both centered to origin
+    @assert replacement.atoms.n ≥ 3 && parent.atoms.n ≥ 3 "Parent and replacement must each be at least 3 atoms for SVD alignment."
+    ###
+    #   compute centered Cartesian coords of the atoms of 
+    #       replacement fragment involved in alignment
+    ###
+    atoms_r = Cart(replacement.atoms[[r for (r, p) in r2p]], replacement.box)
+    X_r = atoms_r.coords.x
+    x_r_center = center(X_r)
+    X_r = X_r .- x_r_center
+
+    ###
+    #   compute centered Cartesian coords of the atoms of 
+    #       parent involved in alignment
+    ###
+    parent_substructure = deepcopy(parent[[p for (r, p) in r2p]])
+    conglomerate!(parent_substructure)
+    atoms_p = Cart(parent_substructure.atoms, parent_substructure.box)
+    Xtals.write_xyz(atoms_p, "atoms_p.xyz")
+    X_p = atoms_p.coords.x
+    x_p_center = center(X_p)
+    X_p = X_p .- x_p_center
+
+    # solve the orthogonal procrustes probelm via SVD
+    F = svd(X_r * X_p')
+    # optimal rotation matrix
+    rot =  F.V * F.U'
+
+    err = norm(rot * X_r - X_p)
+
+    return Alignment(rot, - x_r_center, x_p_center, err)
+end
+
+
+function conglomerate!(parent_substructure::Crystal)
+	@assert length(connected_components(parent_substructure.bonds)) == 1 "multiple connected components in parent"
+	# snip cross-PB bonds to generate multiple components
+	bonds = deepcopy(parent_substructure.bonds)
+	for e in edges(bonds) # loop over bonds
+		if get_prop(bonds, e, :cross_boundary) # find cross-PB bonds
+			rem_edge!(bonds, e)
+		end
+	end
+	# find conn comps
+	conn_comps = connected_components(bonds)
+	ref_comp_id = argmax(length.(conn_comps))
+	# set reference atom
+	ref_atom = conn_comps[ref_comp_id][1]
+	# loop over non-reference components and rectify images
+	for comp_id in 1:length(conn_comps)
+		if comp_id == ref_comp_id
+			continue
+		end
+		# get index of some atom in the non-reference comp
+		atom_idx = conn_comps[comp_id][1]
+		# find displacement vector for first atom
+		dx = parent_substructure.atoms.coords.xf[:, ref_atom] - 
+			 parent_substructure.atoms.coords.xf[:, atom_idx]
+		# get nearest image vector
+		nx = copy(dx)
+		nearest_image!(nx)
+		# if the norm of nx is less than that of dx, translate the atom
+		if norm(nx) < norm(dx)
+			for atom_idx in conn_comps[comp_id]
+				parent_substructure.atoms.coords.xf[:, atom_idx] .+= dx - nx
+			end
+		end
+	end
+	return
+end
+
+
 # Gets the rotation matrix for aligning the replacement moiety onto a subset (isomorphic to masked query) of parent atoms
 function r2p_op(replacement::Crystal, parent::Crystal, r2p_isom::Dict{Int,Int})
     @assert replacement.atoms.n ≥ 3 && parent.atoms.n ≥ 3 "Parent and replacement must each be at least 3 atoms for SVD alignment."
