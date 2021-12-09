@@ -71,7 +71,6 @@ end
 
 
 function conglomerate!(parent_substructure::Crystal)
-	@assert length(connected_components(parent_substructure.bonds)) == 1 "multiple connected components in parent"
 	# snip cross-PB bonds to generate multiple components
 	bonds = deepcopy(parent_substructure.bonds)
 	for e in edges(bonds) # loop over bonds
