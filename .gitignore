@@ -1,5 +1,8 @@
-Manifest.toml
+docs/build
+examples/data
 examples/*.cif
 examples/*.xyz
+Manifest.toml
 test/*.cif
 test/*.xyz
+
