@@ -61,6 +61,9 @@ Bravais unit cell of a crystal.
 	space Group: P1
 	symmetry Operations:
 		'x, y, z'
+	bonding graph:
+		# vertices = 10
+		# edges = 10
 ```
 
 #### the `replacement` fragment
@@ -82,6 +85,9 @@ Bravais unit cell of a crystal.
 	space Group: P1
 	symmetry Operations:
 		'x, y, z'
+	bonding graph:
+		# vertices = 17
+		# edges = 17
 ```
 
 #### the find step
@@ -102,7 +108,7 @@ The code below will, at each location in the `parent` where a substructure match
 ```jldoctest replace_md; output=false
 child = substructure_replace(search, replacement)
 # output
-Name: new_xtal
+Name: added_xtal
 Bravais unit cell of a crystal.
 	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
 	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
@@ -114,6 +120,9 @@ Bravais unit cell of a crystal.
 	space Group: P1
 	symmetry Operations:
 		'x, y, z'
+	bonding graph:
+		# vertices = 592
+		# edges = 680
 ```
 
 To direct the number, location, and orientation of the replacements, use the keyword arguments for [`substructure_replace`](@ref). Particularly, the location `loc` and orientation `ori` keyword arguments specify a particular isomorphism to use (in reference to `search.isomorphisms`) when conducting a replacement operation. The figure below illustrates.
@@ -129,7 +138,7 @@ For one-shot find-and-replace operations, the `replace` function may be used:
 ```jldoctest replace_md; output=false
 child = replace(parent, query => replacement)
 # output
-Name: new_xtal
+Name: added_xtal
 Bravais unit cell of a crystal.
 	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
 	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
@@ -141,6 +150,9 @@ Bravais unit cell of a crystal.
 	space Group: P1
 	symmetry Operations:
 		'x, y, z'
+	bonding graph:
+		# vertices = 592
+		# edges = 680
 ```
 
 !!! note

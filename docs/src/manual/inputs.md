@@ -54,6 +54,9 @@ N.b. masked atoms of query fragments must be labeled with `!` for [`replace` ope
     	space Group: P1
     	symmetry Operations:
     		'x, y, z'
+    	bonding graph:
+    		# vertices = 10
+    		# edges = 10
     ```
 
 The [`moiety`](@ref) reader also returns a `Crystal` data structure but with a (arbitrary) unit cube unit cell.

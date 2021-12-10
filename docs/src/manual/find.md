@@ -148,6 +148,9 @@ Bravais unit cell of a crystal.
 	space Group: P1
 	symmetry Operations:
 		'x, y, z'
+	bonding graph:
+		# vertices = 240
+		# edges = 240
 ```
 
 ## Stereochemistry and Isomorphism
