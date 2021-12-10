@@ -14,7 +14,7 @@ for file in readdir() # loop over files in examples/
         mv(file, export_path * file, force=true) # move HTML files to docs source folder for build
     end
 end
-cd("..") # return to root for running makedocs
+cd("..") # return to root for running deploydocs
 
 # build the docs
 makedocs( # to test docs, run this call to `makedocs` in the REPL
