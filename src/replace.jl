@@ -134,7 +134,8 @@ end
 
 
 function install_replacements(parent::Crystal, replacements::Vector{Installation}, name::String)::Crystal
-    child = Crystal(name, parent.box, parent.atoms, parent.charges, parent.bonds, parent.symmetry)
+    # create child w/o symmetry rules for sake of crystal addition
+    child = Crystal(name, parent.box, parent.atoms, parent.charges, parent.bonds, Xtals.SymmetryInfo())
 
     obsolete_atoms = Int[] # to delete at the end
 
@@ -168,6 +169,9 @@ function install_replacements(parent::Crystal, replacements::Vector{Installation
     obsolete_atoms = unique(obsolete_atoms)
     keep_atoms = [p for p = 1:child.atoms.n if ! (p in obsolete_atoms)]
     child = child[keep_atoms]
+
+    # restore symmetry rules
+    child = Crystal(name, child.box, child.atoms, child.charges, child.bonds, parent.symmetry)
 
     # return result
     return child
@@ -239,7 +243,7 @@ Returns a new `Crystal` with the specified modifications (returns `search.parent
 """
 function substructure_replace(search::Search, replacement::Crystal; random::Bool=false,
     nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[], name::String="new_xtal", verbose::Bool=false,
-    remove_duplicates::Bool=false, periodic_boundaries::Bool=true, reinfer_bonds::Bool=false)::Crystal
+    remove_duplicates::Bool=false, periodic_boundaries::Bool=true, reinfer_bonds::Bool=false, wrap::Bool=true)::Crystal
     # replacement at all locations (default)
     if nb_loc == 0 && loc == Int[] && ori == Int[]
         nb_loc = nb_locations(search)
@@ -313,6 +317,10 @@ function substructure_replace(search::Search, replacement::Crystal; random::Bool
             Xtals.remove_duplicates(child.atoms, child.box, periodic_boundaries),
             Xtals.remove_duplicates(child.charges, child.box, periodic_boundaries)
         )
+    end
+
+    if wrap
+        wrap!(child.atoms.coords)
     end
 
     if reinfer_bonds

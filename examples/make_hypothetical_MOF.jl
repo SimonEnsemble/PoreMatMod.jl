@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.2
+# v0.17.3
 
 using Markdown
 using InteractiveUtils
@@ -115,7 +115,7 @@ PoreMatMod = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 [compat]
 Bio3DView = "~0.1.3"
 PlutoUI = "~0.7.21"
-PoreMatMod = "~0.2.7"
+PoreMatMod = "~0.2.8"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -166,12 +166,6 @@ git-tree-sha1 = "b83aa3f513be680454437a0eee21001607e5d983"
 uuid = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 version = "0.8.5"
 
-[[CategoricalArrays]]
-deps = ["DataAPI", "Future", "JSON", "Missings", "Printf", "Statistics", "StructTypes", "Unicode"]
-git-tree-sha1 = "18d7f3e82c1a80dd38c16453b8fd3f0a7db92f23"
-uuid = "324d7699-5711-5eae-9e2f-1d82baa6b597"
-version = "0.9.7"
-
 [[ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
 git-tree-sha1 = "4c26b4e9e91ca528ea212927326ece5918a04b47"
@@ -213,16 +207,16 @@ uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
 version = "1.9.0"
 
 [[DataFrames]]
-deps = ["CategoricalArrays", "Compat", "DataAPI", "Future", "InvertedIndices", "IteratorInterfaceExtensions", "LinearAlgebra", "Markdown", "Missings", "PooledArrays", "PrettyTables", "Printf", "REPL", "Reexport", "SortingAlgorithms", "Statistics", "TableTraits", "Tables", "Unicode"]
-git-tree-sha1 = "d50972453ef464ddcebdf489d11885468b7b83a3"
+deps = ["Compat", "DataAPI", "Future", "InvertedIndices", "IteratorInterfaceExtensions", "LinearAlgebra", "Markdown", "Missings", "PooledArrays", "PrettyTables", "Printf", "REPL", "Reexport", "SortingAlgorithms", "Statistics", "TableTraits", "Tables", "Unicode"]
+git-tree-sha1 = "2e993336a3f68216be91eb8ee4625ebbaba19147"
 uuid = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-version = "0.22.7"
+version = "1.3.0"
 
 [[DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
-git-tree-sha1 = "7d9d316f04214f7efdbb6398d545446e246eff02"
+git-tree-sha1 = "3daef5523dd2e769dad2365274f760ff5f282c7d"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.18.10"
+version = "0.18.11"
 
 [[DataValueInterfaces]]
 git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
@@ -441,9 +435,9 @@ version = "0.7.1"
 
 [[Missings]]
 deps = ["DataAPI"]
-git-tree-sha1 = "f8c673ccc215eb50fcadb285f522420e29e69e1c"
+git-tree-sha1 = "bf210ce90b6c9eed32d25dbcae1ebc565df2687f"
 uuid = "e1d29d7a-bbdc-5cf2-9ac0-f12de2c33e28"
-version = "0.4.5"
+version = "1.0.2"
 
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
@@ -500,16 +494,16 @@ uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
 version = "1.4.0"
 
 [[PoreMatMod]]
-deps = ["Bio3DView", "CSV", "DataFrames", "FIGlet", "Graphs", "LinearAlgebra", "MetaGraphs", "Pluto", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
-git-tree-sha1 = "53bccf1b4a3c0b5e3c7d70cbc93a6bbda802edaa"
+deps = ["Bio3DView", "CSV", "DataFrames", "Documenter", "FIGlet", "Graphs", "LinearAlgebra", "Logging", "Markdown", "MetaGraphs", "Pluto", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
+git-tree-sha1 = "760ab616ebd2780e90473be4ed40aa666163938a"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
-version = "0.2.7"
+version = "0.2.8"
 
 [[PrettyTables]]
 deps = ["Crayons", "Formatting", "Markdown", "Reexport", "Tables"]
-git-tree-sha1 = "574a6b3ea95f04e8757c0280bb9c29f1a5e35138"
+git-tree-sha1 = "d940010be611ee9d67064fe559edbb305f8cc0eb"
 uuid = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
-version = "0.11.1"
+version = "1.2.3"
 
 [[Printf]]
 deps = ["Unicode"]
@@ -566,10 +560,10 @@ version = "0.9.4"
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
 [[SortingAlgorithms]]
-deps = ["DataStructures", "Random", "Test"]
-git-tree-sha1 = "03f5898c9959f8115e30bc7226ada7d0df554ddd"
+deps = ["DataStructures"]
+git-tree-sha1 = "b3363d7460f7d098ca0912c69b082f75625d7508"
 uuid = "a2af1166-a08f-5f64-846c-94a0d3cef48c"
-version = "0.3.1"
+version = "1.0.1"
 
 [[SparseArrays]]
 deps = ["LinearAlgebra", "Random"]
@@ -595,12 +589,6 @@ deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missin
 git-tree-sha1 = "2bb0cb32026a66037360606510fca5984ccc6b75"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 version = "0.33.13"
-
-[[StructTypes]]
-deps = ["Dates", "UUIDs"]
-git-tree-sha1 = "d24a825a95a6d98c385001212dc9020d609f2d4f"
-uuid = "856f2bd8-1eba-4b0a-8007-ebc267875bd4"
-version = "1.8.1"
 
 [[TOML]]
 deps = ["Dates"]
@@ -656,9 +644,9 @@ version = "1.2.1"
 
 [[Xtals]]
 deps = ["Bio3DView", "CSV", "DataFrames", "Documenter", "FIGlet", "Graphs", "JLD2", "LinearAlgebra", "Logging", "MetaGraphs", "Printf", "PyCall", "UUIDs"]
-git-tree-sha1 = "3147503cd35c4f2b3744fe36301c7de3efee98c5"
+git-tree-sha1 = "d133f0555aad4af6ca9cc89f3dfd26f93dfbca69"
 uuid = "ede5f01d-793e-4c47-9885-c447d1f18d6d"
-version = "0.3.9"
+version = "0.3.10"
 
 [[Zlib_jll]]
 deps = ["Libdl"]

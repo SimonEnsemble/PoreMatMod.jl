@@ -97,7 +97,7 @@ Bio3DView = "~0.1.3"
 Graphs = "~1.4.1"
 MetaGraphs = "~0.7.1"
 PlutoUI = "~0.7.21"
-PoreMatMod = "~0.2.7"
+PoreMatMod = "~0.2.8"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -476,10 +476,10 @@ uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
 version = "1.4.0"
 
 [[PoreMatMod]]
-deps = ["Bio3DView", "CSV", "DataFrames", "FIGlet", "Graphs", "LinearAlgebra", "MetaGraphs", "Pluto", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
-git-tree-sha1 = "53bccf1b4a3c0b5e3c7d70cbc93a6bbda802edaa"
+deps = ["Bio3DView", "CSV", "DataFrames", "Documenter", "FIGlet", "Graphs", "LinearAlgebra", "Logging", "Markdown", "MetaGraphs", "Pluto", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
+git-tree-sha1 = "760ab616ebd2780e90473be4ed40aa666163938a"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
-version = "0.2.7"
+version = "0.2.8"
 
 [[PrettyTables]]
 deps = ["Crayons", "Formatting", "Markdown", "Reexport", "Tables"]

@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.2
+# v0.17.3
 
 using Markdown
 using InteractiveUtils
@@ -440,7 +440,7 @@ uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
 version = "1.4.0"
 
 [[PoreMatMod]]
-deps = ["Bio3DView", "CSV", "DataFrames", "FIGlet", "Graphs", "LinearAlgebra", "Logging", "Markdown", "MetaGraphs", "Pluto", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
+deps = ["Bio3DView", "CSV", "DataFrames", "Documenter", "FIGlet", "Graphs", "LinearAlgebra", "Logging", "Markdown", "MetaGraphs", "Pluto", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
 path = "C:\\Users\\eahen\\.julia\\dev\\PoreMatMod"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 version = "0.2.8"
