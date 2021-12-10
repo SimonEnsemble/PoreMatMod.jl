@@ -72,7 +72,9 @@ end
 function conglomerate!(parent_substructure::Crystal)
     # snip the cross-PB bonds
     bonds = deepcopy(parent_substructure.bonds)
-    @assert length(connected_components(bonds)) == 1
+    if length(connected_components(bonds)) > 1
+        @warn "# connected components in parent substructure > 1. assuming the substructure does not cross the periodic boundary..."
+    end
     drop_cross_pb_bonds!(bonds)
 
     # find connected components of bonding graph without cross-PB bonds
