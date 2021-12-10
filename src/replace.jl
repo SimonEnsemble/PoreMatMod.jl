@@ -74,6 +74,7 @@ function conglomerate!(parent_substructure::Crystal)
     bonds = deepcopy(parent_substructure.bonds)
     if length(connected_components(bonds)) > 1
         @warn "# connected components in parent substructure > 1. assuming the substructure does not cross the periodic boundary..."
+        return
     end
     drop_cross_pb_bonds!(bonds)
 
