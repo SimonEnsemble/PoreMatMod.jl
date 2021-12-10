@@ -29,7 +29,7 @@ function __init__()
             where_it_shld_be = joinpath(rc[:paths][file_type], required_file)
             if ! isfile(where_it_shld_be)
                 @warn "$where_it_shld_be not present; copying it from src."
-                where_it_is = normpath(joinpath(@__DIR__, "..", "..", "examples", "data", String(file_type), required_file))
+                where_it_is = normpath(joinpath(@__DIR__, "..", "examples", "data", String(file_type), required_file))
                 cp(where_it_is, where_it_shld_be)
             end
         end
