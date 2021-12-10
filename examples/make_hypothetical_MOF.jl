@@ -1,16 +1,15 @@
 ### A Pluto.jl notebook ###
-# v0.16.4
+# v0.17.2
 
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 37939a7a-0651-11ec-11c1-6b5ef0a19ec2
+# ╔═╡ 16f0e183-f48d-4dcd-8751-d3c61c875e18
 # load required packages (Pluto.jl will automatically install them)
 using PoreMatMod, PlutoUI, Bio3DView, Logging
 
-# ╔═╡ 8ca1eb06-df90-4837-87b1-2e76e1670504
-# helper functions for viewing molecules and crystals and gathering input files
-include("ExampleHelper.jl");
+# ╔═╡ 3cca5289-a829-4717-b796-0834229995d1
+using PoreMatMod.ExampleHelpers
 
 # ╔═╡ 8d523993-6e85-443a-9949-12030552b457
 md"""
@@ -115,13 +114,24 @@ PoreMatMod = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 
 [compat]
 Bio3DView = "~0.1.3"
-PlutoUI = "~0.7.14"
-PoreMatMod = "~0.2.0"
+PlutoUI = "~0.7.21"
+PoreMatMod = "~0.2.7"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
+
+[[ANSIColoredPrinters]]
+git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
+uuid = "a4c015fc-c6ff-483c-b24f-f7ea428134e9"
+version = "0.0.1"
+
+[[AbstractPlutoDingetjes]]
+deps = ["Pkg"]
+git-tree-sha1 = "abb72771fd8895a7ebd83d5632dc4b989b022b5b"
+uuid = "6e696c72-6542-2067-7265-42206c756150"
+version = "1.1.2"
 
 [[ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -164,27 +174,33 @@ version = "0.9.7"
 
 [[ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "3533f5a691e60601fe60c90d8bc47a27aa2907ec"
+git-tree-sha1 = "4c26b4e9e91ca528ea212927326ece5918a04b47"
 uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-version = "1.11.0"
+version = "1.11.2"
+
+[[ChangesOfVariables]]
+deps = ["LinearAlgebra", "Test"]
+git-tree-sha1 = "9a1d594397670492219635b35a3d830b04730d62"
+uuid = "9e997f8a-9a97-42d5-a9f1-ce6bfc15e2c0"
+version = "0.1.1"
 
 [[Compat]]
 deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "SHA", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
-git-tree-sha1 = "31d0151f5716b655421d9d75b7fa74cc4e744df2"
+git-tree-sha1 = "dce3e3fea680869eaa0b774b2e8343e9ff442313"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "3.39.0"
+version = "3.40.0"
 
 [[Conda]]
-deps = ["JSON", "VersionParsing"]
-git-tree-sha1 = "299304989a5e6473d985212c28928899c74e9421"
+deps = ["Downloads", "JSON", "VersionParsing"]
+git-tree-sha1 = "6cdc8832ba11c7695f494c9d9a1c31e90959ce0f"
 uuid = "8f4d0f93-b110-5947-807f-2305c1781a2d"
-version = "1.5.2"
+version = "1.6.0"
 
 [[Configurations]]
-deps = ["Crayons", "ExproniconLite", "OrderedCollections", "TOML"]
-git-tree-sha1 = "b8486a417456d2fbbe2af13e24cef459c9f42429"
+deps = ["ExproniconLite", "OrderedCollections", "TOML"]
+git-tree-sha1 = "79e812c535bb9780ba00f3acba526bde5652eb13"
 uuid = "5218b696-f38b-4ac9-8b61-a12ec717816d"
-version = "0.15.4"
+version = "0.16.6"
 
 [[Crayons]]
 git-tree-sha1 = "3f71217b538d7aaee0b69ab47d9b7724ca8afa0d"
@@ -231,14 +247,20 @@ git-tree-sha1 = "b19534d1895d702889b219c382a6e18010797f0b"
 uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 version = "0.8.6"
 
+[[Documenter]]
+deps = ["ANSIColoredPrinters", "Base64", "Dates", "DocStringExtensions", "IOCapture", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "REPL", "Test", "Unicode"]
+git-tree-sha1 = "f425293f7e0acaf9144de6d731772de156676233"
+uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+version = "0.27.10"
+
 [[Downloads]]
 deps = ["ArgTools", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 
 [[ExproniconLite]]
-git-tree-sha1 = "c04d5c3442126d75ee4500aa6b0e402cae3bf6ac"
+git-tree-sha1 = "8b08cc88844e4d01db5a2405a08e9178e19e479e"
 uuid = "55351af7-c7e9-48d6-89ff-24e801d99491"
-version = "0.6.12"
+version = "0.6.13"
 
 [[FIGlet]]
 deps = ["BinaryProvider", "Pkg"]
@@ -248,9 +270,9 @@ version = "0.2.1"
 
 [[FileIO]]
 deps = ["Pkg", "Requires", "UUIDs"]
-git-tree-sha1 = "3c041d2ac0a52a12a27af2782b34900d9c3ee68c"
+git-tree-sha1 = "2db648b6712831ecb333eae76dbfd1c156ca13bb"
 uuid = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
-version = "1.11.1"
+version = "1.11.2"
 
 [[FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
@@ -262,9 +284,9 @@ uuid = "59287772-0a20-5a39-b81b-1366585eb4c0"
 version = "0.4.2"
 
 [[FromFile]]
-git-tree-sha1 = "f4fce099f9e14cd12d91e29fd105ef891fb55297"
+git-tree-sha1 = "81e918d0ed5978fcdacd06b7c64c0c5074c4d55a"
 uuid = "ff7dd447-1dcb-4ce3-b8ac-22a812192de7"
-version = "0.1.1"
+version = "0.1.2"
 
 [[Future]]
 deps = ["Random"]
@@ -290,9 +312,9 @@ version = "1.4.1"
 
 [[HTTP]]
 deps = ["Base64", "Dates", "IniFile", "Logging", "MbedTLS", "NetworkOptions", "Sockets", "URIs"]
-git-tree-sha1 = "14eece7a3308b4d8be910e265c724a6ba51a9798"
+git-tree-sha1 = "0fa77022fe4b511826b39c894c90daf5fce3334a"
 uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
-version = "0.9.16"
+version = "0.9.17"
 
 [[Hyperscript]]
 deps = ["Test"]
@@ -301,9 +323,9 @@ uuid = "47d2ed2b-36de-50cf-bf87-49c2cf4b8b91"
 version = "0.0.4"
 
 [[HypertextLiteral]]
-git-tree-sha1 = "5efcf53d798efede8fee5b2c8b09284be359bf24"
+git-tree-sha1 = "2b078b5a615c6c0396c77810d92ee8c6f470d238"
 uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
-version = "0.9.2"
+version = "0.9.3"
 
 [[IOCapture]]
 deps = ["Logging", "Random"]
@@ -328,9 +350,9 @@ uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
 [[InverseFunctions]]
 deps = ["Test"]
-git-tree-sha1 = "f0c6489b12d28fb4c2103073ec7452f3423bd308"
+git-tree-sha1 = "a7254c0acd8e62f1ac75ad24d5db43f5f19f3c65"
 uuid = "3587e190-3f89-42d0-90ee-14403ec27112"
-version = "0.1.1"
+version = "0.1.2"
 
 [[InvertedIndices]]
 git-tree-sha1 = "bee5f1ef5bf65df56bdd2e40447590b272a5471f"
@@ -383,19 +405,19 @@ deps = ["Libdl"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[LogExpFunctions]]
-deps = ["ChainRulesCore", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
-git-tree-sha1 = "6193c3815f13ba1b78a51ce391db8be016ae9214"
+deps = ["ChainRulesCore", "ChangesOfVariables", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
+git-tree-sha1 = "be9eef9f9d78cecb6f262f3c10da151a6c5ab827"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
-version = "0.3.4"
+version = "0.3.5"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
 [[MacroTools]]
 deps = ["Markdown", "Random"]
-git-tree-sha1 = "5a5bc6bf062f0f95e62d0fe0a2d99699fed82dd9"
+git-tree-sha1 = "3d3e902b31198a27340d0bf00d6ac452866021cf"
 uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
-version = "0.5.8"
+version = "0.5.9"
 
 [[Markdown]]
 deps = ["Base64"]
@@ -413,9 +435,9 @@ uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
 
 [[MetaGraphs]]
 deps = ["Graphs", "JLD2", "Random"]
-git-tree-sha1 = "5658bebcf7e58e7ff09aa004ff6e806478c5e93a"
+git-tree-sha1 = "2af69ff3c024d13bde52b34a2a7d6887d4e7b438"
 uuid = "626554b9-1ddb-594c-aa3c-2596fe9399a5"
-version = "0.7.0"
+version = "0.7.1"
 
 [[Missings]]
 deps = ["DataAPI"]
@@ -455,33 +477,33 @@ uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[Pluto]]
 deps = ["Base64", "Configurations", "Dates", "Distributed", "FileWatching", "FuzzyCompletions", "HTTP", "InteractiveUtils", "Logging", "Markdown", "MsgPack", "Pkg", "REPL", "Sockets", "TableIOInterface", "Tables", "UUIDs"]
-git-tree-sha1 = "7b4eb6b87276b7ee6604cd9ababf68ba659cfacb"
+git-tree-sha1 = "669c67f837da26719ff9102cd9b193e0d2114472"
 uuid = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
-version = "0.16.4"
+version = "0.17.3"
 
 [[PlutoSliderServer]]
 deps = ["Base64", "Configurations", "Distributed", "FromFile", "GitHubActions", "HTTP", "Logging", "Pkg", "Pluto", "SHA", "Sockets", "TOML", "UUIDs"]
-git-tree-sha1 = "cff19495202bd7bfa51fddffca066266913ac05e"
+git-tree-sha1 = "ed9660bb2c9eee9d389601bd80a10cee3dd64f0b"
 uuid = "2fc8631c-6f24-4c5b-bca7-cbb509c42db4"
-version = "0.2.5"
+version = "0.2.7"
 
 [[PlutoUI]]
-deps = ["Base64", "Dates", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "Markdown", "Random", "Reexport", "UUIDs"]
-git-tree-sha1 = "4c8a7d080daca18545c56f1cac28710c362478f3"
+deps = ["AbstractPlutoDingetjes", "Base64", "Dates", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "Markdown", "Random", "Reexport", "UUIDs"]
+git-tree-sha1 = "b68904528fd538f1cb6a3fbc44d2abdc498f9e8e"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.16"
+version = "0.7.21"
 
 [[PooledArrays]]
 deps = ["DataAPI", "Future"]
-git-tree-sha1 = "a193d6ad9c45ada72c14b731a318bedd3c2f00cf"
+git-tree-sha1 = "db3a23166af8aebf4db5ef87ac5b00d36eb771e2"
 uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
-version = "1.3.0"
+version = "1.4.0"
 
 [[PoreMatMod]]
-deps = ["Bio3DView", "CSV", "DataFrames", "FIGlet", "Graphs", "LinearAlgebra", "MetaGraphs", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
-git-tree-sha1 = "c0e6e7680603c4ad4095a9744893f82301407d2b"
+deps = ["Bio3DView", "CSV", "DataFrames", "FIGlet", "Graphs", "LinearAlgebra", "MetaGraphs", "Pluto", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
+git-tree-sha1 = "53bccf1b4a3c0b5e3c7d70cbc93a6bbda802edaa"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
-version = "0.2.4"
+version = "0.2.7"
 
 [[PrettyTables]]
 deps = ["Crayons", "Formatting", "Markdown", "Reexport", "Tables"]
@@ -564,15 +586,15 @@ deps = ["LinearAlgebra", "SparseArrays"]
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [[StatsAPI]]
-git-tree-sha1 = "1958272568dc176a1d881acb797beb909c785510"
+git-tree-sha1 = "0f2aa8e32d511f758a2ce49208181f7733a0936a"
 uuid = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
-version = "1.0.0"
+version = "1.1.0"
 
 [[StatsBase]]
 deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
-git-tree-sha1 = "eb35dcc66558b2dda84079b9a1be17557d32091a"
+git-tree-sha1 = "2bb0cb32026a66037360606510fca5984ccc6b75"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-version = "0.33.12"
+version = "0.33.13"
 
 [[StructTypes]]
 deps = ["Dates", "UUIDs"]
@@ -633,10 +655,10 @@ uuid = "81def892-9a0e-5fdd-b105-ffc91e053289"
 version = "1.2.1"
 
 [[Xtals]]
-deps = ["Bio3DView", "CSV", "DataFrames", "Graphs", "JLD2", "LinearAlgebra", "Logging", "MetaGraphs", "Printf", "PyCall", "UUIDs"]
-git-tree-sha1 = "51a24da2713c5d8c73e600256d3c4b29df35f067"
+deps = ["Bio3DView", "CSV", "DataFrames", "Documenter", "FIGlet", "Graphs", "JLD2", "LinearAlgebra", "Logging", "MetaGraphs", "Printf", "PyCall", "UUIDs"]
+git-tree-sha1 = "3147503cd35c4f2b3744fe36301c7de3efee98c5"
 uuid = "ede5f01d-793e-4c47-9885-c447d1f18d6d"
-version = "0.3.8"
+version = "0.3.9"
 
 [[Zlib_jll]]
 deps = ["Libdl"]
@@ -653,8 +675,8 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 
 # ╔═╡ Cell order:
 # ╟─8d523993-6e85-443a-9949-12030552b457
-# ╠═37939a7a-0651-11ec-11c1-6b5ef0a19ec2
-# ╠═8ca1eb06-df90-4837-87b1-2e76e1670504
+# ╠═16f0e183-f48d-4dcd-8751-d3c61c875e18
+# ╠═3cca5289-a829-4717-b796-0834229995d1
 # ╠═74b45651-21d5-4332-a4a5-866ea1bb02b8
 # ╟─3ff0cd63-8bdf-4ba5-92b6-e2a52f7573c2
 # ╠═ccc7fc86-5f48-4cc9-bd5c-349fc1d55b0c

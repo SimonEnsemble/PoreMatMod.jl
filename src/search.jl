@@ -19,7 +19,7 @@ where `isom[k]` is the index of the atom in `search.parent` corresponding to ato
 struct Search
     parent::Crystal
     query::Crystal
-    isomorphisms::Vector{Vector{Vector{Int}}}
+    isomorphisms::Vector{Vector{Dict{Int,Int}}}
 end
 
 Base.show(io::IO, s::Search) = begin
@@ -85,7 +85,7 @@ end
 Returns a crystal consisting of the atoms of the `parent` involved in subgraph isomorphisms in the search `s`
 """
 function isomorphic_substructures(s::Search)::Crystal
-    return s.parent[reduce(vcat, [s.isomorphisms[i][1] for i in 1:nb_locations(s)])]
+    return s.parent[reduce(vcat, collect.(values.([s.isomorphisms[i][1] for i in 1:nb_locations(s)])))]
 end
 
 
@@ -103,23 +103,27 @@ designating atoms to replace with other moieties.
 - `parent::Crystal` the parent structure
 - `disconnected_component::Bool=false` if true, disables substructure searching (e.g. for finding guest molecules)
 """
-function substructure_search(query::Crystal, parent::Crystal; disconnected_component::Bool=false, assertion_override::Bool=false)::Search
-    @assert ne(parent.bonds) > 0 || assertion_override "The parent structure must have bonds."
+function substructure_search(query::Crystal, parent::Crystal; disconnected_component::Bool=false)::Search
+    if parent.atoms.n == 0
+        return
+    end
+
+    @assert ne(parent.bonds) > 0 "The parent structure must have bonds. Use `infer_bonds!(xtal, pbc)` to create them."
     # Make a copy w/o R tags for searching
     moty = deepcopy(query)
     untag_r_group!(moty)
     # Get array of configuration arrays
     configs = find_subgraph_isomorphisms(moty.bonds, moty.atoms.species, parent.bonds, parent.atoms.species, disconnected_component)
     df = DataFrame(p_subset=[sort(c) for c in configs], isomorphism=configs)
-    locs = Int[]
-    isoms = Array{Int}[]
-    for (i, loc) in enumerate(groupby(df, :p_subset))
-        for isom in loc.isomorphism
-            push!(locs, i)
-            push!(isoms, isom)
+    
+    results = Vector{Dict{Int,Int}}[]
+    for (i, df_loc) in enumerate(groupby(df, :p_subset))
+        q2p_loc = Dict{Int,Int}[]
+        for isomorphism in df_loc.isomorphism
+            q2p = Dict([q => p for (q, p) in enumerate(isomorphism)])
+            push!(q2p_loc, q2p)
         end
+        push!(results, q2p_loc)
     end
-    gdf = groupby(DataFrame(location=locs, isomorphism=isoms), :location)
-    results = [loc.isomorphism for loc in gdf]
     return Search(parent, query, results)
 end

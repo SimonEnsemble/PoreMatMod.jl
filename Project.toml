@@ -1,15 +1,18 @@
 name = "PoreMatMod"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 authors = ["SimonEnsemble <cory.simon@oregonstate.edu>"]
-version = "0.2.7"
+version = "0.2.8"
 
 [deps]
 Bio3DView = "99c8bb3a-9d13-5280-9740-b4880ed9c598"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 FIGlet = "3064a664-84fe-4d92-92c7-ed492f3d8fae"
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
+Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 MetaGraphs = "626554b9-1ddb-594c-aa3c-2596fe9399a5"
 Pluto = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
 PlutoSliderServer = "2fc8631c-6f24-4c5b-bca7-cbb509c42db4"
@@ -34,18 +37,12 @@ Xtals = "^0.3"
 julia = "^1.6"
 
 [extras]
-CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
-LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
-Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-Xtals = "ede5f01d-793e-4c47-9885-c447d1f18d6d"
 
 [targets]
-test = ["Test", "Documenter", "CSV", "DataFrames", "LinearAlgebra", "Printf", "PyCall", "InteractiveUtils", "Logging", "Markdown", "Pkg"]
+test = ["Test", "Documenter", "Printf", "PyCall", "InteractiveUtils", "Pkg"]
