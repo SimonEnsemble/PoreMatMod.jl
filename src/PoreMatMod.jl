@@ -11,6 +11,19 @@ function __init__()
 end
 
 
+"""
+    PoreMatModGO()
+
+Launches the GUI Pluto notebook.
+"""
+function PoreMatModGO()
+    # notebook path
+    pmmg_ntbk = joinpath(pathof(PoreMatMod), "..", "PoreMatModGO.jl")
+    # run the notebook in Pluto
+    Pluto.run(notebook=pmmg_ntbk)
+end
+
+
 export
     # search.jl
     Search, substructure_search, nb_isomorphisms, nb_locations, nb_ori_at_loc, isomorphic_substructures,
@@ -26,10 +39,8 @@ export
 
 include("Ullmann.jl")
 include("moiety.jl")
-include("misc.jl")
 include("search.jl")
 include("replace.jl")
-include("examples.jl")
 include("ExampleHelpers.jl")
 
 end
