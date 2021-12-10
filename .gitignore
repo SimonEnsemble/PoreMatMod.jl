@@ -5,4 +5,4 @@ examples/*.xyz
 Manifest.toml
 test/*.cif
 test/*.xyz
-
+test/data
