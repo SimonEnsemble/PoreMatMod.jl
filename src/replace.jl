@@ -292,6 +292,17 @@ function substructure_replace(search::Search, replacement::Crystal; random::Bool
         end
     end
 
+    # remove charges from parent
+    if search.parent.charges.n > 0
+        @warn "Dropping charges from parent."
+        p = search.parent
+        search = Search(
+            Crystal(p.name, p.box, p.atoms, Charges{Frac}(0), p.bonds, p.symmetry),
+            search.query,
+            search.isomorphisms
+        )
+    end
+
     # generate configuration tuples (location, orientation)
     configs = Tuple{Int,Int}[(loc[i], ori[i]) for i in 1:nb_loc]
     # process replacements
