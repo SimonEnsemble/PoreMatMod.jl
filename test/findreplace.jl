@@ -129,6 +129,21 @@ end # test set: substructure_search
         (ne(xtal.bonds) - ne(query.bonds) + ne(replacement.bonds))
 end
 
+@testset "conglomerate test" begin
+    xtal = Crystal("conglomerate_test.cif")
+    infer_bonds!(xtal, false)
+    @test ne(xtal.bonds) == 1
+    remove_bonds!(xtal)
+    @test ne(xtal.bonds) == 0
+    infer_bonds!(xtal, true)
+    @test ne(xtal.bonds) == 5
+    PoreMatMod.conglomerate!(xtal)
+    remove_bonds!(xtal)
+    translate_by!(xtal.atoms.coords, Frac([0.5, 0.5, 0.5]))
+    infer_bonds!(xtal, false)
+    @test ne(xtal.bonds) == 5
+end
+
 
 @testset "remove duplicates" begin
     parent = moiety("ADC.xyz")

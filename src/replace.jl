@@ -69,43 +69,83 @@ function get_r2p_alignment(replacement::Crystal, parent::Crystal, r2p::Dict{Int,
     return Alignment(rot, - x_r_center, x_p_center, err)
 end
 
-
 function conglomerate!(parent_substructure::Crystal)
-    # snip cross-PB bonds to generate multiple components
+    # snip the cross-PB bonds
     bonds = deepcopy(parent_substructure.bonds)
-    for e in edges(bonds) # loop over bonds
-        if get_prop(bonds, e, :cross_boundary) # find cross-PB bonds
-            rem_edge!(bonds, e)
+    if length(connected_components(bonds)) > 1
+        @warn "# connected components in parent substructure > 1. assuming the substructure does not cross the periodic boundary..."
+        return
+    end
+    drop_cross_pb_bonds!(bonds)
+
+    # find connected components of bonding graph without cross-PB bonds
+    #    these are the components split across the boundary
+    conn_comps = connected_components(bonds)
+    
+    # if substructure is entireline in the unit cell, it's already conglomerated :)
+    if length(conn_comps) == 1
+        return
+    end
+
+    # we wish to shift all connected components to a reference component,
+    #   defined to be the largest component for speed.
+    conn_comps_shifted = [false for c = 1:length(conn_comps)]
+    ref_comp_id = argmax(length.(conn_comps))
+    conn_comps_shifted[ref_comp_id] = true  # consider it shifted.
+    
+    # has atom p been shifted?
+    function shifted_atom(p::Int)
+        # loop over all connected components that have been shifted
+        for conn_comp in conn_comps[conn_comps_shifted]
+            # if parent substructure atom in this, yes!
+            if p in conn_comp
+                return true
+            end
+        end
+        # reached this far, atom p is not in component that has been shifted.
+        return false
+    end
+    
+    # to which component does atom p belong?
+    function find_component(p::Int)
+        for c = 1:length(conn_comps)
+            if p in conn_comps[c]
+                return c
+            end
         end
     end
-    # find conn comps
-    conn_comps = connected_components(bonds)
-    ref_comp_id = argmax(length.(conn_comps))
-    # set reference atom
-    ref_atom = conn_comps[ref_comp_id][1]
-    # loop over non-reference components and rectify images
-    for comp_id in 1:length(conn_comps)
-        if comp_id == ref_comp_id
-            continue
-        end
-        # get index of some atom in the non-reference comp
-        atom_idx = conn_comps[comp_id][1]
-        # find displacement vector for first atom
-        dx = parent_substructure.atoms.coords.xf[:, ref_atom] - 
-             parent_substructure.atoms.coords.xf[:, atom_idx]
-        # get nearest image vector
-        nx = copy(dx)
-        nearest_image!(nx)
-        # if the norm of nx is less than that of dx, translate the atom
-        if norm(nx) < norm(dx)
-            for atom_idx in conn_comps[comp_id]
-                parent_substructure.atoms.coords.xf[:, atom_idx] .+= dx - nx
+    
+    # until all components have been shifted to the reference component...
+    while ! all(conn_comps_shifted)
+        # loop over cross-PB edges in the parent substructure
+        for ed in edges(parent_substructure.bonds)
+            if get_prop(parent_substructure.bonds, ed, :cross_boundary)
+                # if one edge belongs to unshifted component and another belogs to any component that has been shifted...
+                if     shifted_atom(ed.src) && ! shifted_atom(ed.dst)
+                    p_ref, p = ed.src, ed.dst
+                elseif shifted_atom(ed.dst) && ! shifted_atom(ed.src)
+                    p_ref, p = ed.dst, ed.src
+                else
+                    continue # both are shifted or both are unshifted. ignore this cross-PB edge
+                end
+                # here's the unshifted component we will shift next, to be next to the shifted components.
+                comp_id = find_component(p)
+                # find displacement vector for this cross-PB edge.
+                dx = parent_substructure.atoms.coords.xf[:, p_ref] - parent_substructure.atoms.coords.xf[:, p]
+                # get distance to nearest image
+                n_dx = copy(dx)
+                nearest_image!(n_dx)
+                # shift all atoms in this component by this vector.
+                for atom_idx in conn_comps[comp_id]
+                    parent_substructure.atoms.coords.xf[:, atom_idx] .+= dx - n_dx
+                end
+                # mark that we've shifted this component.
+                conn_comps_shifted[comp_id] = true
             end
         end
     end
     return
 end
-
 
 function aligned_replacement(replacement::Crystal, parent::Crystal, r2p_alignment::Alignment)
     # put replacement into cartesian space
