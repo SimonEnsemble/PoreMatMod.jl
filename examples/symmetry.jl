@@ -4,11 +4,10 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ c616d4e2-5944-4cc0-98ca-2ae9d5c8ed8e
+# ╔═╡ fd82b765-7a62-4f85-bf60-28c83b1731aa
 begin
 	import Pkg
 	Pkg.develop("PoreMatMod")
-	using Revise
 end
 
 # ╔═╡ 3bb3966e-a7dd-46c1-b649-33169ce424d2
@@ -121,7 +120,7 @@ begin
 end
 
 # ╔═╡ Cell order:
-# ╠═c616d4e2-5944-4cc0-98ca-2ae9d5c8ed8e
+# ╟─fd82b765-7a62-4f85-bf60-28c83b1731aa
 # ╟─8e4fd703-f53e-4056-9466-66f07bacad8d
 # ╠═3bb3966e-a7dd-46c1-b649-33169ce424d2
 # ╠═d3eef6f4-ff15-47f3-8686-2c0cb0fb882d
