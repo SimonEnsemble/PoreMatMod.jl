@@ -1,6 +1,6 @@
 module ExampleHelpers
 
-using Graphs, Logging, Markdown, Reexport
+using Graphs, Logging, Markdown, Reexport, MetaGraphs, LinearAlgebra
 using Bio3DView: viewfile
 @reexport using Xtals
 
@@ -78,9 +78,10 @@ function view_structure(xtal::Crystal; drop_cross_pb=true)
     # write the box mesh
     write_vtk(xtal.box, "temp_unit_cell.vtk")
     # drop symmetry info and charges
-    x = Crystal(xtal.name, xtal.box, xtal.atoms, Charges{Frac}(0), xtal.bonds, Xtals.SymmetryInfo())
+    x = deepcopy(Crystal(xtal.name, xtal.box, xtal.atoms, Charges{Frac}(0), xtal.bonds, Xtals.SymmetryInfo()))
     # drop cross-boundary bonds (they don't render correctly)
     if drop_cross_pb
+        # drop the cross-boundary bonds
         drop_cross_pb_bonds!(x)
     end
     write_mol2(x, filename="temp_view.mol2")

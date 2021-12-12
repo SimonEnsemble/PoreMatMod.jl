@@ -69,11 +69,12 @@ function get_r2p_alignment(replacement::Crystal, parent::Crystal, r2p::Dict{Int,
     return Alignment(rot, - x_r_center, x_p_center, err)
 end
 
+
 function conglomerate!(parent_substructure::Crystal)
     # snip the cross-PB bonds
     bonds = deepcopy(parent_substructure.bonds)
     if length(connected_components(bonds)) > 1
-        @warn "# connected components in parent substructure > 1. assuming the substructure does not cross the periodic boundary..."
+        @debug "# connected components in parent substructure > 1. assuming the substructure does not cross the periodic boundary..."
         return
     end
     drop_cross_pb_bonds!(bonds)
@@ -147,6 +148,7 @@ function conglomerate!(parent_substructure::Crystal)
     return
 end
 
+
 function aligned_replacement(replacement::Crystal, parent::Crystal, r2p_alignment::Alignment)
     # put replacement into cartesian space
     atoms_r = Cart(replacement.atoms, replacement.box)
@@ -169,6 +171,19 @@ function effect_replacements(search::Search, replacement::Crystal, configs::Vect
     installations = [optimal_replacement(search, replacement, q2r, loc_id, [ori_id]) for (loc_id, ori_id) in configs]
     
     child = install_replacements(search.parent, installations, name)
+
+    # handle `missing` values in edge :cross_boundary attribute
+    for edge in edges(child.bonds) # loop over edges
+        # check if cross-boundary info is missing
+        if ismissing(get_prop(child.bonds, edge, :cross_boundary))
+            # check if bond crosses boundary
+            distance_e = get_prop(child.bonds, edge, :distance) # distance in edge property
+            dxa = Cart(Frac(child.atoms.coords.xf[:, src(edge)] - child.atoms.coords.xf[:, dst(edge)]), child.box) # Cartesian displacement
+            distance_a = norm(dxa.x) # current euclidean distance by atom coords
+            set_prop!(child.bonds, edge, :cross_boundary, !isapprox(distance_e, distance_a, atol=0.1))
+        end
+    end
+
     return child
 end
 
@@ -194,9 +209,11 @@ function install_replacements(parent::Crystal, replacements::Vector{Installation
                 if ! (p_nbr in values(q2p)) # p_nbr not in parent_subst
                     # need bond nbr => r in child, where r is in replacement
                     e = (p_nbr, child.atoms.n - replacement.atoms.n + r)
+                    # create edge
                     add_edge!(child.bonds, e)
-                    ## TODO make this always true (currently an assumption):
-                    set_prop!(child.bonds, e[1], e[2], :cross_boundary, get_prop(parent.bonds, p, p_nbr, :cross_boundary))
+                    # copy edge attributes from parent (:cross_boundary will need to be reassessed later)
+                    set_props!(child.bonds, e[1], e[2], props(parent.bonds, p, p_nbr))
+                    set_prop!(child.bonds, e[1], e[2], :cross_boundary, missing)
                 end
             end
         end
@@ -360,7 +377,15 @@ function substructure_replace(search::Search, replacement::Crystal; random::Bool
     end
 
     if wrap
+        # wrap coordinates
         wrap!(child.atoms.coords)
+        # check :cross_boundary edge attributes
+        for edge in edges(child.bonds) # loop over edges
+            distance_e = get_prop(child.bonds, edge, :distance) # distance in edge property
+            dxa = Cart(Frac(child.atoms.coords.xf[:, src(edge)] - child.atoms.coords.xf[:, dst(edge)]), child.box) # Cartesian displacement
+            distance_a = norm(dxa.x) # current euclidean distance by atom coords
+            set_prop!(child.bonds, edge, :cross_boundary, !isapprox(distance_e, distance_a, atol=0.1))
+        end
     end
 
     if reinfer_bonds
