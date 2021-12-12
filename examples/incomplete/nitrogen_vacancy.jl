@@ -5,7 +5,7 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ 2065e50f-1bba-4182-ae16-70feecaa1942
-using PoreMatMod, Bio3DView
+using PoreMatMod
 
 # ╔═╡ 5e702404-3665-411e-a4d2-cb7fba303c91
 using PoreMatMod.ExampleHelpers

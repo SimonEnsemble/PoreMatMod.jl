@@ -12,7 +12,7 @@ end
 
 # ╔═╡ ee100c2d-30aa-4b29-b85e-49417e1ed91c
 # load required packages (Pluto.jl will automatically install them)
-using PoreMatMod, PlutoUI, Bio3DView, Logging
+using PoreMatMod, PlutoUI
 
 # ╔═╡ 172f819b-fca8-433a-9a72-e533078e814c
 using PoreMatMod.ExampleHelpers

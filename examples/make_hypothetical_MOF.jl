@@ -12,7 +12,7 @@ end
 
 # ╔═╡ 16f0e183-f48d-4dcd-8751-d3c61c875e18
 # load required packages (Pluto.jl will automatically install them)
-using PoreMatMod, PlutoUI, Bio3DView, Logging
+using PoreMatMod, PlutoUI
 
 # ╔═╡ 3cca5289-a829-4717-b796-0834229995d1
 using PoreMatMod.ExampleHelpers
@@ -123,7 +123,7 @@ write_cif(child, "acetamido-functionalized_IRMOF-1.cif")
 # ╟─be86f07e-0669-46c2-8c79-80e65dfcc6f2
 # ╠═b53e7c38-d8f5-4f28-a9dc-f7902a86fdb2
 # ╟─b402e79a-784b-4d8b-82f1-df4fe1cedad1
-# ╠═9b2d534a-4f78-4950-add1-9ba645669bb9
+# ╟─9b2d534a-4f78-4950-add1-9ba645669bb9
 # ╠═4be03110-61ab-4cd6-b3fe-7d51ac5ee771
 # ╟─e5eaaef4-13a0-48bd-9f2b-5040b2d10ac1
 # ╟─559ef3c3-a176-4d65-8958-810c9b0b32c5

@@ -6,13 +6,13 @@ using InteractiveUtils
 
 # ╔═╡ 359a6c00-c9a6-441d-b258-55bfb5deb4b5
 begin
-	import Pkg
-	Pkg.develop("PoreMatMod")
+    import Pkg
+    Pkg.develop("PoreMatMod")
 end
 
 # ╔═╡ a948f8b3-4ec5-40b9-b2c1-fcf5b8ad67fa
 # load required packages (Pluto.jl will automatically install them)
-using PoreMatMod, PlutoUI, Bio3DView, Logging
+using PoreMatMod, PlutoUI
 
 # ╔═╡ 77c63e60-2708-4fef-a6ea-cb394f114b88
 using PoreMatMod.ExampleHelpers
@@ -40,17 +40,17 @@ rc[:paths][:moieties]
 # ╔═╡ be86f07e-0669-46c2-8c79-80e65dfcc6f2
 md"""
 !!! example \"the task\"
-	we have the IRMOF-1 crystal structure, and wish to explore appending the acetamido functional group its BDC linkers using different replacement styles.
+    we have the IRMOF-1 crystal structure, and wish to explore appending the acetamido functional group its BDC linkers using different replacement styles.
 
 **Parent crystal structure**: first, we read in the `.cif` file describing the parent IRMOF-1 crystal structure.
 """
 
 # ╔═╡ b53e7c38-d8f5-4f28-a9dc-f7902a86fdb2
 begin
-	# read in the parent xtal
-	parent = Crystal("IRMOF-1.cif")	# load .cif file
-	infer_bonds!(parent, true)      # infer bonds
-	view_structure(parent)          # view structure
+    # read in the parent xtal
+    parent = Crystal("IRMOF-1.cif") # load .cif file
+    infer_bonds!(parent, true)      # infer bonds
+    view_structure(parent)          # view structure
 end
 
 # ╔═╡ b402e79a-784b-4d8b-82f1-df4fe1cedad1
@@ -69,7 +69,7 @@ view_query_or_replacement("2-!-p-phenylene.xyz")
 
 # ╔═╡ 559ef3c3-a176-4d65-8958-810c9b0b32c5
 with_terminal() do
-	display_query_or_replacement_file("2-!-p-phenylene.xyz")
+    display_query_or_replacement_file("2-!-p-phenylene.xyz")
 end
 
 # ╔═╡ d1aa8a19-3702-40f6-b73e-b9ebfc1a7a71
@@ -85,7 +85,7 @@ view_query_or_replacement("2-nitro-p-phenylene.xyz")
 
 # ╔═╡ c8f8dbd3-4191-460d-944f-f5e456ce8b83
 with_terminal() do
-	display_query_or_replacement_file("2-nitro-p-phenylene.xyz")
+    display_query_or_replacement_file("2-nitro-p-phenylene.xyz")
 end
 
 # ╔═╡ 127a2bef-3903-4801-bc75-00a6dde2bc6e
@@ -102,7 +102,7 @@ With all three file inputs loaded (IRMOF-1 as `parent`, 2-!-*p*-phenylene as `qu
 # ╔═╡ 0e3f7334-9e7f-483b-a0ac-70777902bf51
 md"""
 !!! note \"Note\"
-	Multiple replacements can be done with a single search.
+    Multiple replacements can be done with a single search.
 """
 
 # ╔═╡ b7b46022-aee0-4d51-8a5e-0c8c005f341a
@@ -117,8 +117,8 @@ Optimal configurations will be chosen for each location in `search.isomorphisms`
 
 # ╔═╡ 74aa19d2-b1a4-4333-9ff9-e6ea74e7d989
 begin
-	local child = substructure_replace(search, replacement)
-	view_structure(child)
+    local child = substructure_replace(search, replacement)
+    view_structure(child)
 end
 
 # ╔═╡ bed9d62f-d61d-4fb1-9a12-188a864fff21
@@ -130,8 +130,8 @@ If only some of the linkers should be replaced, the `nb_loc` argument lets us sp
 
 # ╔═╡ 9dbf7859-762d-4edc-8300-ac3bba151a8a
 begin
-	local child = substructure_replace(search, replacement, nb_loc=8)
-	view_structure(child)
+    local child = substructure_replace(search, replacement, nb_loc=8)
+    view_structure(child)
 end
 
 # ╔═╡ 95215fe9-a7e6-4563-94b6-5ed1d5dde03b
@@ -143,8 +143,8 @@ Specific locations are chosen by providing the `loc` argument.
 
 # ╔═╡ 8c22f94c-b235-40b2-8fc8-6052c31a6b6e
 begin
-	local child = substructure_replace(search, replacement, loc=[17, 18, 19, 20])
-	view_structure(child)
+    local child = substructure_replace(search, replacement, loc=[17, 18, 19, 20])
+    view_structure(child)
 end
 
 # ╔═╡ 6297833a-ea26-4958-ad56-fc76aeabee69
@@ -156,9 +156,9 @@ Providing both the `loc` and `ori` arguments allows specifying the exact configu
 
 # ╔═╡ 183f9ff1-810a-4062-a3c6-cdb82dbd8a7a
 begin
-	local child = substructure_replace(
-		search, replacement, loc=[1, 2, 3, 13], ori=[0, 1, 2, 3])
-	view_structure(child)
+    local child = substructure_replace(
+        search, replacement, loc=[1, 2, 3, 13], ori=[0, 1, 2, 3])
+    view_structure(child)
 end
 
 # ╔═╡ 0347c45c-899b-4c4d-9b31-f09a205636f0
@@ -170,8 +170,8 @@ By using the `random` keyword argument, the search for optimal alignment can be 
 
 # ╔═╡ b7064b05-6e57-4e81-8cbc-b2075166a1af
 begin
-	local child = substructure_replace(search, replacement, nb_loc=24, random=true)
-	view_structure(child)
+    local child = substructure_replace(search, replacement, nb_loc=24, random=true)
+    view_structure(child)
 end
 
 # ╔═╡ Cell order:

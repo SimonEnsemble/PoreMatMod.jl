@@ -6,13 +6,13 @@ using InteractiveUtils
 
 # ╔═╡ 64b72493-6cac-4b92-9a81-6a5df12f7875
 begin
-	import Pkg
-	Pkg.develop("PoreMatMod")
+    import Pkg
+    Pkg.develop("PoreMatMod")
 end
 
 # ╔═╡ 5401e009-923e-4a7f-9f3a-fd534f06d8b0
 # load required packages (Pluto.jl will automatically install them)
-using PoreMatMod, PlutoUI, Bio3DView, Logging, Graphs, MetaGraphs
+using PoreMatMod, PlutoUI
 
 # ╔═╡ 0f99b225-db96-485c-9e2c-1b4179601e53
 using PoreMatMod.ExampleHelpers
@@ -40,17 +40,17 @@ rc[:paths][:moieties]
 # ╔═╡ be86f07e-0669-46c2-8c79-80e65dfcc6f2
 md"""
 !!! example \"the task\"
-	we have the IRMOF-1 crystal structure, and wish to explore appending the acetamido functional group its BDC linkers using different replacement styles.
+    we have the IRMOF-1 crystal structure, and wish to explore appending the acetamido functional group its BDC linkers using different replacement styles.
 
 **Parent crystal structure**: first, we read in the `.cif` file describing the parent IRMOF-1 crystal structure.
 """
 
 # ╔═╡ b53e7c38-d8f5-4f28-a9dc-f7902a86fdb2
 begin
-	# read in the parent xtal
-	parent = Crystal("IRMOF-1.cif")	# load .cif file
-	infer_bonds!(parent, true)      # infer bonds
-	view_structure(parent)          # view structure
+    # read in the parent xtal
+    parent = Crystal("IRMOF-1.cif")    # load .cif file
+    infer_bonds!(parent, true)      # infer bonds
+    view_structure(parent)          # view structure
 end
 
 # ╔═╡ b402e79a-784b-4d8b-82f1-df4fe1cedad1
@@ -69,7 +69,7 @@ view_query_or_replacement("p-phenylene.xyz")
 
 # ╔═╡ 559ef3c3-a176-4d65-8958-810c9b0b32c5
 with_terminal() do
-	display_query_or_replacement_file("p-phenylene.xyz")
+    display_query_or_replacement_file("p-phenylene.xyz")
 end
 
 # ╔═╡ 127a2bef-3903-4801-bc75-00a6dde2bc6e
