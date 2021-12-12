@@ -6,7 +6,7 @@ using InteractiveUtils
 
 # ╔═╡ d4e77120-8ee6-4514-b066-6127aaa1d6c9
 # load required packages (Pluto.jl will automatically install them)
-using PoreMatMod, PlutoUI, Bio3DView
+using PoreMatMod, PlutoUI
 
 # ╔═╡ 468c12c0-886f-409b-b36f-b6ff90063e40
 using PoreMatMod.ExampleHelpers
