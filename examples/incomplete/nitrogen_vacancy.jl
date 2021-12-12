@@ -4,96 +4,54 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 1a73bdc4-9394-4212-9ae8-3b8654a496c0
+# ╔═╡ 2065e50f-1bba-4182-ae16-70feecaa1942
 using PoreMatMod
 
-# ╔═╡ f05cdf05-1661-41c7-863d-15a436791ac4
+# ╔═╡ 5e702404-3665-411e-a4d2-cb7fba303c91
 using PoreMatMod.ExampleHelpers
 
-# ╔═╡ 0b644231-c25a-4d9f-895d-16fc612613ec
-md"# Azepine"
-
-# ╔═╡ 916b9bc9-c6c9-444b-9281-e3709c248b75
+# ╔═╡ 52318187-a575-4864-8185-416faeea27ab
 begin
-	benzodiazepine_parent = moiety("benzodiazepine.xyz")
-	remove_bonds!(benzodiazepine_parent)
-	local new_box = replicate(unit_cube(), (20, 20, 20))
-	local new_atoms = Frac(Cart(benzodiazepine_parent.atoms, benzodiazepine_parent.box), new_box)
-	local new_charges = Frac(Cart(benzodiazepine_parent.charges, benzodiazepine_parent.box), new_box)
-	benzodiazepine_parent = Crystal(benzodiazepine_parent.name, new_box, new_atoms, new_charges)
-	infer_bonds!(benzodiazepine_parent, false)
-	benzo_fragment = moiety("benzo_fragment.xyz")
-	chloro_benzo_fragment = moiety("chloro_benzo_fragment.xyz")
-	diazepine_fragment = moiety("diazepine_fragment.xyz")
-	N_methyl_diazepine = moiety("N_methyl_diazepine.xyz")
+	rc[:paths][:crystals] = realpath(joinpath(pwd(), "..", "test", "data", "crystals"))
+	rc[:paths][:moieties] = realpath(joinpath(pwd(), "..", "test", "data", "moieties"))
 end
 
-# ╔═╡ da1f22fb-8e16-439b-934a-280ed31635df
+# ╔═╡ 6922e27b-b848-418b-bf1a-df17315baa80
 begin
-	intermediate = replace(benzodiazepine_parent, diazepine_fragment => N_methyl_diazepine)
-	diazepam = replace(intermediate, benzo_fragment => chloro_benzo_fragment)
+	parent = replicate(Crystal("diamond.cif", remove_duplicates=true), (2,2,1))
+	strip_numbers_from_atom_labels!(parent)
+	infer_bonds!(parent, true)
 end
 
-# ╔═╡ 7d73fa2e-9ee5-4002-97a6-496f4d186512
-begin
-	local temp = deepcopy(intermediate)
-	translate_by!(temp.atoms.coords, Frac([0.5, 0.5, 0.5]))
-	wrap!(temp)
-	write_cif(temp, "intermediate.cif")
-	
-	local temp = deepcopy(diazepam)
-	translate_by!(temp.atoms.coords, Frac([0.5, 0.5, 0.5]))
-	wrap!(temp)
-	write_cif(temp, "diazepam.cif")
-end
+# ╔═╡ 418a7421-92ed-406f-9578-34187529c307
+write_cif(parent, "diamond_cell.cif")
 
-# ╔═╡ 6fe41bf5-cf36-4313-8886-cfca2825c6cd
-md"# Slab"
+# ╔═╡ f7d3cb8c-9d12-4f78-94c6-30a308648e69
+view_structure(parent)
 
-# ╔═╡ faff7bea-0d3a-45fe-8a88-b288b390e35b
-function read_poscar(filename::String)::Crystal
-	filedata = readlines(filename)
-	box_matrix = Matrix(reduce(hcat, [parse.(Float64, row) for row in split.(filedata[3:5])])')
-	species = Symbol.(split(filedata[6]))
-	atom_counts = parse.(Int, split(filedata[7]))
-	nb_atoms = sum(atom_counts)
-	species_vec = reduce(vcat, [[element for _ in 1:atom_counts[i]] for (i, element) in enumerate(species)])
-	
-	box = Box(box_matrix)
-	coords = Frac(reduce(hcat, [parse.(Float64, row) for row in split.(filedata[9:nb_atoms+8])]))
-	atoms = Atoms(nb_atoms, species_vec, coords)
-	charges = Charges(nb_atoms, zeros(nb_atoms), coords)
-	
-	return Crystal(filename, box, atoms, charges)
-end
+# ╔═╡ 90f53a39-89b3-41c5-ad8b-c0683b96c9e4
+query = moiety("adamantane_C5.xyz")
 
-# ╔═╡ db771098-8097-4748-85c7-ece4faed4e43
-begin
-	poscar = read_poscar("data/crystals/POSCAR")
-	infer_bonds!(poscar, true)
-end
+# ╔═╡ 58b79260-8a7a-4ca4-bdee-4c3c463334ba
+replacement = moiety("nitrogen_vacancy.xyz")
 
-# ╔═╡ 35c1c1d5-ea01-4d15-80c3-63330744b037
-write_cif(poscar, "poscar.cif")
+# ╔═╡ b835a642-0a24-4796-8e01-e3c4041a6bff
+child = replace(parent, query => replacement, loc=[8])
 
-# ╔═╡ b09ea1c5-67b5-4953-8fef-c5144f09186b
-hydrated_Pd2 = moiety("hydrated_Pd2.xyz")
+# ╔═╡ 3c003a65-3983-42ed-b445-5618ae21a4a3
+write_cif(child, "child.cif")
 
-# ╔═╡ b7a6a162-39cc-4137-b803-94c2a5326b6e
-OA_Pd2 = moiety("OA_Pd2.xyz")
-
-# ╔═╡ e232cfc8-a954-4089-be59-a9fa5b3a2736
-oxidative_addition = replace(poscar, hydrated_Pd2 => OA_Pd2)
-
-# ╔═╡ 908ab709-c12a-455b-994b-89e600d47b06
-write_cif(oxidative_addition, "oxidative_addition.cif")
+# ╔═╡ caf947dc-11bd-455d-8fd6-434fa52edada
+view_structure(child)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+Bio3DView = "99c8bb3a-9d13-5280-9740-b4880ed9c598"
 PoreMatMod = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 
 [compat]
+Bio3DView = "~0.1.3"
 PoreMatMod = "~0.2.7"
 """
 
@@ -653,19 +611,16 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 """
 
 # ╔═╡ Cell order:
-# ╠═1a73bdc4-9394-4212-9ae8-3b8654a496c0
-# ╠═f05cdf05-1661-41c7-863d-15a436791ac4
-# ╟─0b644231-c25a-4d9f-895d-16fc612613ec
-# ╠═916b9bc9-c6c9-444b-9281-e3709c248b75
-# ╠═da1f22fb-8e16-439b-934a-280ed31635df
-# ╠═7d73fa2e-9ee5-4002-97a6-496f4d186512
-# ╟─6fe41bf5-cf36-4313-8886-cfca2825c6cd
-# ╠═faff7bea-0d3a-45fe-8a88-b288b390e35b
-# ╠═db771098-8097-4748-85c7-ece4faed4e43
-# ╠═35c1c1d5-ea01-4d15-80c3-63330744b037
-# ╠═b09ea1c5-67b5-4953-8fef-c5144f09186b
-# ╠═b7a6a162-39cc-4137-b803-94c2a5326b6e
-# ╠═e232cfc8-a954-4089-be59-a9fa5b3a2736
-# ╠═908ab709-c12a-455b-994b-89e600d47b06
+# ╠═2065e50f-1bba-4182-ae16-70feecaa1942
+# ╠═5e702404-3665-411e-a4d2-cb7fba303c91
+# ╠═52318187-a575-4864-8185-416faeea27ab
+# ╠═6922e27b-b848-418b-bf1a-df17315baa80
+# ╠═418a7421-92ed-406f-9578-34187529c307
+# ╠═f7d3cb8c-9d12-4f78-94c6-30a308648e69
+# ╠═90f53a39-89b3-41c5-ad8b-c0683b96c9e4
+# ╠═58b79260-8a7a-4ca4-bdee-4c3c463334ba
+# ╠═b835a642-0a24-4796-8e01-e3c4041a6bff
+# ╠═3c003a65-3983-42ed-b445-5618ae21a4a3
+# ╠═caf947dc-11bd-455d-8fd6-434fa52edada
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

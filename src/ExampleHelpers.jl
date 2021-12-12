@@ -1,6 +1,6 @@
 module ExampleHelpers
 
-using Graphs, Logging, Markdown, Reexport
+using Graphs, Logging, Markdown, Reexport, MetaGraphs, LinearAlgebra
 using Bio3DView: viewfile
 @reexport using Xtals
 
@@ -74,11 +74,17 @@ write the child crystal structure to file for downstream molecular simulations
 end
 
 # function to visualize a crystal in the notebook
-function view_structure(xtal::Crystal)
+function view_structure(xtal::Crystal; drop_cross_pb=true)
+    # write the box mesh
     write_vtk(xtal.box, "temp_unit_cell.vtk")
-    no_pb = deepcopy(xtal)
-    drop_cross_pb_bonds!(no_pb)
-    write_mol2(no_pb, filename="temp_view.mol2")
+    # drop symmetry info and charges
+    x = deepcopy(Crystal(xtal.name, xtal.box, xtal.atoms, Charges{Frac}(0), xtal.bonds, Xtals.SymmetryInfo()))
+    # drop cross-boundary bonds (they don't render correctly)
+    if drop_cross_pb
+        # drop the cross-boundary bonds
+        drop_cross_pb_bonds!(x)
+    end
+    write_mol2(x, filename="temp_view.mol2")
     output = nothing
     try
         output = viewfile("temp_view.mol2", "mol2", vtkcell="temp_unit_cell.vtk")

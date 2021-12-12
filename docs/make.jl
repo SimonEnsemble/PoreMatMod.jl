@@ -18,11 +18,11 @@ cd("..") # return to root for running deploydocs
 
 # build the docs
 makedocs( # to test docs, run this call to `makedocs` in the REPL
-    root = joinpath(dirname(pathof(PoreMatMod)), "..", "docs"),
-    modules = [PoreMatMod, Xtals],
-    sitename = "PoreMatMod.jl",
-    clean = true,
-    pages = [
+    root=joinpath(dirname(pathof(PoreMatMod)), "..", "docs"),
+    modules=[PoreMatMod, Xtals],
+    sitename="PoreMatMod.jl",
+    clean=true,
+    pages=[
         "PoreMatMod" => "index.md",
         "Manual" => [
             "Getting Started" => "manual/start.md",
@@ -33,8 +33,9 @@ makedocs( # to test docs, run this call to `makedocs` in the REPL
         "PoreMatModGO" => "PoreMatModGO.md",
         "Contribute/Report Issues" => "collab.md"
     ],
-    format = Documenter.HTML(assets = ["assets/flux.css"]),
-    doctest = false # doctests are run in testing; running them here is redundant and slow
+    format=Documenter.HTML(assets = ["assets/flux.css"]),
+    push_preview=true,
+    doctest=false # doctests are run in testing; running them here is redundant and slow
 )
 
 # deploy the docs

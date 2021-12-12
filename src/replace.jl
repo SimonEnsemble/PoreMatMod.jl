@@ -71,35 +71,77 @@ end
 
 
 function conglomerate!(parent_substructure::Crystal)
-    # snip cross-PB bonds to generate multiple components
+    # snip the cross-PB bonds
     bonds = deepcopy(parent_substructure.bonds)
-    for e in edges(bonds) # loop over bonds
-        if get_prop(bonds, e, :cross_boundary) # find cross-PB bonds
-            rem_edge!(bonds, e)
+    if length(connected_components(bonds)) > 1
+        @debug "# connected components in parent substructure > 1. assuming the substructure does not cross the periodic boundary..."
+        return
+    end
+    drop_cross_pb_bonds!(bonds)
+
+    # find connected components of bonding graph without cross-PB bonds
+    #    these are the components split across the boundary
+    conn_comps = connected_components(bonds)
+    
+    # if substructure is entireline in the unit cell, it's already conglomerated :)
+    if length(conn_comps) == 1
+        return
+    end
+
+    # we wish to shift all connected components to a reference component,
+    #   defined to be the largest component for speed.
+    conn_comps_shifted = [false for c = 1:length(conn_comps)]
+    ref_comp_id = argmax(length.(conn_comps))
+    conn_comps_shifted[ref_comp_id] = true  # consider it shifted.
+    
+    # has atom p been shifted?
+    function shifted_atom(p::Int)
+        # loop over all connected components that have been shifted
+        for conn_comp in conn_comps[conn_comps_shifted]
+            # if parent substructure atom in this, yes!
+            if p in conn_comp
+                return true
+            end
+        end
+        # reached this far, atom p is not in component that has been shifted.
+        return false
+    end
+    
+    # to which component does atom p belong?
+    function find_component(p::Int)
+        for c = 1:length(conn_comps)
+            if p in conn_comps[c]
+                return c
+            end
         end
     end
-    # find conn comps
-    conn_comps = connected_components(bonds)
-    ref_comp_id = argmax(length.(conn_comps))
-    # set reference atom
-    ref_atom = conn_comps[ref_comp_id][1]
-    # loop over non-reference components and rectify images
-    for comp_id in 1:length(conn_comps)
-        if comp_id == ref_comp_id
-            continue
-        end
-        # get index of some atom in the non-reference comp
-        atom_idx = conn_comps[comp_id][1]
-        # find displacement vector for first atom
-        dx = parent_substructure.atoms.coords.xf[:, ref_atom] - 
-             parent_substructure.atoms.coords.xf[:, atom_idx]
-        # get nearest image vector
-        nx = copy(dx)
-        nearest_image!(nx)
-        # if the norm of nx is less than that of dx, translate the atom
-        if norm(nx) < norm(dx)
-            for atom_idx in conn_comps[comp_id]
-                parent_substructure.atoms.coords.xf[:, atom_idx] .+= dx - nx
+    
+    # until all components have been shifted to the reference component...
+    while ! all(conn_comps_shifted)
+        # loop over cross-PB edges in the parent substructure
+        for ed in edges(parent_substructure.bonds)
+            if get_prop(parent_substructure.bonds, ed, :cross_boundary)
+                # if one edge belongs to unshifted component and another belogs to any component that has been shifted...
+                if     shifted_atom(ed.src) && ! shifted_atom(ed.dst)
+                    p_ref, p = ed.src, ed.dst
+                elseif shifted_atom(ed.dst) && ! shifted_atom(ed.src)
+                    p_ref, p = ed.dst, ed.src
+                else
+                    continue # both are shifted or both are unshifted. ignore this cross-PB edge
+                end
+                # here's the unshifted component we will shift next, to be next to the shifted components.
+                comp_id = find_component(p)
+                # find displacement vector for this cross-PB edge.
+                dx = parent_substructure.atoms.coords.xf[:, p_ref] - parent_substructure.atoms.coords.xf[:, p]
+                # get distance to nearest image
+                n_dx = copy(dx)
+                nearest_image!(n_dx)
+                # shift all atoms in this component by this vector.
+                for atom_idx in conn_comps[comp_id]
+                    parent_substructure.atoms.coords.xf[:, atom_idx] .+= dx - n_dx
+                end
+                # mark that we've shifted this component.
+                conn_comps_shifted[comp_id] = true
             end
         end
     end
@@ -129,12 +171,26 @@ function effect_replacements(search::Search, replacement::Crystal, configs::Vect
     installations = [optimal_replacement(search, replacement, q2r, loc_id, [ori_id]) for (loc_id, ori_id) in configs]
     
     child = install_replacements(search.parent, installations, name)
+
+    # handle `missing` values in edge :cross_boundary attribute
+    for edge in edges(child.bonds) # loop over edges
+        # check if cross-boundary info is missing
+        if ismissing(get_prop(child.bonds, edge, :cross_boundary))
+            # check if bond crosses boundary
+            distance_e = get_prop(child.bonds, edge, :distance) # distance in edge property
+            dxa = Cart(Frac(child.atoms.coords.xf[:, src(edge)] - child.atoms.coords.xf[:, dst(edge)]), child.box) # Cartesian displacement
+            distance_a = norm(dxa.x) # current euclidean distance by atom coords
+            set_prop!(child.bonds, edge, :cross_boundary, !isapprox(distance_e, distance_a, atol=0.1))
+        end
+    end
+
     return child
 end
 
 
 function install_replacements(parent::Crystal, replacements::Vector{Installation}, name::String)::Crystal
-    child = Crystal(name, parent.box, parent.atoms, parent.charges, parent.bonds, parent.symmetry)
+    # create child w/o symmetry rules for sake of crystal addition
+    child = Crystal(name, parent.box, parent.atoms, parent.charges, parent.bonds, Xtals.SymmetryInfo())
 
     obsolete_atoms = Int[] # to delete at the end
 
@@ -153,9 +209,11 @@ function install_replacements(parent::Crystal, replacements::Vector{Installation
                 if ! (p_nbr in values(q2p)) # p_nbr not in parent_subst
                     # need bond nbr => r in child, where r is in replacement
                     e = (p_nbr, child.atoms.n - replacement.atoms.n + r)
+                    # create edge
                     add_edge!(child.bonds, e)
-                    ## TODO make this always true (currently an assumption):
-                    set_prop!(child.bonds, e[1], e[2], :cross_boundary, get_prop(parent.bonds, p, p_nbr, :cross_boundary))
+                    # copy edge attributes from parent (:cross_boundary will need to be reassessed later)
+                    set_props!(child.bonds, e[1], e[2], props(parent.bonds, p, p_nbr))
+                    set_prop!(child.bonds, e[1], e[2], :cross_boundary, missing)
                 end
             end
         end
@@ -168,6 +226,9 @@ function install_replacements(parent::Crystal, replacements::Vector{Installation
     obsolete_atoms = unique(obsolete_atoms)
     keep_atoms = [p for p = 1:child.atoms.n if ! (p in obsolete_atoms)]
     child = child[keep_atoms]
+
+    # restore symmetry rules
+    child = Crystal(name, child.box, child.atoms, child.charges, child.bonds, parent.symmetry)
 
     # return result
     return child
@@ -239,7 +300,7 @@ Returns a new `Crystal` with the specified modifications (returns `search.parent
 """
 function substructure_replace(search::Search, replacement::Crystal; random::Bool=false,
     nb_loc::Int=0, loc::Array{Int}=Int[], ori::Array{Int}=Int[], name::String="new_xtal", verbose::Bool=false,
-    remove_duplicates::Bool=false, periodic_boundaries::Bool=true, reinfer_bonds::Bool=false)::Crystal
+    remove_duplicates::Bool=false, periodic_boundaries::Bool=true, reinfer_bonds::Bool=false, wrap::Bool=true)::Crystal
     # replacement at all locations (default)
     if nb_loc == 0 && loc == Int[] && ori == Int[]
         nb_loc = nb_locations(search)
@@ -313,6 +374,18 @@ function substructure_replace(search::Search, replacement::Crystal; random::Bool
             Xtals.remove_duplicates(child.atoms, child.box, periodic_boundaries),
             Xtals.remove_duplicates(child.charges, child.box, periodic_boundaries)
         )
+    end
+
+    if wrap
+        # wrap coordinates
+        wrap!(child.atoms.coords)
+        # check :cross_boundary edge attributes
+        for edge in edges(child.bonds) # loop over edges
+            distance_e = get_prop(child.bonds, edge, :distance) # distance in edge property
+            dxa = Cart(Frac(child.atoms.coords.xf[:, src(edge)] - child.atoms.coords.xf[:, dst(edge)]), child.box) # Cartesian displacement
+            distance_a = norm(dxa.x) # current euclidean distance by atom coords
+            set_prop!(child.bonds, edge, :cross_boundary, !isapprox(distance_e, distance_a, atol=0.1))
+        end
     end
 
     if reinfer_bonds
