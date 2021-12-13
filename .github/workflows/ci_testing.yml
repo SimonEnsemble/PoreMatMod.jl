@@ -13,19 +13,13 @@ concurrency:
 
 env:
   julia_version: '1.6.4'
-  job_timeout_minutes: 30
 
 jobs:
 
 
-  reuse:
-    uses: SimonEnsemble/PoreMatMod.jl/.github/workflows/test.yml@limit-ci-wall-time
-    with:
-      job_timeout_minutes: ${{ env.job_timeout_minutes }}
-
   unit-and-doc-tests:
     runs-on: ubuntu-20.04
-    timeout-minutes: $job_timeout_minutes
+    timeout-minutes: 30
     
     steps:
       - name: checkout commit
@@ -59,7 +53,7 @@ jobs:
 
   cross-platform:
     runs-on: ${{ matrix.os }}
-    timeout-minutes: ${{ env.job_timeout_minutes }}
+    timeout-minutes: 30
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -91,7 +85,7 @@ jobs:
 
   deploy-docs:
     runs-on: ubuntu-20.04
-    timeout-minutes: ${{ env.job_timeout_minutes }}
+    timeout-minutes: 30
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
