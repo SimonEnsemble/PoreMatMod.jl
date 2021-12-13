@@ -19,7 +19,7 @@ jobs:
 
 
   reuse:
-    uses: SimonEnsemble/PoreMatMod.jl/.github/workflows/test.yml@main
+    uses: ./.github/workflows/test.yml@main
     with:
       job_timeout_minutes: ${{ env.job_timeout_minutes }}
 
