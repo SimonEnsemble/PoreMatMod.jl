@@ -20,7 +20,10 @@ jobs:
 
   unit-and-doc-tests:
     runs-on: ubuntu-20.04
-    timeout-minutes: ${{ env.job_timeout_minutes }}
+    timeout-minutes: ${{ matrix.job_timeout_minutes }}
+    strategy:
+      matrix:
+        job_timeout_minutes: ${{ env.job_timeout_minutes }}
     
     steps:
       - name: checkout commit
