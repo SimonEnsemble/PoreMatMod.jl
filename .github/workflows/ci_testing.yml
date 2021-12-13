@@ -18,6 +18,11 @@ env:
 jobs:
 
 
+  reuse:
+    uses: SimonEnsemble/PoreMatMod.jl/.github/workflows/test.yml@main
+    with:
+      job_timeout_minutes: ${{ env.job_timeout_minutes }}
+
   unit-and-doc-tests:
     runs-on: ubuntu-20.04
     timeout-minutes: $job_timeout_minutes
