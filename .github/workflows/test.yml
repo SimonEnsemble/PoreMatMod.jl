@@ -7,4 +7,5 @@ jobs:
 
 
   test:
-    run: echo "test"
+    steps:
+      run: echo "test"
