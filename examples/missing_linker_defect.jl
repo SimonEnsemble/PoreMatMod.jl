@@ -98,7 +98,7 @@ n.b.
 
 # ╔═╡ 74aa19d2-b1a4-4333-9ff9-e6ea74e7d989
 begin
-    child = replace(parent, query => replacement; loc=[1, 18])
+    child = replace(parent, query => replacement; loc=[3, 9])
     view_structure(child)
 end
 
