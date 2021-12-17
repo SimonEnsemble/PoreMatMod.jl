@@ -381,8 +381,14 @@ function substructure_replace(search::Search, replacement::Crystal; random::Bool
     end
 
     if wrap
+        # throw error if installed replacement fragment spans the unit cell
+        if any(abs.(child.atoms.coords.xf) .> 2.0)
+            error("installed replacement fragment too large for the unit cell; replicate the parent and try again.")
+        end
+
         # wrap coordinates
         wrap!(child.atoms.coords)
+        
         # check :cross_boundary edge attributes
         for edge in edges(child.bonds) # loop over edges
             distance_e = get_prop(child.bonds, edge, :distance) # distance in edge property

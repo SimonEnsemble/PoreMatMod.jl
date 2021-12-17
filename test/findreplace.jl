@@ -2,24 +2,21 @@ module PoreMatMod_Test
 
 using Test, Graphs, PoreMatMod, LinearAlgebra
 
-@testset "non-p1 symmetry and split across PB" begin
-    parent = Crystal("NiPyC_fragment_trouble.cif", convert_to_p1=false)
-    infer_bonds!(parent, true)
-
+@testset "replacement split across PB" begin
+    parent = Crystal("NiPyC_fragment_trouble.cif")
     query = moiety("PyC.xyz")
     replacement = moiety("PyC-CH3.xyz")
-    prim_child = replace(parent, query => replacement)
+
+    @test_throws AssertionError replace(parent, query => replacement)
+    infer_bonds!(parent, true)
+    child = replace(parent, query => replacement)
     
-    @test ne(prim_child.bonds) == ne(parent.bonds) + 3 * 2 # added H -> CH3 on two PyC ligands
+    @test ne(child.bonds) == ne(parent.bonds) + 3 * 2 # added H -> CH3 on two PyC ligands
 
     # test conglomerate worked.
-    remove_bonds!(prim_child)
-    infer_bonds!(prim_child, true)
-    @test ne(prim_child.bonds) == ne(parent.bonds) + 3 * 2 # added H -> CH3 on two PyC ligands
-
-    @test   prim_child.symmetry.operations == parent.symmetry.operations && 
-            prim_child.symmetry.space_group == parent.symmetry.space_group && 
-            prim_child.symmetry.is_p1 == parent.symmetry.is_p1
+    remove_bonds!(child)
+    infer_bonds!(child, true)
+    @test ne(child.bonds) == ne(parent.bonds) + 3 * 2 # added H -> CH3 on two PyC ligands
 end
 
 @testset "split across PB, non-connected replacement"
@@ -46,6 +43,16 @@ end
         end
     end
     @test all(min_distances .< 0.01)
+end
+
+@testset "replacement spans twice the unit cell" begin
+    parent = Crystal("NiPyC_fragment_trouble.cif")
+    infer_bonds!(parent, true)
+
+    query = moiety("PyC.xyz")
+    replacement = moiety("PyC-long_chain.xyz")
+    
+    @test_throws Exception replace(parent, query => replacement)
 end
 
 @testset "substructure_search" begin
