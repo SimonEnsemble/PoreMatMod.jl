@@ -9,14 +9,14 @@ using Test, Graphs, PoreMatMod, LinearAlgebra
     query = moiety("PyC.xyz")
     replacement = moiety("PyC-CH3.xyz")
     prim_child = replace(parent, query => replacement)
-
-    write_cif(prim_child, joinpath(rc[:paths][:crystals], "prim_child.cif"))
-    child = Crystal("prim_child.cif")
-
-    @test child.atoms.n == 33
     
-    @test ne(prim_child.bonds) == 34
-    
+    @test ne(prim_child.bonds) == ne(parent.bonds) + 3 * 2 # added H -> CH3 on two PyC ligands
+
+    # test conglomerate worked.
+    remove_bonds!(prim_child)
+    infer_bonds!(prim_child, true)
+    @test ne(prim_child.bonds) == ne(parent.bonds) + 3 * 2 # added H -> CH3 on two PyC ligands
+
     @test   prim_child.symmetry.operations == parent.symmetry.operations && 
             prim_child.symmetry.space_group == parent.symmetry.space_group && 
             prim_child.symmetry.is_p1 == parent.symmetry.is_p1

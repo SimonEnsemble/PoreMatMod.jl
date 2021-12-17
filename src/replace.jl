@@ -54,7 +54,6 @@ function get_r2p_alignment(replacement::Crystal, parent::Crystal, r2p::Dict{Int,
     parent_substructure = deepcopy(parent[[p for (r, p) in r2p]])
     conglomerate!(parent_substructure)
     atoms_p = Cart(parent_substructure.atoms, parent_substructure.box)
-    Xtals.write_xyz(atoms_p, "atoms_p.xyz")
     X_p = atoms_p.coords.x
     x_p_center = center(X_p)
     X_p = X_p .- x_p_center
@@ -74,7 +73,7 @@ function conglomerate!(parent_substructure::Crystal)
     # snip the cross-PB bonds
     bonds = deepcopy(parent_substructure.bonds)
     if length(connected_components(bonds)) > 1
-        @debug "# connected components in parent substructure > 1. assuming the substructure does not cross the periodic boundary..."
+        @warn "# connected components in parent substructure > 1. assuming the substructure does not cross the periodic boundary..."
         return
     end
     drop_cross_pb_bonds!(bonds)
