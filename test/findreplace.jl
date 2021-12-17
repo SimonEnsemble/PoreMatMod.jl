@@ -19,7 +19,7 @@ using Test, Graphs, PoreMatMod, LinearAlgebra
     @test ne(child.bonds) == ne(parent.bonds) + 3 * 2 # added H -> CH3 on two PyC ligands
 end
 
-@testset "split across PB, non-connected replacement"
+@testset "split across PB, non-connected replacement" begin
     parent = Crystal("NiPyC_fragment_trouble.cif", convert_to_p1=false)
     infer_bonds!(parent, true)
     
