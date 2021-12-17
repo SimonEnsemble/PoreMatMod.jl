@@ -2,7 +2,7 @@ module PoreMatMod_Test
 
 using Test, Graphs, PoreMatMod, LinearAlgebra
 
-@testset "non-p1 symmetry" begin
+@testset "non-p1 symmetry and split across PB" begin
     parent = Crystal("NiPyC_fragment_trouble.cif", convert_to_p1=false)
     infer_bonds!(parent, true)
 
@@ -20,6 +20,32 @@ using Test, Graphs, PoreMatMod, LinearAlgebra
     @test   prim_child.symmetry.operations == parent.symmetry.operations && 
             prim_child.symmetry.space_group == parent.symmetry.space_group && 
             prim_child.symmetry.is_p1 == parent.symmetry.is_p1
+end
+
+@testset "split across PB, non-connected replacement"
+    parent = Crystal("NiPyC_fragment_trouble.cif", convert_to_p1=false)
+    infer_bonds!(parent, true)
+    
+    query = moiety("PyC_split.xyz")
+    replacement = moiety("PyC_split_replacement.xyz")
+    child = replace(parent, query => replacement)
+    
+    # ensure O atoms aligned
+    parent_Os = parent[parent.atoms.species .== :O]
+    child_Os  = child[child.atoms.species .== :O]
+    nb_Os = parent_Os.atoms.n
+    @test parent_Os.atoms.n == nb_Os
+    
+    min_distances = [Inf for _ = 1:nb_Os] # from parent
+    for i = 1:nb_Os
+        for j = 1:nb_Os
+            r = norm(parent_Os.atoms.coords.xf[:, i] - child_Os.atoms.coords.xf[:, j])
+            if r < min_distances[i] 
+                min_distances[i] = r
+            end
+        end
+    end
+    @test all(min_distances .< 0.01)
 end
 
 @testset "substructure_search" begin
