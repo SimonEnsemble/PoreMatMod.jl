@@ -34,7 +34,7 @@ struct Installation
 end
 
 
-function get_r2p_alignment(replacement::Crystal, parent::Crystal, r2p::Dict{Int, Int})
+function get_r2p_alignment(replacement::Crystal, parent::Crystal, r2p::Dict{Int, Int}, q2p::Dict{Int, Int})
     center = (X::Matrix{Float64}) -> sum(X, dims=2)[:] / size(X, 2)
     # when both centered to origin
     @assert replacement.atoms.n ≥ 3 && parent.atoms.n ≥ 3 "Parent and replacement must each be at least 3 atoms for SVD alignment."
@@ -51,9 +51,14 @@ function get_r2p_alignment(replacement::Crystal, parent::Crystal, r2p::Dict{Int,
     #   compute centered Cartesian coords of the atoms of 
     #       parent involved in alignment
     ###
-    parent_substructure = deepcopy(parent[[p for (r, p) in r2p]])
-    conglomerate!(parent_substructure)
-    atoms_p = Cart(parent_substructure.atoms, parent_substructure.box)
+    # handle fragments cut across the PB using the parent subset isomorphic to query
+    parent_substructure = deepcopy(parent[[p for (q, p) in q2p]])
+    conglomerate!(parent_substructure) # must do this for when replacement fragment is disconnected
+    # prepare parent substructure having correspondence with replacement
+    p2ps = Dict([p => i for (i, p) in enumerate([p for (q, p) in q2p])]) # parent to parent subset map
+
+    parent_substructure_to_align_to = parent_substructure[[p2ps[p] for p in [p for (r, p) in r2p]]]
+    atoms_p = Cart(parent_substructure_to_align_to.atoms, parent.box)
     X_p = atoms_p.coords.x
     x_p_center = center(X_p)
     X_p = X_p .- x_p_center
@@ -257,7 +262,7 @@ function optimal_replacement(search::Search, replacement::Crystal, q2r::Dict{Int
         q2p = isomorphisms[loc_id][ori_id]
         r2p = Dict([r => q2p[q] for (q, r) in q2r])
         # calculate alignment
-        test_alignment = get_r2p_alignment(replacement, parent, r2p)
+        test_alignment = get_r2p_alignment(replacement, parent, r2p, q2p)
         # keep best alignment and generating ori_id
         if test_alignment.err < r2p_alignment.err
             r2p_alignment = test_alignment
@@ -376,8 +381,14 @@ function substructure_replace(search::Search, replacement::Crystal; random::Bool
     end
 
     if wrap
+        # throw error if installed replacement fragment spans the unit cell
+        if any(abs.(child.atoms.coords.xf) .> 2.0)
+            error("installed replacement fragment too large for the unit cell; replicate the parent and try again.")
+        end
+
         # wrap coordinates
         wrap!(child.atoms.coords)
+        
         # check :cross_boundary edge attributes
         for edge in edges(child.bonds) # loop over edges
             distance_e = get_prop(child.bonds, edge, :distance) # distance in edge property
