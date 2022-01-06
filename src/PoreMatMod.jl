@@ -1,6 +1,6 @@
 module PoreMatMod
 
-using StatsBase, Graphs, MetaGraphs, LinearAlgebra, DataFrames, Pluto, Reexport
+using DataFrames, FIGlet, Graphs, LinearAlgebra, MetaGraphs, Pluto, Reexport, StatsBase
 @reexport using Xtals
 
 import Base.(∈), Base.show, Base.replace
@@ -8,19 +8,6 @@ import Base.(∈), Base.show, Base.replace
 
 function __init__()
     add_bonding_rules(tagged_bonding_rules())
-end
-
-
-"""
-    PoreMatModGO()
-
-Launches the GUI Pluto notebook.
-"""
-function PoreMatModGO()
-    # notebook path
-    pmmg_ntbk = joinpath(pathof(PoreMatMod), "..", "PoreMatModGO.jl")
-    # run the notebook in Pluto
-    Pluto.run(notebook=pmmg_ntbk)
 end
 
 
@@ -42,5 +29,6 @@ include("moiety.jl")
 include("search.jl")
 include("replace.jl")
 include("ExampleHelpers.jl")
+include("misc.jl")
 
 end
