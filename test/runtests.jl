@@ -6,7 +6,7 @@ testfiles = [
 ]
 
 @assert VERSION.major == 1
-@assert VERSION.minor ≥ 1
+@assert VERSION.minor ≥ 3
 
 using Test, Documenter, PoreMatMod
 PoreMatMod.banner()
