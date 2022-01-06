@@ -5,17 +5,19 @@ testfiles = [
     "examples.jl"
 ]
 
-using Test, Documenter, FIGlet
+@assert VERSION.major == 1
+@assert VERSION.minor ≥ 1
 
-FIGlet.render("PoreMatMod.jl", FIGlet.availablefonts()[35])
-
-using PoreMatMod
+using Test, Documenter, PoreMatMod
+PoreMatMod.banner()
 
 for testfile ∈ testfiles
     @info "Running test/$testfile"
     @time include(testfile)
 end
 
-@time doctest(PoreMatMod)
+if VERSION.minor ≥ 7
+    @time doctest(PoreMatMod)
+end
 
 @info "Done."

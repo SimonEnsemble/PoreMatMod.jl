@@ -12,13 +12,13 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  julia_version: '1.6.4'
+  julia_version: '1.7.1'
 
 jobs:
 
 
   unit-and-doc-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     
     steps:
@@ -51,16 +51,14 @@ jobs:
           verbose: true
 
 
-  cross-platform:
+  cross-platform-os:
+    if: github.ref_name == 'master'
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        julia_version: [1.6.4, 1.7.0]
-        exclude:
-          - julia_version: 1.7.0 ## BUG stochastic segfaults on every os
-      fail-fast: false
     
     steps:
       - name: checkout commit
@@ -69,13 +67,43 @@ jobs:
       - name: set up Julia
         uses: julia-actions/setup-julia@latest
         with:
-          version: ${{ matrix.julia_version }}
+          version: ${{ env.julia_version }}
       
       - name: build package
         uses: julia-actions/julia-buildpkg@latest
       
       - name: install dependencies
-        run: julia --project --color=yes -e 'import Pkg; Pkg.add.(["FIGlet"])'
+        run: julia --project --color=yes -e 'import Pkg; Pkg.add("Documenter")'
+        shell: bash
+      
+      - name: run tests
+        run: julia --project --color=yes -e 'import Pkg; Pkg.test()'
+        shell: bash
+
+  
+  cross-platform-julia:
+    if: github.ref_name == 'master'
+    strategy:
+      fail-fast: true
+      matrix:
+        julia: ['1.1.1', '1.2.0', '1.3.1', '1.4.2', '1.5.4', '1.6.4', '1.7.0']
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: checkout commit
+        uses: actions/checkout@master
+
+      - name: set up Julia
+        uses: julia-actions/setup-julia@latest
+        with:
+          version: ${{ matrix.julia }}
+      
+      - name: build package
+        uses: julia-actions/julia-buildpkg@latest
+      
+      - name: install dependencies
+        run: julia --project --color=yes -e 'import Pkg; Pkg.add("Documenter")'
         shell: bash
       
       - name: run tests
@@ -84,7 +112,8 @@ jobs:
 
 
   deploy-docs:
-    runs-on: ubuntu-20.04
+    if: github.ref_name == 'master'
+    runs-on: ubuntu-latest
     timeout-minutes: 30
 
     env:
@@ -105,8 +134,8 @@ jobs:
       
       - name: install dependencies
         run: |
-          julia --color=yes -e 'import Pkg; Pkg.add.(["PlutoUI"])'
-          julia --project --color=yes -e 'import Pkg; Pkg.add.(["FIGlet"])'
+          julia --color=yes -e 'import Pkg; Pkg.add("PlutoUI")'
+          julia --project --color=yes -e 'import Pkg; Pkg.add("FIGlet")'
       
       - name: build and deploy docs
         run: julia --project --color=yes ./docs/make.jl
