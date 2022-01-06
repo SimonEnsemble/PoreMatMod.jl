@@ -10,7 +10,7 @@ tagged_p_phenylene = moiety("2-!-p-phenylene.xyz")
 acetamido_p_phen = moiety("2-acetylamido-p-phenylene.xyz")
 
 @testset "replacement split across PB" begin
-    parent = NiPyC_fragment_trouble
+    parent = deepcopy(NiPyC_fragment_trouble)
     query = deepcopy(PyC)
     replacement = moiety("PyC-CH3.xyz")
 
@@ -69,9 +69,9 @@ end
     timil125 = Crystal("Ti-MIL-125.cif")
     strip_numbers_from_atom_labels!(timil125)
     infer_bonds!(timil125, true)
-    p_phenylene = deepcopy(p_phenylene)
+    query = deepcopy(p_phenylene)
     p_phenylene_w_R_grp = deepcopy(tagged_p_phenylene)
-    search1 = p_phenylene ∈ xtal
+    search1 = query ∈ xtal
 
     @test nb_isomorphisms(search1) == 96
     
@@ -81,7 +81,7 @@ end
     
     @test search1.isomorphisms[1][1] == Dict([q => p for (q, p) in enumerate([233, 306, 318, 245, 185, 197, 414, 329, 402, 341])])
     
-    search2 = p_phenylene ∈ timil125
+    search2 = query ∈ timil125
     
     @test nb_isomorphisms(search2) == 48
     
