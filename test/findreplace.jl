@@ -2,9 +2,16 @@ module PoreMatMod_Test
 
 using Test, Graphs, PoreMatMod, LinearAlgebra
 
+NiPyC_fragment_trouble = Crystal("NiPyC_fragment_trouble.cif")
+irmof1 = Crystal("IRMOF-1.cif")
+PyC = moiety("PyC.xyz")
+p_phenylene = moiety("p-phenylene.xyz")
+tagged_p_phenylene = moiety("2-!-p-phenylene.xyz")
+acetamido_p_phen = moiety("2-acetylamido-p-phenylene.xyz")
+
 @testset "replacement split across PB" begin
-    parent = Crystal("NiPyC_fragment_trouble.cif")
-    query = moiety("PyC.xyz")
+    parent = deepcopy(NiPyC_fragment_trouble)
+    query = deepcopy(PyC)
     replacement = moiety("PyC-CH3.xyz")
 
     @test_throws AssertionError replace(parent, query => replacement)
@@ -46,25 +53,25 @@ end
 end
 
 @testset "replacement spans twice the unit cell" begin
-    parent = Crystal("NiPyC_fragment_trouble.cif")
+    parent = deepcopy(NiPyC_fragment_trouble)
     infer_bonds!(parent, true)
 
-    query = moiety("PyC.xyz")
+    query = deepcopy(PyC)
     replacement = moiety("PyC-long_chain.xyz")
     
     @test_throws Exception replace(parent, query => replacement)
 end
 
 @testset "substructure_search" begin
-    irmof1 = Crystal("IRMOF-1.cif")
-    strip_numbers_from_atom_labels!(irmof1)
-    infer_bonds!(irmof1, true)
+    xtal = deepcopy(irmof1)
+    strip_numbers_from_atom_labels!(xtal)
+    infer_bonds!(xtal, true)
     timil125 = Crystal("Ti-MIL-125.cif")
     strip_numbers_from_atom_labels!(timil125)
     infer_bonds!(timil125, true)
-    p_phenylene = moiety("p-phenylene.xyz")
-    p_phenylene_w_R_grp = moiety("2-!-p-phenylene.xyz")
-    search1 = p_phenylene ∈ irmof1
+    query = deepcopy(p_phenylene)
+    p_phenylene_w_R_grp = deepcopy(tagged_p_phenylene)
+    search1 = query ∈ xtal
 
     @test nb_isomorphisms(search1) == 96
     
@@ -74,7 +81,7 @@ end
     
     @test search1.isomorphisms[1][1] == Dict([q => p for (q, p) in enumerate([233, 306, 318, 245, 185, 197, 414, 329, 402, 341])])
     
-    search2 = p_phenylene ∈ timil125
+    search2 = query ∈ timil125
     
     @test nb_isomorphisms(search2) == 48
     
@@ -103,7 +110,7 @@ end
     @test [parent.atoms.species[search.isomorphisms[1][1][i]] for i in 1:4] == query.atoms.species[1:4] &&
         query.atoms.species[5] == :H! && parent.atoms.species[search.isomorphisms[1][1][5]] == :H
     
-    query = moiety("p-phenylene.xyz")
+    query = deepcopy(p_phenylene)
     parent = Crystal("IRMOF-1_one_ring.cif")
     strip_numbers_from_atom_labels!(parent)
     infer_bonds!(parent, true)
@@ -114,11 +121,11 @@ end # test set: substructure_search
 
 
 @testset "find_replace" begin
-    parent = Crystal("IRMOF-1.cif")
+    parent = deepcopy(irmof1)
     strip_numbers_from_atom_labels!(parent)
     infer_bonds!(parent, true)
-    query = moiety("2-!-p-phenylene.xyz")
-    replacement = moiety("2-acetylamido-p-phenylene.xyz")
+    query = deepcopy(tagged_p_phenylene)
+    replacement = deepcopy(acetamido_p_phen)
     new_xtal = replace(parent, query => replacement)
 
     @test new_xtal.atoms.n == 592
@@ -135,28 +142,28 @@ end # test set: substructure_search
 
     @test new_xtal.atoms.n == 445
 
-    replacement = moiety("p-phenylene.xyz")
+    replacement = deepcopy(p_phenylene)
     new_xtal = replace(parent, query => replacement)
 
     @test ne(new_xtal.bonds) == ne(parent.bonds)
 
-    replacement = moiety("2-acetylamido-p-phenylene.xyz")
+    replacement = deepcopy(acetamido_p_phen)
     new_xtal = replace(parent, query => replacement, nb_loc=1)
 
     @test ne(new_xtal.bonds) == (ne(parent.bonds) - ne(query.bonds) + ne(replacement.bonds))
 
-    xtal = Crystal("IRMOF-1.cif")
+    xtal = deepcopy(irmof1)
     strip_numbers_from_atom_labels!(xtal)
     infer_bonds!(xtal, true)
-    query = moiety("2-!-p-phenylene.xyz")
+    query = deepcopy(tagged_p_phenylene)
     nb_bonds(xtal) = ne(xtal.bonds)
     # test that a "no-op" leaves the number of bonds unchanged
-    replacement = moiety("p-phenylene.xyz")
+    replacement = deepcopy(p_phenylene)
 
     @test nb_bonds(replace(xtal, query => replacement)) == nb_bonds(xtal)
 
     # test that adding a new moiety increases the number of bonds correctly
-    replacement = moiety("2-acetylamido-p-phenylene.xyz")
+    replacement = deepcopy(acetamido_p_phen)
 
     @test ne((replace(xtal, query => replacement, nb_loc=1)).bonds) ==
         (ne(xtal.bonds) - ne(query.bonds) + ne(replacement.bonds))
