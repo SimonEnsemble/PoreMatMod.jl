@@ -2,7 +2,7 @@
 
 ## Installation
 
-Download and install the [Julia programming language](https://julialang.org/), at version 1.4 or higher.
+Download and install the [Julia programming language](https://julialang.org/), at version 1.6 or higher.
 `PoreMatMod.jl` is not currently stable on version 1.7.
 
 To install `PoreMadMod.jl` (officially registered as a Julia package), in the Julia REPL, enter the package manager by typing `]` and enter:
