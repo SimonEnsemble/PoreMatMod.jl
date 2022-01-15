@@ -37,14 +37,14 @@ Link to examples [here](https://simonensemble.github.io/PoreMatMod.jl/dev/exampl
 
 ## Citing
 
-If you found `PoreMatMod.jl` useful, please cite our paper [here](https://doi.org/10.33774/chemrxiv-2021-vx5r3). :point_down:
+If you found `PoreMatMod.jl` useful, please cite our paper in *J. Chem. Inf. Model.* (ACS Editors' Choice) [here](https://pubs.acs.org/doi/10.1021/acs.jcim.1c01219) [preprint [here](https://chemrxiv.org/engage/chemrxiv/article-details/615cf5127d3da5dd7bee4a22)]. :point_down:
 
 ```latex
-@misc{henle2021pmm,
-    title={PoreMatMod.jl: Julia package for in silico post-synthetic modification of crystal structure models.},
+@article{henle2021pmm,
+    title={PoreMatMod.jl: Julia package for in silico post-synthetic modification of crystal structure models},
     author={E. Adrian Henle and Nickolas Gantzler and Praveen K. Thallapally and Xiaoli Z. Fern and Cory M. Simon},
-    year={2021},
-    preprint={ChemRxiv}
+    year={2022},
+    journal={Journal of Chemical Information and Modeling}
 }
 ```
 ## Contributing
