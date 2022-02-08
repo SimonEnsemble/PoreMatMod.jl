@@ -51,6 +51,31 @@ jobs:
           verbose: true
 
 
+  load-order:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout commit
+        uses: actions/checkout@master
+
+      - name: set up Julia
+        uses: julia-actions/setup-julia@latest
+        with:
+          version: ${{ env.julia_version }}
+      
+      - name: build julia package
+        uses: julia-actions/julia-buildpkg@latest
+
+      - name: install dependencies
+        run: julia --project -e 'import Pkg; Pkg.add.(["PorousMaterials", "XtalsPyTools", "Combinatorics"])'
+
+      - name: load order
+        run: |
+          julia --project .github/workflow_extras/write_load_combos.jl Xtals PorousMaterials PoreMatMod XtalsPyTools
+          bash load_combos.sh
+
+
   cross-platform-os:
     if: github.ref_name == 'master'
     strategy:
