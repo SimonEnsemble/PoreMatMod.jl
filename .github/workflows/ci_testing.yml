@@ -68,7 +68,7 @@ jobs:
         uses: julia-actions/julia-buildpkg@latest
 
       - name: install dependencies
-        run: julia --project -e 'import Pkg; Pkg.add.(["PorousMaterials", "PoreMatMod", "Combinatorics"])'
+        run: julia --project -e 'import Pkg; Pkg.add.(["PorousMaterials", "XtalsPyTools", "Combinatorics"])'
 
       - name: load order
         run: |
