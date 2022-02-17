@@ -158,7 +158,7 @@ jobs:
         uses: julia-actions/julia-buildpkg@latest
       
       - name: install dependencies
-        run: julia --color=yes -e 'import Pkg; Pkg.add.(["Documenter", "Pluto", "PlutoUI", "PlutoSliderServer", "FIGlet"])'
+        run: julia --color=yes -e 'import Pkg; Pkg.add.(["Documenter", "Pluto", "PlutoUI", "PlutoSliderServer"])'
       
       - name: build and deploy docs
         run: julia --project --color=yes ./docs/make.jl
