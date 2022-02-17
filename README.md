@@ -17,7 +17,7 @@ N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline m
 
 | **Documentation** | **Build Status** | **Test Coverage** |
 |:---:|:---:|:---:|
-| [![Docs Badge](https://img.shields.io/badge/docs-dev-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/dev) | [![build](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml/badge.svg)](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml) | [![codecov](https://codecov.io/gh/SimonEnsemble/PoreMatMod.jl/branch/master/graph/badge.svg?token=Z9VMLXS3U9)](https://codecov.io/gh/SimonEnsemble/PoreMatMod.jl) |
+| [![Docs Badge](https://img.shields.io/badge/docs-dev-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/dev) | [![build](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml/badge.svg)](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml) | [![codecov](https://codecov.io/gh/SimonEnsemble/PoreMatMod.jl/branch/master/graph/badge.svg?token=Z9VMLXS3U9)](https://codecov.io/gh/SimonEnsemble/PoreMatMod.jl) [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl) |
 
 
 ## Installation
