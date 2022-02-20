@@ -6,15 +6,18 @@ using InteractiveUtils
 
 # ╔═╡ fd82b765-7a62-4f85-bf60-28c83b1731aa
 begin
-	import Pkg
-	Pkg.develop("PoreMatMod")
+    import Pkg
+    Pkg.develop("PoreMatMod")
 end
 
 # ╔═╡ 3bb3966e-a7dd-46c1-b649-33169ce424d2
 using PoreMatMod, PlutoUI
 
 # ╔═╡ d3eef6f4-ff15-47f3-8686-2c0cb0fb882d
-using PoreMatMod.ExampleHelpers
+begin
+    using PoreMatMod.ExampleHelpers
+    check_example_data()
+end
 
 # ╔═╡ 8e4fd703-f53e-4056-9466-66f07bacad8d
 md"## Example: substructure replacement in a high-symmetry parent"
@@ -37,17 +40,17 @@ rc[:paths][:moieties]
 # ╔═╡ e7be5fba-b120-47f5-a952-8577ee847d99
 md"""
 !!! example \"the task\"
-	We have a crystallographic unit cell of NiPyC. We wish to append methyl groups onto the PyC linkers.
+    We have a crystallographic unit cell of NiPyC. We wish to append methyl groups onto the PyC linkers.
 
 **Parent crystal structure**: first, we read in the `.cif` file describing the parent structure, which is in a high-symmetry representation, meaning this structure must be reproduced according to the symmetry rules of the unit cell's space group. Normally, structures are automatically transformed to P1 symmetry, so we must specify that we wish to preserve the original unit cell.
 """
 
 # ╔═╡ c0e2ffbd-fb85-4187-b8b5-73edea90969a
 begin
-	# read in the parent xtal, keeping it in its original space group
-	parent = Crystal("NiPyC_experiment.cif", convert_to_p1=false) # load cif file
-	infer_bonds!(parent, true) 									  # infer bonds
-	view_structure(parent)										  # view structure
+    # read in the parent xtal, keeping it in its original space group
+    parent = Crystal("NiPyC_experiment.cif", convert_to_p1=false) # load cif file
+    infer_bonds!(parent, true)                                    # infer bonds
+    view_structure(parent)                                        # view structure
 end
 
 # ╔═╡ 0bbe1bf4-89e8-4372-8f6a-93fc89334b00
@@ -66,7 +69,7 @@ view_query_or_replacement("PyC.xyz")
 
 # ╔═╡ 5e90af51-f777-47f9-980b-19bca38de5d4
 with_terminal() do
-	display_query_or_replacement_file("PyC.xyz")
+    display_query_or_replacement_file("PyC.xyz")
 end
 
 # ╔═╡ 70468997-24fa-4c1b-9f02-379823f97db8
@@ -82,7 +85,7 @@ view_query_or_replacement("PyC-CH3.xyz")
 
 # ╔═╡ 7f82be68-558d-4dce-8492-bcc585ddf448
 with_terminal() do
-	display_query_or_replacement_file("PyC-CH3.xyz")
+    display_query_or_replacement_file("PyC-CH3.xyz")
 end
 
 # ╔═╡ 2e3299b5-3b63-48d9-90d7-b8dde5715907
@@ -112,11 +115,11 @@ md"""
 
 # ╔═╡ 36a1be30-db0e-4c45-8894-859e36793482
 begin
-	p1_child = Crystal("symmetry_child.cif", check_overlap=false)
-	p1_child = replicate(p1_child, (2, 2, 2))
-	infer_bonds!(p1_child, true)
-	write_cif(p1_child, "supercell.cif")
-	view_structure(p1_child)
+    p1_child = Crystal("symmetry_child.cif", check_overlap=false)
+    p1_child = replicate(p1_child, (2, 2, 2))
+    infer_bonds!(p1_child, true)
+    write_cif(p1_child, "supercell.cif")
+    view_structure(p1_child)
 end
 
 # ╔═╡ Cell order:

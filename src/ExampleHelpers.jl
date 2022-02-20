@@ -8,7 +8,7 @@ include("moiety.jl")
 
 function __init__()
     # list of required files for examples
-    required_files = Dict(
+    global required_files = Dict(
         :crystals => ["IRMOF-1.cif", "SIFSIX-2-Cu-i.cif", "IRMOF-1_noH.cif", "UiO-66.cif", "NiPyC_fragment_trouble.cif"],
         
         :moieties => [
@@ -18,6 +18,10 @@ function __init__()
     )
     rc[:r_tag] = '!'
     rc[:paths][:moieties] = joinpath(rc[:paths][:data], "moieties")
+end
+
+
+function check_example_data()
     # make sure directories are present and the right files for the examples
     for file_type in [:moieties, :crystals]
         # make sure directories exist
@@ -35,6 +39,7 @@ function __init__()
         end
     end
 end
+
 
 function input_file_message() 
     return md"""
@@ -136,6 +141,6 @@ function display_query_or_replacement_file(filename::String)
 end
 
 export  display_query_or_replacement_file, view_query_or_replacement, view_structure, write_cif_message, 
-        xtal_folder_message, moiety_folder_message, fragment_construction_note, input_file_message
+        xtal_folder_message, moiety_folder_message, fragment_construction_note, input_file_message, check_example_data
 
 end

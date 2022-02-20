@@ -6,8 +6,8 @@ using InteractiveUtils
 
 # ╔═╡ 53071de7-da2f-4628-9313-2124693ce525
 begin
-	import Pkg
-	Pkg.develop("PoreMatMod")
+    import Pkg
+    Pkg.develop("PoreMatMod")
 end
 
 # ╔═╡ d4e77120-8ee6-4514-b066-6127aaa1d6c9
@@ -15,7 +15,10 @@ end
 using PoreMatMod, PlutoUI
 
 # ╔═╡ 468c12c0-886f-409b-b36f-b6ff90063e40
-using PoreMatMod.ExampleHelpers
+begin
+    using PoreMatMod.ExampleHelpers
+    check_example_data()
+end
 
 # ╔═╡ 8d523993-6e85-443a-9949-12030552b457
 md"""
