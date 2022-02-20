@@ -6,8 +6,8 @@ using InteractiveUtils
 
 # ╔═╡ 0069ec00-f42b-40bb-a82e-c91ec78583e4
 begin
-	import Pkg
-	Pkg.develop("PoreMatMod")
+    import Pkg
+    Pkg.develop("PoreMatMod")
 end
 
 # ╔═╡ 37939a7a-0651-11ec-11c1-6b5ef0a19ec2
@@ -15,7 +15,10 @@ end
 using PoreMatMod, PlutoUI
 
 # ╔═╡ 2889e30d-442d-4620-b5f6-0216e21c623b
-using PoreMatMod.ExampleHelpers
+begin
+    using PoreMatMod.ExampleHelpers
+    check_example_data()
+end
 
 # ╔═╡ 8d523993-6e85-443a-9949-12030552b457
 md"""
@@ -40,17 +43,17 @@ rc[:paths][:moieties]
 # ╔═╡ 026100b5-0708-48bb-840d-931605524874
 md"""
 !!! example \"the task\"
-	We have an IRMOF-1 crystal structure with hydrogen atoms missing on the linkers, presumably owing to artifacts of X-ray structure determination. We wish to append hydrogen atoms onto the missing positions on the linkers.
+    We have an IRMOF-1 crystal structure with hydrogen atoms missing on the linkers, presumably owing to artifacts of X-ray structure determination. We wish to append hydrogen atoms onto the missing positions on the linkers.
 
 **Parent crystal structure**: first, we read in the `.cif` file describing the parent structure, which is not simulation-ready owing to the missing hydrogen atoms.
 """
 
 # ╔═╡ 0433da26-4f59-424f-9603-875d904c0fd5
 begin
-	# read in the parent xtal
-	parent = Crystal("IRMOF-1_noH.cif") # load .cif file
-	infer_bonds!(parent, true)          # infer bonds
-	view_structure(parent)              # view structure
+    # read in the parent xtal
+    parent = Crystal("IRMOF-1_noH.cif") # load .cif file
+    infer_bonds!(parent, true)          # infer bonds
+    view_structure(parent)              # view structure
 end
 
 # ╔═╡ 4ad53cf5-d063-4bb6-ae20-1b6cc29902c8
@@ -69,7 +72,7 @@ view_query_or_replacement("1,4-C-phenylene_noH.xyz")
 
 # ╔═╡ f68335d7-b4e0-40b3-b10d-bf406ab42c1c
 with_terminal() do
-	display_query_or_replacement_file("1,4-C-phenylene_noH.xyz")
+    display_query_or_replacement_file("1,4-C-phenylene_noH.xyz")
 end
 
 # ╔═╡ c53f896d-fa27-4290-aa6d-aa8c0c467f3b
@@ -85,7 +88,7 @@ view_query_or_replacement("1,4-C-phenylene.xyz")
 
 # ╔═╡ b172c36b-80bf-4620-b2e4-5c39d719962e
 with_terminal() do
-	display_query_or_replacement_file("1,4-C-phenylene.xyz")
+    display_query_or_replacement_file("1,4-C-phenylene.xyz")
 end
 
 # ╔═╡ 5b71d14a-be80-4ac3-8983-62571d0d4e7d
@@ -95,8 +98,8 @@ md"""
 
 # ╔═╡ 74aa19d2-b1a4-4333-9ff9-e6ea74e7d989
 begin
-	child = replace(parent, query => replacement)
-	view_structure(child)
+    child = replace(parent, query => replacement)
+    view_structure(child)
 end
 
 # ╔═╡ 5869bf7a-958e-4e51-997a-18497e7deaba

@@ -6,8 +6,8 @@ using InteractiveUtils
 
 # ╔═╡ 8ae2593a-cb48-44c9-b9dc-ab901c358a06
 begin
-	import Pkg
-	Pkg.develop("PoreMatMod")
+    import Pkg
+    Pkg.develop("PoreMatMod")
 end
 
 # ╔═╡ 16f0e183-f48d-4dcd-8751-d3c61c875e18
@@ -15,7 +15,10 @@ end
 using PoreMatMod, PlutoUI
 
 # ╔═╡ 3cca5289-a829-4717-b796-0834229995d1
-using PoreMatMod.ExampleHelpers
+begin
+    using PoreMatMod.ExampleHelpers
+    check_example_data()
+end
 
 # ╔═╡ 8d523993-6e85-443a-9949-12030552b457
 md"""
@@ -40,17 +43,17 @@ rc[:paths][:moieties]
 # ╔═╡ be86f07e-0669-46c2-8c79-80e65dfcc6f2
 md"""
 !!! example \"the task\"
-	we have the IRMOF-1 crystal structure, and wish to append acetamido functional groups to six of its (randomly chosen) BDC (1,4-benzodicarboxylate) linkers to give a mixed-linker IRMOF-1 derivative.
+    we have the IRMOF-1 crystal structure, and wish to append acetamido functional groups to six of its (randomly chosen) BDC (1,4-benzodicarboxylate) linkers to give a mixed-linker IRMOF-1 derivative.
 
 **Parent crystal structure**: first, we read in the `.cif` file describing the parent IRMOF-1 crystal structure.
 """
 
 # ╔═╡ b53e7c38-d8f5-4f28-a9dc-f7902a86fdb2
 begin
-	# read in the parent xtal
-	parent = Crystal("IRMOF-1.cif")	# load .cif file
-	infer_bonds!(parent, true)      # infer bonds
-	view_structure(parent)          # view structure
+    # read in the parent xtal
+    parent = Crystal("IRMOF-1.cif") # load .cif file
+    infer_bonds!(parent, true)      # infer bonds
+    view_structure(parent)          # view structure
 end
 
 # ╔═╡ b402e79a-784b-4d8b-82f1-df4fe1cedad1
@@ -69,7 +72,7 @@ view_query_or_replacement("2-!-p-phenylene.xyz")
 
 # ╔═╡ 559ef3c3-a176-4d65-8958-810c9b0b32c5
 with_terminal() do
-	display_query_or_replacement_file("2-!-p-phenylene.xyz")
+    display_query_or_replacement_file("2-!-p-phenylene.xyz")
 end
 
 # ╔═╡ d1aa8a19-3702-40f6-b73e-b9ebfc1a7a71
@@ -85,7 +88,7 @@ view_query_or_replacement("2-acetylamido-p-phenylene.xyz")
 
 # ╔═╡ c8f8dbd3-4191-460d-944f-f5e456ce8b83
 with_terminal() do
-	display_query_or_replacement_file("2-!-p-phenylene.xyz")
+    display_query_or_replacement_file("2-!-p-phenylene.xyz")
 end
 
 # ╔═╡ 127a2bef-3903-4801-bc75-00a6dde2bc6e
@@ -100,8 +103,8 @@ n.b.
 
 # ╔═╡ 74aa19d2-b1a4-4333-9ff9-e6ea74e7d989
 begin
-	child = replace(parent, query => replacement, nb_loc=6)
-	view_structure(child)
+    child = replace(parent, query => replacement, nb_loc=6)
+    view_structure(child)
 end
 
 # ╔═╡ 986ecdc4-455f-457e-a964-f00ddfeb53a2

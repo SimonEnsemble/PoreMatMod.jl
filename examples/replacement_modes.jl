@@ -15,7 +15,10 @@ end
 using PoreMatMod, PlutoUI
 
 # ╔═╡ 77c63e60-2708-4fef-a6ea-cb394f114b88
-using PoreMatMod.ExampleHelpers
+begin
+    using PoreMatMod.ExampleHelpers
+    check_example_data()
+end
 
 # ╔═╡ 8d523993-6e85-443a-9949-12030552b457
 md"""
