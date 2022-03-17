@@ -1,7 +1,7 @@
 name = "PoreMatMod"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 authors = ["SimonEnsemble <cory.simon@oregonstate.edu>"]
-version = "0.2.11"
+version = "0.2.12"
 
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
@@ -14,32 +14,33 @@ LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 MetaGraphs = "626554b9-1ddb-594c-aa3c-2596fe9399a5"
+Pluto = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 Xtals = "ede5f01d-793e-4c47-9885-c447d1f18d6d"
 
 [compat]
-Aqua = "~0.5.0"
+Aqua = "0.5"
 Bio3DView = "~0.1.0"
-CSV = "0.8.0"
-DataFrames = "0.22.0, 1.0.0"
+CSV = "0.8"
+DataFrames = "1"
 FIGlet = "~0.2.0"
-Graphs = "1.4.0"
-MetaGraphs = "~0.7.0"
-Reexport = "1.1.0"
-StatsBase = "0.33.0"
-Xtals = "~0.3.0"
-julia = "1.6"
+Graphs = "1.4"
+MetaGraphs = "0.7"
+Pluto = "0.18"
+Reexport = "1.1"
+StatsBase = "0.33"
+Xtals = "0.3"
+julia = "1.6, 1.7"
 
 [extras]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-Pluto = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
 PlutoSliderServer = "2fc8631c-6f24-4c5b-bca7-cbb509c42db4"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "Documenter", "Printf", "InteractiveUtils", "Pkg", "Pluto", "PlutoUI", "PlutoSliderServer"]
+test = ["Test", "Documenter", "Printf", "InteractiveUtils", "Pkg", "PlutoUI", "PlutoSliderServer"]
