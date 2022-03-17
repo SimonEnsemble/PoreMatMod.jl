@@ -7,7 +7,7 @@ using InteractiveUtils
 # ╔═╡ 8738d1c4-6907-4a7c-96bf-0467b6eb696d
 begin
     import Pkg
-    Pkg.develop("PoreMatMod")
+    Pkg.add(url="https://github.com/SimonEnsemble/PoreMatMod.jl")
 end
 
 # ╔═╡ ee100c2d-30aa-4b29-b85e-49417e1ed91c

@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.3
+# v0.17.7
 
 using Markdown
 using InteractiveUtils
@@ -7,7 +7,7 @@ using InteractiveUtils
 # ╔═╡ 0069ec00-f42b-40bb-a82e-c91ec78583e4
 begin
     import Pkg
-    Pkg.develop("PoreMatMod")
+    Pkg.add(url="https://github.com/SimonEnsemble/PoreMatMod.jl")
 end
 
 # ╔═╡ 37939a7a-0651-11ec-11c1-6b5ef0a19ec2
@@ -109,7 +109,7 @@ write_cif_message()
 write_cif(child, "simulation_ready_IRMOF-1.cif")
 
 # ╔═╡ Cell order:
-# ╟─0069ec00-f42b-40bb-a82e-c91ec78583e4
+# ╠═0069ec00-f42b-40bb-a82e-c91ec78583e4
 # ╟─8d523993-6e85-443a-9949-12030552b457
 # ╠═37939a7a-0651-11ec-11c1-6b5ef0a19ec2
 # ╠═2889e30d-442d-4620-b5f6-0216e21c623b
