@@ -17,14 +17,14 @@ N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline m
 
 | **Documentation** | **Build Status** | **Test Coverage** |
 |:---:|:---:|:---:|
-| [![Docs Badge](https://img.shields.io/badge/docs-dev-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/dev) | [![build](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml/badge.svg)](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/ci_testing.yml) | [![codecov](https://codecov.io/gh/SimonEnsemble/PoreMatMod.jl/branch/master/graph/badge.svg?token=Z9VMLXS3U9)](https://codecov.io/gh/SimonEnsemble/PoreMatMod.jl) [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl) |
+| [![Docs Badge](https://img.shields.io/badge/docs-dev-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/dev) | [![CI](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/CI_Build.yml/badge.svg)](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/CI_Build.yml) [![Docs](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/doc_deployment.yml/badge.svg)](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/doc_deployment.yml) [![Nightly](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/nightly.yml/badge.svg)](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/nightly.yml) | [![codecov](https://codecov.io/gh/SimonEnsemble/PoreMatMod.jl/branch/master/graph/badge.svg?token=Z9VMLXS3U9)](https://codecov.io/gh/SimonEnsemble/PoreMatMod.jl) [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl) |
 
 
 ## Installation
 `PoreMatMod.jl` is a registered Julia package and can be installed by entering the following line in the Julia REPL when in package mode (type `]` to enter package mode):
 
 ```
-(v1.6) pkg> add PoreMatMod
+(v1.7) pkg> add PoreMatMod
 ```
 
 ## Documentation
