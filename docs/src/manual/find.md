@@ -144,7 +144,7 @@ Bravais unit cell of a crystal.
 
 	# atoms = 240
 	# charges = 0
-	chemical formula: Dict(:H => 2, :C => 3)
+	chemical formula: C₁₄₄H₉₆
 	space Group: P1
 	symmetry Operations:
 		'x, y, z'

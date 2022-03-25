@@ -50,7 +50,7 @@ N.b. masked atoms of query fragments must be labeled with `!` for [`replace` ope
 
     	# atoms = 10
     	# charges = 0
-    	chemical formula: Dict(:H => 2, :C => 3)
+    	chemical formula: C₆H₄
     	space Group: P1
     	symmetry Operations:
     		'x, y, z'

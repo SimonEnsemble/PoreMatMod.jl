@@ -57,7 +57,7 @@ Bravais unit cell of a crystal.
 
 	# atoms = 10
 	# charges = 0
-	chemical formula: Dict(:H => 3, :H! => 1, :C => 6)
+	chemical formula: C₆H!H₃
 	space Group: P1
 	symmetry Operations:
 		'x, y, z'
@@ -81,7 +81,7 @@ Bravais unit cell of a crystal.
 
 	# atoms = 17
 	# charges = 0
-	chemical formula: Dict(:N => 1, :H => 7, :O => 1, :C => 8)
+	chemical formula: C₈H₇NO
 	space Group: P1
 	symmetry Operations:
 		'x, y, z'
@@ -116,7 +116,7 @@ Bravais unit cell of a crystal.
 
 	# atoms = 592
 	# charges = 0
-	chemical formula: Dict(:N => 3, :Zn => 4, :H => 21, :O => 16, :C => 30)
+	chemical formula: C₂₄₀H₁₆₈N₂₄O₁₂₈Zn₃₂
 	space Group: P1
 	symmetry Operations:
 		'x, y, z'
@@ -146,7 +146,7 @@ Bravais unit cell of a crystal.
 
 	# atoms = 592
 	# charges = 0
-	chemical formula: Dict(:N => 3, :Zn => 4, :H => 21, :O => 16, :C => 30)
+	chemical formula: C₂₄₀H₁₆₈N₂₄O₁₂₈Zn₃₂
 	space Group: P1
 	symmetry Operations:
 		'x, y, z'
