@@ -45,7 +45,7 @@ end
 Returns a copy of a crystal w/ R group atoms deleted
 """
 function subtract_r_group(xtal::Crystal)::Crystal
-    not_r = [i for i ∈ 1:length(xtal.atoms.species) if !(i ∈ r_group_indices(xtal))]
+    not_r = [i for i ∈ eachindex(xtal.atoms.species) if !(i ∈ r_group_indices(xtal))]
     coords = @view xtal.atoms.coords[not_r]
     species = @view xtal.atoms.species[not_r]
     return Crystal("no_r_$(xtal.name)", xtal.box, Atoms(species, coords), xtal.charges)
@@ -96,7 +96,7 @@ function moiety(name::Union{String,Nothing}; bonding_rules::Union{Vector{Bonding
     # ordered atoms
     if length(R_group_indices) > 0
         order_wo_R = order[
-            [i for i ∈ 1:length(order) if !(order[i] ∈ R_group_indices)]]
+            [i for i ∈ eachindex(order) if !(order[i] ∈ R_group_indices)]]
     else
         order_wo_R = order
     end

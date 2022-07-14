@@ -94,7 +94,7 @@ function conglomerate!(parent_substructure::Crystal)
 
     # we wish to shift all connected components to a reference component,
     #   defined to be the largest component for speed.
-    conn_comps_shifted = [false for c = 1:length(conn_comps)]
+    conn_comps_shifted = [false for c = eachindex(conn_comps)]
     ref_comp_id = argmax(length.(conn_comps))
     conn_comps_shifted[ref_comp_id] = true  # consider it shifted.
     
@@ -113,7 +113,7 @@ function conglomerate!(parent_substructure::Crystal)
     
     # to which component does atom p belong?
     function find_component(p::Int)
-        for c = 1:length(conn_comps)
+        for c = eachindex(conn_comps)
             if p in conn_comps[c]
                 return c
             end
