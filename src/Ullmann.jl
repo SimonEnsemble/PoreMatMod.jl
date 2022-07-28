@@ -20,15 +20,15 @@ function compatibility_matrix(subgraph::MetaGraph, subgraph_species::Array{Symbo
     path8_G = path4_G^2
 
     if !disconnected_component # search for substructures
-        @inbounds for α ∈ 1:nv(subgraph) # Loop over rows (subgraph nodes)
-            @inbounds for β ∈ 1:nv(graph) # Loop over columns (graph nodes)
+        @inbounds for β ∈ 1:nv(graph) # Loop over rows (subgraph nodes)
+            @inbounds for α ∈ 1:nv(subgraph) # Loop over columns (graph nodes)
                 # Record Bool for each (i,j): true if atom species match, graph node degree is sufficient, and 4 and 8 length self-paths are sufficient.
                 M₀[α, β] = subgraph_species[α] == graph_species[β] && deg_G[β, β] ≥ deg_S[α, α] && path4_G[β, β] ≥ path4_S[α, α] && path8_G[β, β] ≥ path8_S[α, α]
             end
         end
     else # search only for exact, isolated matches (no substructures)
-        @inbounds for α ∈ 1:nv(subgraph) # Loop over rows (subgraph nodes)
-            @inbounds for β ∈ 1:nv(graph) # Loop over columns (graph nodes)
+        @inbounds for β ∈ 1:nv(graph) # Loop over rows (subgraph nodes)
+            @inbounds for α ∈ 1:nv(subgraph) # Loop over columns (graph nodes)
                 # Record Bool for each (i,j): true if atom species match, and graph node degree matches.
                 M₀[α, β] = subgraph_species[α] == graph_species[β] && deg_G[β, β] == deg_S[α, α]
             end
@@ -40,39 +40,22 @@ end
 
 # list of nodes β ∈ graph that could possibly correpond with node α ∈ subgraph
 function candidate_list(M::Array{Bool, 2}, α::Int)::Array{Int, 1}
-    return [β for β ∈ 1:size(M, 2) if M[α, β]]
+    @inbounds @views return findall(M[α, :])
 end
 
 
 # does node α have possible candidate matches in the graph?
 function has_candidates(M::Array{Bool, 2}, α::Int)::Bool
-    @inbounds for β ∈ 1:size(M, 2) # loop over graph nodes
-        if M[α, β]
-            return true
-        end
-    end
-    # if made it this far, no graph node could possibly correspond to α ∈ subgraph
-    return false
+    @inbounds return any([M[α, β] for β ∈ 1:size(M, 2)])
 end
 
 
 function is_isomorphism(M::Array{Bool, 2})::Bool
     # (1) each row of M, corresponding to a node α ∈ subgraph, contains exactly one 1.
     #     i.e., every subgraph node has exactly one correspondence
-    @inbounds for α ∈ 1:size(M, 1)
-        if sum(M[α, :]) != 1
-            return false
-        end
-    end
     # (2) no column of M, corresponding to a node β ∈ graph, contains more than one 1.
     #     i.e., a graph node does not correspond to more than 1 subgraph node.
-    @inbounds for β ∈ 1:size(M, 2)
-        if sum(M[:, β]) > 1
-            return false
-        end
-    end
-    # if made it this far, it is indeed an isomorphism.
-    return true
+    @inbounds return !(any([sum(M[α, :]) ≠ 1 for α ∈ 1:size(M, 1)]) || any([sum(M[:, β]) > 1 for β ∈ 1:size(M, 2)]))
 end
 
 
@@ -80,12 +63,7 @@ end
 #   if any subgraph node α has no possible correspondence w/ a node β in the graph, no point in continuing
 #   return true iff M has no empty candidate lists for subgraph nodes.
 function possibly_contains_isomorphism(M::Array{Bool, 2})::Bool
-    @inbounds for α ∈ 1:size(M, 1) # loop over subgraph nodes
-        if ! has_candidates(M, α)
-            return false # subgraph node α cannot be assigned!
-        end
-    end
-    return true # M may be the intersection of one or more solutions.
+    @inbounds return all([has_candidates(M, α) for α ∈ 1:size(M, 1)])
 end
 
 
