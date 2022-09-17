@@ -7,7 +7,7 @@ Download and install the [Julia programming language](https://julialang.org/), a
 
 To install `PoreMadMod.jl` (officially registered as a Julia package), in the Julia REPL, enter the package manager by typing `]` and enter:
 
-```julia
+```
 pkg> add PoreMatMod
 ```
 
@@ -25,7 +25,7 @@ We recommend writing Julia code and performing find-and-replace tasks with `Pore
 
 Run the unit tests associated with `PoreMatMod.jl` by entering package mode in the Julia REPL via (`]`) and entering:
 
-```julia
+```
 pkg> test PoreMatMod
 ```
 
