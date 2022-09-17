@@ -31,3 +31,25 @@ pkg> add PoreMatMod
 
 Link to examples [here](https://simonensemble.github.io/PoreMatMod.jl/dev/examples/) with raw [Pluto](https://github.com/fonsp/Pluto.jl) notebooks [here](https://github.com/SimonEnsemble/PoreMatMod.jl/tree/master/examples).
 
+## Citing
+
+If you found `PoreMatMod.jl` useful, please cite our paper in *J. Chem. Inf. Model.* (ACS Editors' Choice) [here](https://pubs.acs.org/doi/10.1021/acs.jcim.1c01219) [preprint [here](https://chemrxiv.org/engage/chemrxiv/article-details/615cf5127d3da5dd7bee4a22)]. :point_down:
+
+```latex
+@article{Henle2022,
+  doi = {10.1021/acs.jcim.1c01219},
+  url = {https://doi.org/10.1021/acs.jcim.1c01219},
+  year = {2022},
+  month = jan,
+  publisher = {American Chemical Society ({ACS})},
+  volume = {62},
+  number = {3},
+  pages = {423--432},
+  author = {E. Adrian Henle and Nickolas Gantzler and Praveen K. Thallapally and Xiaoli Z. Fern and Cory M. Simon},
+  title = {{PoreMatMod}.jl: Julia Package for in Silico Postsynthetic Modification of Crystal Structure Models},
+  journal = {Journal of Chemical Information and Modeling}
+}
+```
+## Contributing
+
+We encourage feature requests and feedback [on GitHub](https://github.com/SimonEnsemble/PoreMatMod.jl/issues).
