@@ -1,0 +1,13 @@
+@article{Henle2022,
+  doi = {10.1021/acs.jcim.1c01219},
+  url = {https://doi.org/10.1021/acs.jcim.1c01219},
+  year = {2022},
+  month = jan,
+  publisher = {American Chemical Society ({ACS})},
+  volume = {62},
+  number = {3},
+  pages = {423--432},
+  author = {E. Adrian Henle and Nickolas Gantzler and Praveen K. Thallapally and Xiaoli Z. Fern and Cory M. Simon},
+  title = {{PoreMatMod}.jl: Julia Package for in Silico Postsynthetic Modification of Crystal Structure Models},
+  journal = {Journal of Chemical Information and Modeling}
+}

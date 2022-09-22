@@ -1,7 +1,7 @@
 name: Weekly
 
 on:
-  schedule: # run at midnight pacific time Monday-Friday
+  schedule: # run at midnight pacific time Sunday
     - cron: '0 8 * * 1'
   workflow_dispatch: # run on button-press in Actions tab
 
@@ -10,7 +10,7 @@ concurrency: # only allow the most recent workflow to execute
   cancel-in-progress: true
 
 env: # environment variables
-  julia_version: '1.7.2' # julia version to use on all runners (except cross-platform)
+  julia_version: '1.8.1' # julia version to use on all runners (except cross-platform)
 
 
 jobs: # run in parallel within workflow

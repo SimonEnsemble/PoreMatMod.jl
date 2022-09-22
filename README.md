@@ -24,12 +24,8 @@ N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline m
 `PoreMatMod.jl` is a registered Julia package and can be installed by entering the following line in the Julia REPL when in package mode (type `]` to enter package mode):
 
 ```
-(v1.7) pkg> add PoreMatMod
+pkg> add PoreMatMod
 ```
-
-## Documentation
-
-Link to documentation [here](https://simonensemble.github.io/PoreMatMod.jl/dev).
 
 ## Gallery of examples
 
@@ -57,7 +53,3 @@ If you found `PoreMatMod.jl` useful, please cite our paper in *J. Chem. Inf. Mod
 ## Contributing
 
 We encourage feature requests and feedback [on GitHub](https://github.com/SimonEnsemble/PoreMatMod.jl/issues).
-
-## License
-`PoreMatMod.jl` is licensed under the [MIT license](./LICENSE).
-
