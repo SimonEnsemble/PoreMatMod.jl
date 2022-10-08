@@ -32,6 +32,6 @@ include("replace.jl")
 include("ExampleHelpers.jl")
 include("misc.jl")
 
-@precompile_signatures(PoreMatMod.jl)
+@precompile_signatures(PoreMatMod)
 
 end
