@@ -2,6 +2,7 @@ module PoreMatMod
 
 using DataFrames, FIGlet, Graphs, LinearAlgebra, MetaGraphs, Pluto, Reexport, StatsBase
 @reexport using Xtals
+using PrecompileSignatures: @precompile_signatures
 
 import Base.(∈), Base.show, Base.replace
 
@@ -30,5 +31,7 @@ include("search.jl")
 include("replace.jl")
 include("ExampleHelpers.jl")
 include("misc.jl")
+
+@precompile_signatures(PoreMatMod.jl)
 
 end
