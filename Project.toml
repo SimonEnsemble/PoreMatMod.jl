@@ -1,10 +1,9 @@
 name = "PoreMatMod"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 authors = ["SimonEnsemble <cory.simon@oregonstate.edu>"]
-version = "0.2.16"
+version = "0.2.17"
 
 [deps]
-Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
 Bio3DView = "99c8bb3a-9d13-5280-9740-b4880ed9c598"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
@@ -36,13 +35,4 @@ Xtals = "0.4"
 julia = "1.7, 1.8"
 
 [extras]
-Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
-Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-PlutoSliderServer = "2fc8631c-6f24-4c5b-bca7-cbb509c42db4"
-PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-
-[targets]
-test = ["Test", "Documenter", "Printf", "InteractiveUtils", "Pkg", "PlutoUI", "PlutoSliderServer"]
+Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
