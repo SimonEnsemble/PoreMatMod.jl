@@ -11,13 +11,13 @@ end
 for file in readdir() # loop over files in examples/
     if length(split(file, ".html")) > 1 # select only the HTML files
         @info "Staging file $file"
-        mv(file, export_path * file, force=true) # move HTML files to docs source folder for build
+        mv(file, export_path * file; force=true) # move HTML files to docs source folder for build
     end
 end
 cd("..") # return to root for running deploydocs
 
 # build the docs
-makedocs( # to test docs, run this call to `makedocs` in the REPL
+makedocs(; # to test docs, run this call to `makedocs` in the REPL
     root=joinpath(dirname(pathof(PoreMatMod)), "..", "docs"),
     modules=[PoreMatMod, Xtals],
     sitename="PoreMatMod.jl",
@@ -28,15 +28,19 @@ makedocs( # to test docs, run this call to `makedocs` in the REPL
             "Getting Started" => "manual/start.md",
             "Loading Data" => "manual/inputs.md",
             "Substructure Search" => "manual/find.md",
-            "Substructure Find/Replace" => "manual/replace.md"],
+            "Substructure Find/Replace" => "manual/replace.md"
+        ],
         "Examples" => "examples.md",
         "PoreMatModGO" => "PoreMatModGO.md",
         "Contribute/Report Issues" => "collab.md"
     ],
-    format=Documenter.HTML(assets = ["assets/flux.css"]),
+    format=Documenter.HTML(; assets=["assets/flux.css"]),
     push_preview=true,
     doctest=false # doctests are run in testing; running them here is redundant and slow
 )
 
 # deploy the docs
-deploydocs(repo = "github.com/SimonEnsemble/PoreMatMod.jl.git", versions = ["latest" => "v^", "v#.#.#", "dev" => "master"])
+deploydocs(;
+    repo="github.com/SimonEnsemble/PoreMatMod.jl.git",
+    versions=["latest" => "v^", "v#.#.#", "dev" => "master"]
+)

@@ -3,16 +3,28 @@ Returns bonding rules involving R-group-tagged atoms
 """
 function tagged_bonding_rules()::Array{BondingRule}
     newrules = []
-    for rule ∈ rc[:bonding_rules]
+    for rule in rc[:bonding_rules]
         if rule.species_i != :*
-            push!(newrules, BondingRule(Symbol("$(rule.species_i)!"), rule.species_j, rule.max_dist))
-            push!(newrules, BondingRule(Symbol("$(rule.species_j)!"), rule.species_i, rule.max_dist))
-            push!(newrules, BondingRule(Symbol("$(rule.species_i)!"), Symbol("$(rule.species_j)!"), rule.max_dist))
+            push!(
+                newrules,
+                BondingRule(Symbol("$(rule.species_i)!"), rule.species_j, rule.max_dist)
+            )
+            push!(
+                newrules,
+                BondingRule(Symbol("$(rule.species_j)!"), rule.species_i, rule.max_dist)
+            )
+            push!(
+                newrules,
+                BondingRule(
+                    Symbol("$(rule.species_i)!"),
+                    Symbol("$(rule.species_j)!"),
+                    rule.max_dist
+                )
+            )
         end
     end
     return newrules
 end
-
 
 """
 Returns R group indices (whichever atoms have species symbols appended by '!')
@@ -29,17 +41,15 @@ function r_group_indices(xtal::Crystal)::Array{Int}
     return R
 end
 
-
 """
 Un-tags R group atoms (removes '!' suffix)
 """
 function untag_r_group!(xtal::Crystal)
     r = r_group_indices(xtal) # get indices of R group
-    for i ∈ r
+    for i in r
         xtal.atoms.species[i] = Symbol(split("$(xtal.atoms.species[i])", rc[:r_tag])[1])
     end
 end
-
 
 """
 Returns a copy of a crystal w/ R group atoms deleted
@@ -50,7 +60,6 @@ function subtract_r_group(xtal::Crystal)::Crystal
     species = @view xtal.atoms.species[not_r]
     return Crystal("no_r_$(xtal.name)", xtal.box, Atoms(species, coords), xtal.charges)
 end
-
 
 ## moiety import function (exposed)
 @doc raw"""
@@ -70,7 +79,10 @@ Bonds are inferred automatically via `infer_bonds!`.
 - `xyz_filename::Union{String,Nothing}` the moiety input file name, an `.xyz` file; if set to `nothing` the moiety is the null set.
 - `bonding_rules::Union{Vector{BondingRule},Nothing}` (optional) a list of rules to use for inferring the bonding network of the atoms loaded from the XYZ file. If set to `nothing`, the default rules are used.
 """
-function moiety(name::Union{String,Nothing}; bonding_rules::Union{Vector{BondingRule},Nothing}=nothing)::Crystal
+function moiety(
+    name::Union{String, Nothing};
+    bonding_rules::Union{Vector{BondingRule}, Nothing}=nothing
+)::Crystal
     # make box (arbitrary unit cube)
     box = unit_cube()
     # handle deletion option (replace-with-nothing)
@@ -92,11 +104,10 @@ function moiety(name::Union{String,Nothing}; bonding_rules::Union{Vector{Bonding
         infer_bonds!(moiety, false; bonding_rules=bonding_rules)
     end
     # sort by node degree
-    order = sortperm(degree(moiety.bonds), rev=true)
+    order = sortperm(degree(moiety.bonds); rev=true)
     # ordered atoms
     if length(R_group_indices) > 0
-        order_wo_R = order[
-            [i for i ∈ eachindex(order) if !(order[i] ∈ R_group_indices)]]
+        order_wo_R = order[[i for i ∈ eachindex(order) if !(order[i] ∈ R_group_indices)]]
     else
         order_wo_R = order
     end

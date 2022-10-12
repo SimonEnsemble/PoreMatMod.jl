@@ -11,7 +11,7 @@ testfiles = [
 using Test, Documenter, PoreMatMod
 PoreMatMod.banner()
 
-for testfile ∈ testfiles
+for testfile in testfiles
     @info "Running test/$testfile"
     @time include(testfile)
 end

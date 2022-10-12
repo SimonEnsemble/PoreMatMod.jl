@@ -4,9 +4,10 @@
 Stores the `parent` and `query` used for a substructure search and the results (isomorphisms) of the subgraph matching algorithm.
 
 ## attributes
-* `search.parent::Crystal`                           # the parent in the search
-* `search.query::Crystal`                            # the query in the search
-* `search.isomorphisms::Vector{Vector{Vector{Int}}}` # the query-to-parent correspondences
+
+  - `search.parent::Crystal`                           # the parent in the search
+  - `search.query::Crystal`                            # the query in the search
+  - `search.isomorphisms::Vector{Vector{Vector{Int}}}` # the query-to-parent correspondences
 
 The isomorphisms are grouped by location in the parent `Crystal` and can be examined using `nb_isomorphisms`, `nb_locations`, and `nb_ori_at_loc`.
 
@@ -19,14 +20,15 @@ where `isom[k]` is the index of the atom in `search.parent` corresponding to ato
 struct Search
     parent::Crystal
     query::Crystal
-    isomorphisms::Vector{Vector{Dict{Int,Int}}}
+    isomorphisms::Vector{Vector{Dict{Int, Int}}}
 end
 
-Base.show(io::IO, s::Search) = begin
-    println(io, s.query.name, " ∈ ", s.parent.name)
-    print(io, nb_isomorphisms(s), " hits in ", nb_locations(s), " locations.")
+function Base.show(io::IO, s::Search)
+    begin
+        println(io, s.query.name, " ∈ ", s.parent.name)
+        print(io, nb_isomorphisms(s), " hits in ", nb_locations(s), " locations.")
+    end
 end
-
 
 """
     nb_isomorphisms(search::Search)
@@ -34,12 +36,12 @@ end
 Returns the number of isomorphisms found in the specified `Search`
 
 # Arguments
-- `search::Search` a substructure `Search` object
+
+  - `search::Search` a substructure `Search` object
 """
 function nb_isomorphisms(search::Search)::Int
     return sum(nb_ori_at_loc(search))
 end
-
 
 """
     nb_locations(search::Search)
@@ -48,12 +50,12 @@ Returns the number of unique locations in the `parent` (sets of atoms in the `pa
 specified `Search` results contain isomorphisms.
 
 # Arguments
-- `search::Search` a substructure `Search` object
+
+  - `search::Search` a substructure `Search` object
 """
 function nb_locations(search::Search)::Int
     return length(search.isomorphisms)
 end
-
 
 """
     nb_ori_at_loc(search)
@@ -63,12 +65,12 @@ location (collection of atoms) for which the specified `Search` results
 contain isomorphisms.
 
 # Arguments
-- `search::Search` a substructure `Search` object
+
+  - `search::Search` a substructure `Search` object
 """
 function nb_ori_at_loc(search::Search)::Array{Int}
     return length.(search.isomorphisms)
 end
-
 
 # extension of infix `in` operator for syntactic sugar
 # this allows all of the following:
@@ -78,16 +80,17 @@ end
 #    [s1, s2] .∈ [g1, g2]    →    find each moiety in each crystal
 (∈)(s::Crystal, g::Crystal) = substructure_search(s, g)
 
-
 """
     iso_structs = isomorphic_substructures(s::Search)::Crystal
 
 Returns a crystal consisting of the atoms of the `parent` involved in subgraph isomorphisms in the search `s`
 """
 function isomorphic_substructures(s::Search)::Crystal
-    return s.parent[reduce(vcat, collect.(values.([s.isomorphisms[i][1] for i in 1:nb_locations(s)])))]
+    return s.parent[reduce(
+        vcat,
+        collect.(values.([s.isomorphisms[i][1] for i in 1:nb_locations(s)]))
+    )]
 end
-
 
 """
     substructure_search(query, parent; disconnected_component=false)
@@ -99,11 +102,16 @@ periodic boundaries.  The search moiety may optionally contain markup for
 designating atoms to replace with other moieties.
 
 # Arguments
-- `query::Crystal` the search moiety
-- `parent::Crystal` the parent structure
-- `disconnected_component::Bool=false` if true, disables substructure searching (e.g. for finding guest molecules)
+
+  - `query::Crystal` the search moiety
+  - `parent::Crystal` the parent structure
+  - `disconnected_component::Bool=false` if true, disables substructure searching (e.g. for finding guest molecules)
 """
-function substructure_search(query::Crystal, parent::Crystal; disconnected_component::Bool=false)::Search
+function substructure_search(
+    query::Crystal,
+    parent::Crystal;
+    disconnected_component::Bool=false
+)::Search
     if parent.atoms.n == 0
         return
     end
@@ -113,12 +121,18 @@ function substructure_search(query::Crystal, parent::Crystal; disconnected_compo
     moty = deepcopy(query)
     untag_r_group!(moty)
     # Get array of configuration arrays
-    configs = find_subgraph_isomorphisms(moty.bonds, moty.atoms.species, parent.bonds, parent.atoms.species, disconnected_component)
-    df = DataFrame(p_subset=[sort(c) for c in configs], isomorphism=configs)
-    
-    results = Vector{Dict{Int,Int}}[]
+    configs = find_subgraph_isomorphisms(
+        moty.bonds,
+        moty.atoms.species,
+        parent.bonds,
+        parent.atoms.species,
+        disconnected_component
+    )
+    df = DataFrame(; p_subset=[sort(c) for c in configs], isomorphism=configs)
+
+    results = Vector{Dict{Int, Int}}[]
     for (i, df_loc) in enumerate(groupby(df, :p_subset))
-        q2p_loc = Dict{Int,Int}[]
+        q2p_loc = Dict{Int, Int}[]
         for isomorphism in df_loc.isomorphism
             q2p = Dict([q => p for (q, p) in enumerate(isomorphism)])
             push!(q2p_loc, q2p)

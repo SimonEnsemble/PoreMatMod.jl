@@ -7,7 +7,7 @@ using InteractiveUtils
 # ╔═╡ 53071de7-da2f-4628-9313-2124693ce525
 begin
     import Pkg
-    Pkg.add(url="https://github.com/SimonEnsemble/PoreMatMod.jl")
+    Pkg.add(; url="https://github.com/SimonEnsemble/PoreMatMod.jl")
 end
 
 # ╔═╡ d4e77120-8ee6-4514-b066-6127aaa1d6c9
@@ -72,7 +72,7 @@ view_query_or_replacement("BDC.xyz")
 
 # ╔═╡ d56f8ef4-9a3a-4607-99b1-26034bb23757
 with_terminal() do
-    display_query_or_replacement_file("BDC.xyz")
+    return display_query_or_replacement_file("BDC.xyz")
 end
 
 # ╔═╡ b3a0b763-f9ae-480a-8ad0-ff35f12dc68f
@@ -88,7 +88,7 @@ view_query_or_replacement("formate_caps.xyz")
 
 # ╔═╡ a9005ea7-9fe4-4112-bd9b-a5bb124b0d04
 with_terminal() do
-    display_query_or_replacement_file("formate_caps.xyz")
+    return display_query_or_replacement_file("formate_caps.xyz")
 end
 
 # ╔═╡ 03b88236-08cb-4f1f-b23d-5f78581373b4
