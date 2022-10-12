@@ -9,7 +9,7 @@ function test_is_equiv(frag::Crystal, moty::Crystal)::Bool
         for (m, m_label) in enumerate(moty.atoms.species)
             if f_label == m_label
                 for i in 1:3
-                    if frag.atoms.coords.xf[i,f] ≠ moty.atoms.coords.xf[i,m]
+                    if frag.atoms.coords.xf[i, f] ≠ moty.atoms.coords.xf[i, m]
                         return false # detected an atom w/ inconsistent coordinates
                     end
                 end
@@ -18,7 +18,6 @@ function test_is_equiv(frag::Crystal, moty::Crystal)::Bool
     end
     return true
 end
-
 
 @testset "Moiety Tests" begin
     moiety_bcfm = moiety("S-bromochlorofluoromethane.xyz")

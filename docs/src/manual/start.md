@@ -17,6 +17,7 @@ To load the `PoreMatMod.jl` package, so that its functions are imported into you
 
 ```julia
 julia> using PoreMatMod
+
 ```
 
 We recommend writing Julia code and performing find-and-replace tasks with `PoreMadMod.jl` using interactive [Pluto notebooks](https://github.com/fonsp/Pluto.jl).
@@ -30,7 +31,8 @@ pkg> test PoreMatMod
 ```
 
 !!! note
-
+    
     `PoreMatMod.jl` is built on [`Xtals.jl`](https://github.com/SimonEnsemble/Xtals.jl), which provides:
-    * the data structure and reader, `Crystal`, for crystal structures 
-    * the `infer_bonds!` function that assigns bonds between atoms of a `Crystal`
+    
+      - the data structure and reader, `Crystal`, for crystal structures
+      - the `infer_bonds!` function that assigns bonds between atoms of a `Crystal`

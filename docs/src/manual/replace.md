@@ -3,6 +3,7 @@ DocTestSetup = quote
     using PoreMatMod
 end
 ```
+
 # Find/Replace Operations
 
 Suppose we wish to conduct the find-and-replace operations illustrated in the figure below, to produce an acetylamido-functionalized IRMOF-1 structure.
@@ -10,22 +11,27 @@ Suppose we wish to conduct the find-and-replace operations illustrated in the fi
 ![replacement scheme](../../assets/replace/rep_header.png)
 
 #### the `parent` structure
+
 First, we load the `parent` IRMOF-1 structure and infer its bonds.
 
 ```jldoctest replace_md; output=false
 parent = Crystal("IRMOF-1.cif")
 infer_bonds!(parent, true)
+
 # output
+
 true
 ```
 
 #### the `query` fragment
+
 Next, we define a `query` fragment as a *p*-phenylene moiety.
 To guide the replacement, the masked atoms of the `query` fragment must be annotated with `!` in the `.xyz` input file by appending a `!` character at the end of their atomic symbols.
 The atom property viewer feature in [iRASPA](https://iraspa.org/) is useful for figuring out which atom(s) to mask.
 
 !!! note
-    A masked atom (marked with `!`) in the `query` fragment implies that the corresponding atom of the `parent` crystal structure (i) must be removed [e.g., to make room for replacement with a different functionality] but (ii) does not correspond with an atom on the `replacement` fragment and thus cannot be used in the process of aligning the `replacement` fragment onto the `parent` crystal. 
+    
+    A masked atom (marked with `!`) in the `query` fragment implies that the corresponding atom of the `parent` crystal structure (i) must be removed [e.g., to make room for replacement with a different functionality] but (ii) does not correspond with an atom on the `replacement` fragment and thus cannot be used in the process of aligning the `replacement` fragment onto the `parent` crystal.
 
 In our example, in `2-!-p-phenylene.xyz` input file describing our *p*-phenylene `query` fragment, one H atom is masked (see figure above):
 
@@ -48,7 +54,9 @@ We then read the input file for the `query` fragment.
 
 ```jldoctest replace_md; output=false
 query = moiety("2-!-p-phenylene.xyz")
+
 # output
+
 Name: 2-!-p-phenylene.xyz
 Bravais unit cell of a crystal.
 	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
@@ -72,7 +80,9 @@ Next, we read in the acetylamido-functionalized version of the `query` fragment,
 
 ```jldoctest replace_md; output=false
 replacement = moiety("2-acetylamido-p-phenylene.xyz")
+
 # output
+
 Name: 2-acetylamido-p-phenylene.xyz
 Bravais unit cell of a crystal.
 	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
@@ -97,17 +107,22 @@ Note the `!` tags are ignored during the `substructure_search`.
 
 ```jldoctest replace_md; output=false
 search = query in parent # equivalent to substructure_search(query, parent)
+
 # output
+
 2-!-p-phenylene.xyz ∈ IRMOF-1.cif
 96 hits in 24 locations.
 ```
 
 #### the replace step
+
 The code below will, at each location in the `parent` where a substructure matched the `query` fragment, choose a random orientation (corresponding to an overlay of the `query` with the substructure), align and install the replacement fragment, then remove the original substructure, giving the `child` structure shown in the figure above.
 
 ```jldoctest replace_md; output=false
 child = substructure_replace(search, replacement)
+
 # output
+
 Name: new_xtal
 Bravais unit cell of a crystal.
 	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
@@ -137,7 +152,9 @@ For one-shot find-and-replace operations, the `replace` function may be used:
 
 ```jldoctest replace_md; output=false
 child = replace(parent, query => replacement)
+
 # output
+
 Name: new_xtal
 Bravais unit cell of a crystal.
 	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
@@ -156,8 +173,8 @@ Bravais unit cell of a crystal.
 ```
 
 !!! note
+    
     Generally, it is advisable to perform the search using `substructure_replace` then pass it to `replace`, as multiple replacement tasks can then be performed on the basis of the search step as opposed to repeating it for each replacement. The search is usually the slowest step, and it is desirable not to perform it repeatedly.
-
 
 ## Documentation of functions
 

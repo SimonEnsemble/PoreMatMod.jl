@@ -1,5 +1,4 @@
-![logo.JPG](logo.jpg)
----
+## ![logo.JPG](logo.jpg)
 
 `PoreMatMod.jl` is a [Julia](https://julialang.org/) package for (i) subgraph matching and (ii) modifying crystal structures such as metal-organic frameworks (MOFs).
 
@@ -15,12 +14,12 @@ Functioning as a "find-and-replace" tool on atomistic crystal structure models o
 
 N.b. while `PoreMatMod.jl` was developed for MOFs and other porous crystalline materials, its find-and-replace operations can be applied to discrete, molecular structures as well by assigning an arbitrary unit cell.
 
-| **Documentation** | **Build Status** | **Test Coverage** |
-|:---:|:---:|:---:|
+| **Documentation**                                                                                                  | **Build Status**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | **Test Coverage**                                                                                                                                                                                                                                                                                |
+|:------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 | [![Docs Badge](https://img.shields.io/badge/docs-dev-blue.svg)](https://SimonEnsemble.github.io/PoreMatMod.jl/dev) | [![CI](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/CI_build.yml/badge.svg)](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/CI_build.yml) [![Docs](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/doc_deployment.yml/badge.svg)](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/doc_deployment.yml) [![weekly](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/weekly.yml/badge.svg)](https://github.com/SimonEnsemble/PoreMatMod.jl/actions/workflows/weekly.yml) | [![codecov](https://codecov.io/gh/SimonEnsemble/PoreMatMod.jl/branch/master/graph/badge.svg?token=Z9VMLXS3U9)](https://codecov.io/gh/SimonEnsemble/PoreMatMod.jl) [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl) |
 
-
 ## Installation
+
 `PoreMatMod.jl` is a registered Julia package and can be installed by entering the following line in the Julia REPL when in package mode (type `]` to enter package mode):
 
 ```
@@ -50,6 +49,7 @@ If you found `PoreMatMod.jl` useful, please cite our paper in *J. Chem. Inf. Mod
   journal = {Journal of Chemical Information and Modeling}
 }
 ```
+
 ## Contributing
 
 We encourage feature requests and feedback [on GitHub](https://github.com/SimonEnsemble/PoreMatMod.jl/issues).

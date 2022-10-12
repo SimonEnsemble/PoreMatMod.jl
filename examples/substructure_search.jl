@@ -7,7 +7,7 @@ using InteractiveUtils
 # ╔═╡ 64b72493-6cac-4b92-9a81-6a5df12f7875
 begin
     import Pkg
-    Pkg.add(url="https://github.com/SimonEnsemble/PoreMatMod.jl")
+    Pkg.add(; url="https://github.com/SimonEnsemble/PoreMatMod.jl")
 end
 
 # ╔═╡ 5401e009-923e-4a7f-9f3a-fd534f06d8b0
@@ -72,7 +72,7 @@ view_query_or_replacement("p-phenylene.xyz")
 
 # ╔═╡ 559ef3c3-a176-4d65-8958-810c9b0b32c5
 with_terminal() do
-    display_query_or_replacement_file("p-phenylene.xyz")
+    return display_query_or_replacement_file("p-phenylene.xyz")
 end
 
 # ╔═╡ 127a2bef-3903-4801-bc75-00a6dde2bc6e
