@@ -3,7 +3,8 @@ module Ullmann_Test
 using Test, Graphs, MetaGraphs, PoreMatMod
 
 # add a list of edges to a graph
-add_edges!(g, edges) = for edge in edges
+add_edges!(g, edges) =
+    for edge in edges
         add_edge!(g, edge[1], edge[2])
     end
 

@@ -116,7 +116,8 @@ function conglomerate!(parent_substructure::Crystal)
     end
 
     # to which component does atom p belong?
-    find_component(p::Int) = for c in eachindex(conn_comps)
+    find_component(p::Int) =
+        for c in eachindex(conn_comps)
             if p in conn_comps[c]
                 return c
             end
