@@ -17,7 +17,7 @@ end
 cd("..") # return to root for running deploydocs
 
 # build the docs
-makedocs( # to test docs, run this call to `makedocs` in the REPL;
+makedocs( # to test docs, run this call to `makedocs` in the REPL;;
     root=joinpath(dirname(pathof(PoreMatMod)), "..", "docs"),
     modules=[PoreMatMod, Xtals],
     sitename="PoreMatMod.jl",
