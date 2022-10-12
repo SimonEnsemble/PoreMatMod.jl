@@ -7,7 +7,7 @@ using InteractiveUtils
 # ╔═╡ 8738d1c4-6907-4a7c-96bf-0467b6eb696d
 begin
     import Pkg
-    Pkg.add(url="https://github.com/SimonEnsemble/PoreMatMod.jl")
+    Pkg.add(; url="https://github.com/SimonEnsemble/PoreMatMod.jl")
 end
 
 # ╔═╡ ee100c2d-30aa-4b29-b85e-49417e1ed91c
@@ -51,8 +51,8 @@ md"""
 # ╔═╡ 6d9c3b97-fd26-470c-8acf-8ce10b33b82d
 begin
     # read in the parent xtal
-    parent = Crystal("SIFSIX-2-Cu-i.cif", check_overlap=false) 
-    
+    parent = Crystal("SIFSIX-2-Cu-i.cif"; check_overlap=false)
+
     infer_bonds!(parent, true)  # infer bonds
     view_structure(parent)      # view structure
 end
@@ -73,7 +73,7 @@ view_query_or_replacement("disordered_ligand!.xyz")
 
 # ╔═╡ 3077d0db-01e7-4aab-b183-c0f69a1f2da3
 with_terminal() do
-    display_query_or_replacement_file("disordered_ligand!.xyz")
+    return display_query_or_replacement_file("disordered_ligand!.xyz")
 end
 
 # ╔═╡ 10911157-64eb-485b-86f1-e83dc201b054
@@ -89,7 +89,7 @@ view_query_or_replacement("acetylene.xyz")
 
 # ╔═╡ 83d00463-ae3b-47d8-b65d-ff8a0aa522e8
 with_terminal() do
-    display_query_or_replacement_file("acetylene.xyz")
+    return display_query_or_replacement_file("acetylene.xyz")
 end
 
 # ╔═╡ 25ed4da3-525c-4045-82c4-b3cbf8e707e3
@@ -105,7 +105,7 @@ view_query_or_replacement("4-pyridyl.xyz")
 
 # ╔═╡ e85d27a8-ec86-4e38-92a4-f8a2ad9a0ce3
 with_terminal() do
-    display_query_or_replacement_file("4-pyridyl.xyz")
+    return display_query_or_replacement_file("4-pyridyl.xyz")
 end
 
 # ╔═╡ da89adc2-0688-44c6-9fd2-791bd13c8d74
@@ -124,12 +124,12 @@ n.b.
 begin
     # repair ring disorder
     child = replace(parent, query_disordered_ring => replacement_ring)
-    
+
     # search for disconnected acetylene components
-    search = substructure_search(query_guest, child, disconnected_component=true)
+    search = substructure_search(query_guest, child; disconnected_component=true)
     # delete guest molecules
     child = substructure_replace(search, nothing)
-    
+
     view_structure(child)
 end
 

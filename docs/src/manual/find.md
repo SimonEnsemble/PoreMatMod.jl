@@ -9,7 +9,6 @@ end
 
 # Subgraph matching (substructure searches)
 
-
 `PoreMatMod.jl` conducts subgraph matching, i.e. searches for subgraphs of a `parent` graph isomorphic to a `query` graph, using [Ullmann's algorithm for subgraph isomorphisms](https://doi.org/10.1145/321921.321925).
 
 For subgraph matching, both the `parent` crystal structure and `query` fragment are represented by node-labeled (by the chemical species) graphs (nodes = atoms, edges = bonds). For crystals, bonds across the unit cell boundaries of periodic materials are accounted for, allowing us to find subgraph isomorphisms when the fragment is split across a unit cell boundary.
@@ -21,6 +20,7 @@ To learn by example, suppose we wish to search the IRMOF-1 crystal structure for
 ![find graphic](../../assets/find/s_moty-in-xtal.png)
 
 First, we load the `query` fragment and `parent` crystal structure:
+
 ```julia
 parent = Crystal("IRMOF-1.cif")
 infer_bonds!(parent_xtal, true) # true to infer bonds across the periodic boundary
@@ -32,34 +32,41 @@ then execute a search for subgraphs of the `parent` that "match" (are isomorphic
 
 ```jldoctest find
 search = substructure_search(query, parent)
+
 # output
+
 p-phenylene.xyz ∈ IRMOF-1.cif
 96 hits in 24 locations.
 ```
 
 !!! note "Syntactic sugar for substructure search"
+    
     The `∈` (`\in` then hit `Tab` for this Unicode character) or `in` infix operators will also execute the search:
-
+    
     ```jldoctest find; output=false
     search = query ∈ parent
     # or
     search = query in parent
     # or
     search = substructure_search(query, parent)
+    
     # output
+    
     p-phenylene.xyz ∈ IRMOF-1.cif
     96 hits in 24 locations.
     ```
 
-
 Both functions `substructure_search` and `∈` return a `Search` object with attributes:
-* `search.query`: the query in the search
-* `search.parent`: the parent in the search
-* `search.isomorphisms`: the result of a search---a nested vector giving the query-to-parent correpondence dictionaries.
+
+  - `search.query`: the query in the search
+  - `search.parent`: the parent in the search
+  - `search.isomorphisms`: the result of a search---a nested vector giving the query-to-parent correpondence dictionaries.
 
 ```jldoctest find
 search.isomorphisms
+
 # output
+
 24-element Vector{Vector{Dict{Int64, Int64}}}:
  [Dict(5 => 185, 4 => 245, 6 => 197, 7 => 414, 2 => 306, 10 => 341, 9 => 402, 8 => 329, 3 => 318, 1 => 233…), Dict(5 => 197, 4 => 233, 6 => 185, 7 => 402, 2 => 318, 10 => 329, 9 => 414, 8 => 341, 3 => 306, 1 => 245…), Dict(5 => 185, 4 => 318, 6 => 197, 7 => 341, 2 => 233, 10 => 414, 9 => 329, 8 => 402, 3 => 245, 1 => 306…), Dict(5 => 197, 4 => 306, 6 => 185, 7 => 329, 2 => 245, 10 => 402, 9 => 341, 8 => 414, 3 => 233, 1 => 318…)]
  [Dict(5 => 186, 4 => 246, 6 => 198, 7 => 413, 2 => 305, 10 => 342, 9 => 401, 8 => 330, 3 => 317, 1 => 234…), Dict(5 => 198, 4 => 234, 6 => 186, 7 => 401, 2 => 317, 10 => 330, 9 => 413, 8 => 342, 3 => 305, 1 => 246…), Dict(5 => 186, 4 => 317, 6 => 198, 7 => 342, 2 => 234, 10 => 413, 9 => 330, 8 => 401, 3 => 246, 1 => 305…), Dict(5 => 198, 4 => 305, 6 => 186, 7 => 330, 2 => 246, 10 => 401, 9 => 342, 8 => 413, 3 => 234, 1 => 317…)]
@@ -89,7 +96,9 @@ The number of locations---the number of unique substructures of the `parent` to 
 
 ```jldoctest find
 nb_locations(search) # = length(search.isomorphisms)
+
 # output
+
 24
 ```
 
@@ -97,7 +106,9 @@ Element `i_loc` of `search.isomorphisms`, `search.isomorphisms[i_loc]`, is a vec
 
 ```jldoctest find; output=false
 nb_ori_at_loc(search)  # 24-element Vector{Int64}: [4, 4, 4, ..., 4]
+
 # output
+
 24-element Vector{Int64}:
  4
  4
@@ -127,7 +138,9 @@ The total number of isomorphisms is given by `nb_isomorphisms(search)`.
 
 ```jldoctest find
 nb_isomorphisms(search) # = sum(nb_ori_at_loc(search))
+
 # output
+
 96
 ```
 
@@ -135,7 +148,9 @@ N.b. to generate a `Crystal` containing only the substructures of the `parent` w
 
 ```jldoctest find
 isomorphic_substructures(search)
+
 # output
+
 Name: IRMOF-1.cif
 Bravais unit cell of a crystal.
 	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
@@ -157,14 +172,14 @@ Bravais unit cell of a crystal.
 
 The node-labeled graph representation of a molecule/crystal structure is invariant with respect to stereochemistry.
 In other words, every rotational/conformational state and stereoisomer of a structure share the same graph representation.
-What this means is that `PoreMatMod.jl` may find more subgraph matches than you may first expect. 
+What this means is that `PoreMatMod.jl` may find more subgraph matches than you may first expect.
 
 *Example 1*: Suppose we search for a carboxylate with beta hydrogen in acrylate.
 
 ![symmetry viz](../../assets/find/symmetry.png)
 
 There is clearly only one substructure of acrylate that matches the query.
-However, there are two subgraph isomorphisms, because swapping the oxygen atoms in the point cloud representation results in the same graph representation. 
+However, there are two subgraph isomorphisms, because swapping the oxygen atoms in the point cloud representation results in the same graph representation.
 The above image gives a closer look at how these degenerate representations translate to multiple isomorphisms for a single occurence of a fragment in a structure.
 
 *Example 2*: Suppose we search the IRMOF-1 `parent` structure for the [BDC.xyz](../../../assets/find/BDC.xyz) linker as the `query` instead of the more minimal *p*-phenylene `query` fragment.
@@ -174,13 +189,18 @@ The number of _locations_ at which the isomorphisms are found, however, is uncha
 ```jldoctest find
 query = moiety("BDC.xyz")
 search = query ∈ parent
-nb_isomorphisms(search) 
+nb_isomorphisms(search)
+
 # output
+
 384
 ```
+
 ```jldoctest find
-nb_locations(search) 
+nb_locations(search)
+
 # output
+
 24
 ```
 

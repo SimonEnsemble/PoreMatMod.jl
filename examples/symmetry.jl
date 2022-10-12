@@ -7,7 +7,7 @@ using InteractiveUtils
 # ╔═╡ fd82b765-7a62-4f85-bf60-28c83b1731aa
 begin
     import Pkg
-    Pkg.add(url="https://github.com/SimonEnsemble/PoreMatMod.jl")
+    Pkg.add(; url="https://github.com/SimonEnsemble/PoreMatMod.jl")
 end
 
 # ╔═╡ 3bb3966e-a7dd-46c1-b649-33169ce424d2
@@ -48,7 +48,7 @@ md"""
 # ╔═╡ c0e2ffbd-fb85-4187-b8b5-73edea90969a
 begin
     # read in the parent xtal, keeping it in its original space group
-    parent = Crystal("NiPyC_experiment.cif", convert_to_p1=false) # load cif file
+    parent = Crystal("NiPyC_experiment.cif"; convert_to_p1=false) # load cif file
     infer_bonds!(parent, true)                                    # infer bonds
     view_structure(parent)                                        # view structure
 end
@@ -69,7 +69,7 @@ view_query_or_replacement("PyC.xyz")
 
 # ╔═╡ 5e90af51-f777-47f9-980b-19bca38de5d4
 with_terminal() do
-    display_query_or_replacement_file("PyC.xyz")
+    return display_query_or_replacement_file("PyC.xyz")
 end
 
 # ╔═╡ 70468997-24fa-4c1b-9f02-379823f97db8
@@ -85,7 +85,7 @@ view_query_or_replacement("PyC-CH3.xyz")
 
 # ╔═╡ 7f82be68-558d-4dce-8492-bcc585ddf448
 with_terminal() do
-    display_query_or_replacement_file("PyC-CH3.xyz")
+    return display_query_or_replacement_file("PyC-CH3.xyz")
 end
 
 # ╔═╡ 2e3299b5-3b63-48d9-90d7-b8dde5715907
@@ -97,7 +97,7 @@ md"""
 search = query in parent
 
 # ╔═╡ 0b287f09-a121-430a-a749-dc93492d1680
-child = substructure_replace(search, replacement, nb_loc=1, wrap=false)
+child = substructure_replace(search, replacement; nb_loc=1, wrap=false)
 
 # ╔═╡ d8ea8d5e-f17a-412b-8461-15ba6d9621ec
 write_cif(child)
@@ -115,7 +115,7 @@ md"""
 
 # ╔═╡ 36a1be30-db0e-4c45-8894-859e36793482
 begin
-    p1_child = Crystal("symmetry_child.cif", check_overlap=false)
+    p1_child = Crystal("symmetry_child.cif"; check_overlap=false)
     p1_child = replicate(p1_child, (2, 2, 2))
     infer_bonds!(p1_child, true)
     write_cif(p1_child, "supercell.cif")

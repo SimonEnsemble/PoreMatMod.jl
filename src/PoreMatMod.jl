@@ -6,18 +6,19 @@ using PrecompileSignatures: @precompile_signatures
 
 import Base.(∈), Base.show, Base.replace
 
-
-function __init__()
-    add_bonding_rules(tagged_bonding_rules())
-end
-
+__init__() = add_bonding_rules(tagged_bonding_rules())
 
 export
     # search.jl
-    Search, substructure_search, nb_isomorphisms, nb_locations, nb_ori_at_loc, isomorphic_substructures,
+    Search,
+    substructure_search,
+    nb_isomorphisms,
+    nb_locations,
+    nb_ori_at_loc,
+    isomorphic_substructures,
 
     # replace.jl
-    substructure_replace, 
+    substructure_replace,
 
     # moiety.jl
     moiety,

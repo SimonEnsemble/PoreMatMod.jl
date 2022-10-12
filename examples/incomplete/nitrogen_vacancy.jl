@@ -12,15 +12,15 @@ using PoreMatMod.ExampleHelpers
 
 # ╔═╡ 52318187-a575-4864-8185-416faeea27ab
 begin
-	rc[:paths][:crystals] = realpath(joinpath(pwd(), "..", "test", "data", "crystals"))
-	rc[:paths][:moieties] = realpath(joinpath(pwd(), "..", "test", "data", "moieties"))
+    rc[:paths][:crystals] = realpath(joinpath(pwd(), "..", "test", "data", "crystals"))
+    rc[:paths][:moieties] = realpath(joinpath(pwd(), "..", "test", "data", "moieties"))
 end
 
 # ╔═╡ 6922e27b-b848-418b-bf1a-df17315baa80
 begin
-	parent = replicate(Crystal("diamond.cif", remove_duplicates=true), (2,2,1))
-	strip_numbers_from_atom_labels!(parent)
-	infer_bonds!(parent, true)
+    parent = replicate(Crystal("diamond.cif"; remove_duplicates=true), (2, 2, 1))
+    strip_numbers_from_atom_labels!(parent)
+    infer_bonds!(parent, true)
 end
 
 # ╔═╡ 418a7421-92ed-406f-9578-34187529c307
@@ -36,7 +36,7 @@ query = moiety("adamantane_C5.xyz")
 replacement = moiety("nitrogen_vacancy.xyz")
 
 # ╔═╡ b835a642-0a24-4796-8e01-e3c4041a6bff
-child = replace(parent, query => replacement, loc=[8])
+child = replace(parent, query => replacement; loc=[8])
 
 # ╔═╡ 3c003a65-3983-42ed-b445-5618ae21a4a3
 write_cif(child, "child.cif")

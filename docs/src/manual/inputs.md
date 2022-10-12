@@ -15,18 +15,21 @@ Accepted file formats for crystal structures (containing atomic coordinates and 
 Crystal structure files (`.cif`, `.cssr`) are read from the path `rc[:paths][:crystals]`.
 
 !!! example
+    
     Read in the crystal structure of [IRMOF-1.cif](../../../assets/inputs/IRMOF-1.cif) and infer its bonding graph:
-
+    
     ```jldoctest; output=false
     parent = Crystal("IRMOF-1.cif")
     infer_bonds!(parent, true) # true b/c we want periodic bonds included
+    
     # output
+    
     true
     ```
 
 The `Crystal` constructor returns a [`Crystal`](@ref) data structure.
 The [`infer_bonds!`](@ref) function infers the bonding graph of the crystal structure (nodes: atoms, edges: bonds) based on interatomic distances---necessary for subgraph matching.
-Both `Crystal` and `infer_bonds!` are inherited from `Xtals.jl` (see the [`docs`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal)). 
+Both `Crystal` and `infer_bonds!` are inherited from `Xtals.jl` (see the [`docs`](https://simonensemble.github.io/Xtals.jl/dev/crystal/#Xtals.Crystal)).
 
 ## Query and Replacement Fragments
 
@@ -37,17 +40,20 @@ Query and replacement fragment files (`.xyz`) are read from the path `rc[:paths]
 N.b. masked atoms of query fragments must be labeled with `!` for [`replace` operations](../../replace). For [substructure searches](../../find) using `substructure_search`, any `!` tags are ignored (the atoms are treated according to their chemical species).
 
 !!! example
+    
     Read in the chemical fragment [`p-phenylene.xyz`](../../../assets/inputs/p-phenylene.xyz):
-
+    
     ```jldoctest; output=false
     query = moiety("p-phenylene.xyz")
+    
     # output
+    
     Name: p-phenylene.xyz
     Bravais unit cell of a crystal.
     	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
     	Unit cell dimensions a = 1.000000 Å. b = 1.000000 Å, c = 1.000000 Å
     	Volume of unit cell: 1.000000 Å³
-
+    
     	# atoms = 10
     	# charges = 0
     	chemical formula: C₆H₄
@@ -68,14 +74,16 @@ The [`moiety`](@ref) reader also returns a `Crystal` data structure but with a (
 To change the paths from where the input files are read, change `rc[:paths][:crystals]` and `rc[:paths][:moieties]`.
 
 !!! example
+    
     Suppose we wish to store our `.cif` files in `~/my_xtals` and our `.xyz` files in our present working directory.
-
+    
     ```julia
     rc[:paths][:crystals] = joinpath(homedir(), "my_xtals")
-    rc[:paths][:moiety] = pwd()                                  
+    rc[:paths][:moiety] = pwd()
     ```
 
 ## Other data
+
 `PoreMatMod.jl` draws atomic masses and covalent radii from [`Xtals.jl`](https://github.com/SimonEnsemble/Xtals.jl/).
 
 ## Detailed documentation for functions

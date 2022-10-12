@@ -7,7 +7,7 @@ using InteractiveUtils
 # ╔═╡ d757a3a8-1ee3-4afd-b0bd-9d8429250f96
 begin
     import Pkg
-    Pkg.add(url="https://github.com/SimonEnsemble/PoreMatMod.jl")
+    Pkg.add(; url="https://github.com/SimonEnsemble/PoreMatMod.jl")
 end
 
 # ╔═╡ 322d1bd1-86ae-47e7-b49d-38687eb3885a
@@ -20,9 +20,9 @@ using PoreMatMod.ExampleHelpers
 begin
     parent = Crystal("UiO-66.cif")
     for x in parent.atoms.coords.xf
-        if x == 1.
+        if x == 1.0
             x -= eps(Float64)
-        elseif x == 0.
+        elseif x == 0.0
             x += eps(Float64)
         end
     end
@@ -40,7 +40,7 @@ bimetallic_SBU = moiety("bimetallic_SBU.xyz")
 # ╔═╡ 44b0cc75-036b-468f-9da7-04c2d97536a9
 begin
     multi_metal = replace(parent, SBU => bimetallic_SBU)
-    translate_by!(multi_metal.atoms.coords, Frac([-0.25, -0.25, 0.]))
+    translate_by!(multi_metal.atoms.coords, Frac([-0.25, -0.25, 0.0]))
 end
 
 # ╔═╡ 780437f4-3a42-4aa2-b2e8-599d8d232dc2
@@ -49,7 +49,7 @@ write_cif(multi_metal, "multi-metal.cif")
 # ╔═╡ ad888be3-2123-4d2f-865a-ff7a63cebf9e
 begin
     shifted_uio66 = deepcopy(parent)
-    translate_by!(shifted_uio66.atoms.coords, Frac([-0.25, -0.25, 0.]))
+    translate_by!(shifted_uio66.atoms.coords, Frac([-0.25, -0.25, 0.0]))
     write_cif(shifted_uio66, "shifted_parent.cif")
 end
 
