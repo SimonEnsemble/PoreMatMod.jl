@@ -18,9 +18,5 @@ function PoreMatModGO()
     end
 end
 
-"""
-    banner()
-
-Displays the ASCII banner for the package using FIGlet
-"""
-banner() = FIGlet.render("PoreMatMod.jl", FIGlet.availablefonts()[35])
+BANNER = String(read(joinpath(dirname(pathof(PoreMatMod)), "banner.txt")))
+banner() = println(BANNER)

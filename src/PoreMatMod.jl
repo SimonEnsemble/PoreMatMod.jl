@@ -1,6 +1,6 @@
 module PoreMatMod
 
-using DataFrames, FIGlet, Graphs, LinearAlgebra, MetaGraphs, Pluto, Reexport, StatsBase
+using DataFrames, Graphs, LinearAlgebra, MetaGraphs, Pluto, Reexport, StatsBase
 @reexport using Xtals
 using PrecompileSignatures: @precompile_signatures
 
