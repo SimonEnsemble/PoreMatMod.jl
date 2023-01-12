@@ -45,24 +45,13 @@ N.b. masked atoms of query fragments must be labeled with `!` for [`replace` ope
     
     ```jldoctest; output=false
     query = moiety("p-phenylene.xyz")
-    
+
     # output
-    
-    Name: p-phenylene.xyz
-    Bravais unit cell of a crystal.
-    	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
-    	Unit cell dimensions a = 1.000000 Å. b = 1.000000 Å, c = 1.000000 Å
-    	Volume of unit cell: 1.000000 Å³
-    
-    	# atoms = 10
-    	# charges = 0
-    	chemical formula: C₆H₄
-    	space Group: P1
-    	symmetry Operations:
-    		'x, y, z'
-    	bonding graph:
-    		# vertices = 10
-    		# edges = 10
+
+    Crystal(C₆H₄, periodic = TTT):
+        bounding_box      : [       1        0        0;
+                             6.12323e-17        1        0;
+                             6.12323e-17 6.12323e-17        1]u"Å"
     ```
 
 The [`moiety`](@ref) reader also returns a `Crystal` data structure but with a (arbitrary) unit cube unit cell.
