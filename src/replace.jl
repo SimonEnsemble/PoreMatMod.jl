@@ -274,7 +274,7 @@ function install_replacements(
 
     # delete obsolete atoms
     obsolete_atoms = unique(obsolete_atoms)
-    keep_atoms = [p for p = 1:(child.atoms.n) if !(p in obsolete_atoms)]
+    keep_atoms = [p for p in 1:(child.atoms.n) if !(p in obsolete_atoms)]
     child = child[keep_atoms]
 
     # restore symmetry rules

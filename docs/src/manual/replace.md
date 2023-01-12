@@ -57,21 +57,10 @@ query = moiety("2-!-p-phenylene.xyz")
 
 # output
 
-Name: 2-!-p-phenylene.xyz
-Bravais unit cell of a crystal.
-	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
-	Unit cell dimensions a = 1.000000 Å. b = 1.000000 Å, c = 1.000000 Å
-	Volume of unit cell: 1.000000 Å³
-
-	# atoms = 10
-	# charges = 0
-	chemical formula: C₆H!H₃
-	space Group: P1
-	symmetry Operations:
-		'x, y, z'
-	bonding graph:
-		# vertices = 10
-		# edges = 10
+Crystal(C₆H!H₃, periodic = TTT):
+    bounding_box      : [       1        0        0;
+                         6.12323e-17        1        0;
+                         6.12323e-17 6.12323e-17        1]u"Å"
 ```
 
 #### the `replacement` fragment
@@ -83,21 +72,10 @@ replacement = moiety("2-acetylamido-p-phenylene.xyz")
 
 # output
 
-Name: 2-acetylamido-p-phenylene.xyz
-Bravais unit cell of a crystal.
-	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
-	Unit cell dimensions a = 1.000000 Å. b = 1.000000 Å, c = 1.000000 Å
-	Volume of unit cell: 1.000000 Å³
-
-	# atoms = 17
-	# charges = 0
-	chemical formula: C₈H₇NO
-	space Group: P1
-	symmetry Operations:
-		'x, y, z'
-	bonding graph:
-		# vertices = 17
-		# edges = 17
+Crystal(C₈H₇NO, periodic = TTT):
+    bounding_box      : [       1        0        0;
+                         6.12323e-17        1        0;
+                         6.12323e-17 6.12323e-17        1]u"Å"
 ```
 
 #### the find step
@@ -123,21 +101,10 @@ child = substructure_replace(search, replacement)
 
 # output
 
-Name: new_xtal
-Bravais unit cell of a crystal.
-	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
-	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
-	Volume of unit cell: 17237.492730 Å³
-
-	# atoms = 592
-	# charges = 0
-	chemical formula: C₂₄₀H₁₆₈N₂₄O₁₂₈Zn₃₂
-	space Group: P1
-	symmetry Operations:
-		'x, y, z'
-	bonding graph:
-		# vertices = 592
-		# edges = 680
+Crystal(C₂₄₀H₁₆₈N₂₄O₁₂₈Zn₃₂, periodic = TTT):
+    bounding_box      : [  25.832        0        0;
+                         1.58175e-15   25.832        0;
+                         1.58175e-15 1.58175e-15   25.832]u"Å"
 ```
 
 To direct the number, location, and orientation of the replacements, use the keyword arguments for [`substructure_replace`](@ref). Particularly, the location `loc` and orientation `ori` keyword arguments specify a particular isomorphism to use (in reference to `search.isomorphisms`) when conducting a replacement operation. The figure below illustrates.
@@ -155,21 +122,10 @@ child = replace(parent, query => replacement)
 
 # output
 
-Name: new_xtal
-Bravais unit cell of a crystal.
-	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
-	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
-	Volume of unit cell: 17237.492730 Å³
-
-	# atoms = 592
-	# charges = 0
-	chemical formula: C₂₄₀H₁₆₈N₂₄O₁₂₈Zn₃₂
-	space Group: P1
-	symmetry Operations:
-		'x, y, z'
-	bonding graph:
-		# vertices = 592
-		# edges = 680
+Crystal(C₂₄₀H₁₆₈N₂₄O₁₂₈Zn₃₂, periodic = TTT):
+    bounding_box      : [  25.832        0        0;
+                         1.58175e-15   25.832        0;
+                         1.58175e-15 1.58175e-15   25.832]u"Å"
 ```
 
 !!! note

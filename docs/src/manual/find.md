@@ -151,21 +151,10 @@ isomorphic_substructures(search)
 
 # output
 
-Name: IRMOF-1.cif
-Bravais unit cell of a crystal.
-	Unit cell angles α = 90.000000 deg. β = 90.000000 deg. γ = 90.000000 deg.
-	Unit cell dimensions a = 25.832000 Å. b = 25.832000 Å, c = 25.832000 Å
-	Volume of unit cell: 17237.492730 Å³
-
-	# atoms = 240
-	# charges = 0
-	chemical formula: C₁₄₄H₉₆
-	space Group: P1
-	symmetry Operations:
-		'x, y, z'
-	bonding graph:
-		# vertices = 240
-		# edges = 240
+Crystal(C₁₄₄H₉₆, periodic = TTT):
+    bounding_box      : [  25.832        0        0;
+                         1.58175e-15   25.832        0;
+                         1.58175e-15 1.58175e-15   25.832]u"Å"
 ```
 
 ## Stereochemistry and Isomorphism

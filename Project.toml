@@ -1,13 +1,12 @@
 name = "PoreMatMod"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 authors = ["SimonEnsemble <cory.simon@oregonstate.edu>"]
-version = "0.2.17"
+version = "0.2.18"
 
 [deps]
 Bio3DView = "99c8bb3a-9d13-5280-9740-b4880ed9c598"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-FIGlet = "3064a664-84fe-4d92-92c7-ed492f3d8fae"
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
@@ -24,7 +23,6 @@ Aqua = "0.5"
 Bio3DView = "0.1"
 CSV = "0.10"
 DataFrames = "1"
-FIGlet = "0.2"
 Graphs = "1.7"
 MetaGraphs = "0.7"
 Pluto = "0.19"

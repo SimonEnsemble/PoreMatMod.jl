@@ -199,12 +199,6 @@ git-tree-sha1 = "8b08cc88844e4d01db5a2405a08e9178e19e479e"
 uuid = "55351af7-c7e9-48d6-89ff-24e801d99491"
 version = "0.6.13"
 
-[[FIGlet]]
-deps = ["BinaryProvider", "Pkg"]
-git-tree-sha1 = "bfc6b52f75b4720581e3e49ae786da6764e65b6a"
-uuid = "3064a664-84fe-4d92-92c7-ed492f3d8fae"
-version = "0.2.1"
-
 [[FileIO]]
 deps = ["Pkg", "Requires", "UUIDs"]
 git-tree-sha1 = "2db648b6712831ecb333eae76dbfd1c156ca13bb"
@@ -437,7 +431,7 @@ uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
 version = "1.4.0"
 
 [[PoreMatMod]]
-deps = ["Bio3DView", "CSV", "DataFrames", "FIGlet", "Graphs", "LinearAlgebra", "MetaGraphs", "Pluto", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
+deps = ["Bio3DView", "CSV", "DataFrames", "Graphs", "LinearAlgebra", "MetaGraphs", "Pluto", "PlutoSliderServer", "PlutoUI", "Reexport", "StatsBase", "Xtals"]
 git-tree-sha1 = "53bccf1b4a3c0b5e3c7d70cbc93a6bbda802edaa"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 version = "0.2.7"
@@ -592,7 +586,7 @@ uuid = "81def892-9a0e-5fdd-b105-ffc91e053289"
 version = "1.2.1"
 
 [[Xtals]]
-deps = ["Bio3DView", "CSV", "DataFrames", "Documenter", "FIGlet", "Graphs", "JLD2", "LinearAlgebra", "Logging", "MetaGraphs", "Printf", "PyCall", "UUIDs"]
+deps = ["Bio3DView", "CSV", "DataFrames", "Documenter", "Graphs", "JLD2", "LinearAlgebra", "Logging", "MetaGraphs", "Printf", "PyCall", "UUIDs"]
 git-tree-sha1 = "3147503cd35c4f2b3744fe36301c7de3efee98c5"
 uuid = "ede5f01d-793e-4c47-9885-c447d1f18d6d"
 version = "0.3.9"
