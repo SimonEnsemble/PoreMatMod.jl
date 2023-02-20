@@ -45,13 +45,13 @@ N.b. masked atoms of query fragments must be labeled with `!` for [`replace` ope
     
     ```jldoctest; output=false
     query = moiety("p-phenylene.xyz")
-    
+
     # output
-    
+
     Crystal(C₆H₄, periodic = TTT):
         bounding_box      : [       1        0        0;
                              6.12323e-17        1        0;
-                             6.12323e-17 6.12323e-17        1]u"Å"
+                             6.12323e-17 6.12323e-17        1]u"Å"
     ```
 
 The [`moiety`](@ref) reader also returns a `Crystal` data structure but with a (arbitrary) unit cube unit cell.

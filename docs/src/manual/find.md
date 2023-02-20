@@ -154,7 +154,7 @@ isomorphic_substructures(search)
 Crystal(C₁₄₄H₉₆, periodic = TTT):
     bounding_box      : [  25.832        0        0;
                          1.58175e-15   25.832        0;
-                         1.58175e-15 1.58175e-15   25.832]u"Å"
+                         1.58175e-15 1.58175e-15   25.832]u"Å"
 ```
 
 ## Stereochemistry and Isomorphism

@@ -60,7 +60,7 @@ query = moiety("2-!-p-phenylene.xyz")
 Crystal(C₆H!H₃, periodic = TTT):
     bounding_box      : [       1        0        0;
                          6.12323e-17        1        0;
-                         6.12323e-17 6.12323e-17        1]u"Å"
+                         6.12323e-17 6.12323e-17        1]u"Å"
 ```
 
 #### the `replacement` fragment
@@ -75,7 +75,7 @@ replacement = moiety("2-acetylamido-p-phenylene.xyz")
 Crystal(C₈H₇NO, periodic = TTT):
     bounding_box      : [       1        0        0;
                          6.12323e-17        1        0;
-                         6.12323e-17 6.12323e-17        1]u"Å"
+                         6.12323e-17 6.12323e-17        1]u"Å"
 ```
 
 #### the find step
@@ -104,7 +104,7 @@ child = substructure_replace(search, replacement)
 Crystal(C₂₄₀H₁₆₈N₂₄O₁₂₈Zn₃₂, periodic = TTT):
     bounding_box      : [  25.832        0        0;
                          1.58175e-15   25.832        0;
-                         1.58175e-15 1.58175e-15   25.832]u"Å"
+                         1.58175e-15 1.58175e-15   25.832]u"Å"
 ```
 
 To direct the number, location, and orientation of the replacements, use the keyword arguments for [`substructure_replace`](@ref). Particularly, the location `loc` and orientation `ori` keyword arguments specify a particular isomorphism to use (in reference to `search.isomorphisms`) when conducting a replacement operation. The figure below illustrates.
@@ -125,7 +125,7 @@ child = replace(parent, query => replacement)
 Crystal(C₂₄₀H₁₆₈N₂₄O₁₂₈Zn₃₂, periodic = TTT):
     bounding_box      : [  25.832        0        0;
                          1.58175e-15   25.832        0;
-                         1.58175e-15 1.58175e-15   25.832]u"Å"
+                         1.58175e-15 1.58175e-15   25.832]u"Å"
 ```
 
 !!! note
