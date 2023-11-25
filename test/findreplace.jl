@@ -126,6 +126,14 @@ end
 
     @test search.isomorphisms[1][1] ==
           Dict([q => p for (q, p) in enumerate([34, 38, 39, 36, 26, 27, 51, 46, 50, 48])])
+
+    q1 = moiety("glycine_res.xyz")
+    q2 = moiety("glycine_res.xyz"; presort=false)
+    search = q1 ∈ q2
+    
+    @test q1.atoms.coords.xf ≠ q2.atoms.coords.xf
+    
+    @test length(search.isomorphisms) == 1
 end # test set: substructure_search
 
 @testset "find_replace" begin
