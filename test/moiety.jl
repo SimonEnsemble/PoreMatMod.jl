@@ -28,7 +28,7 @@ end
     @test moiety_2!bcfm.atoms.species == [:C, :Cl, :F, :Br, :H!]
 
     @test PoreMatMod.subtract_r_group(moiety_2!bcfm).atoms.species == [:C, :Cl, :F, :Br]
-    
+
     null_moiety = moiety(nothing; bonding_rules=rc[:bonding_rules])
 
     @test null_moiety.atoms.n == 0
