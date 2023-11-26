@@ -22,8 +22,16 @@ end
 @testset "Moiety Tests" begin
     moiety_bcfm = moiety("S-bromochlorofluoromethane.xyz")
     moiety_2!bcfm = moiety("!-S-bromochlorofluoromethane.xyz")
+    
     @test moiety_bcfm.atoms.species == [:C, :Cl, :F, :Br, :H]
+    
     @test moiety_2!bcfm.atoms.species == [:C, :Cl, :F, :Br, :H!]
+
+    @test PoreMatMod.subtract_r_group(moiety_2!bcfm).atoms.species == [:C, :Cl, :F, :Br]
+
+    null_moiety = moiety(; bonding_rules=rc[:bonding_rules])
+
+    @test null_moiety.atoms.n == 0
 end
 
 end # module
