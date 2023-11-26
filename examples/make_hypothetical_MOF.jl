@@ -5,10 +5,7 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ 8ae2593a-cb48-44c9-b9dc-ab901c358a06
-begin
-    import Pkg
-    Pkg.add(; url="https://github.com/SimonEnsemble/PoreMatMod.jl")
-end
+
 
 # ╔═╡ 16f0e183-f48d-4dcd-8751-d3c61c875e18
 # load required packages (Pluto.jl will automatically install them)
