@@ -130,9 +130,9 @@ end
     q1 = moiety("glycine_res.xyz")
     q2 = moiety("glycine_res.xyz"; presort=false)
     search = q1 ∈ q2
-    
+
     @test q1.atoms.coords.xf ≠ q2.atoms.coords.xf
-    
+
     @test length(search.isomorphisms) == 1
 end # test set: substructure_search
 
