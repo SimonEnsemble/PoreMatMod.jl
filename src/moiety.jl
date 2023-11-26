@@ -56,8 +56,8 @@ Returns a copy of a crystal w/ R group atoms deleted
 """
 function subtract_r_group(xtal::Crystal)::Crystal
     not_r = [i for i in eachindex(xtal.atoms.species) if !(i ∈ r_group_indices(xtal))]
-    coords = @view xtal.atoms.coords[not_r]
-    species = @view xtal.atoms.species[not_r]
+    coords = xtal.atoms.coords[not_r]
+    species = xtal.atoms.species[not_r]
     return Crystal("no_r_$(xtal.name)", xtal.box, Atoms(species, coords), xtal.charges)
 end
 
@@ -78,23 +78,25 @@ Bonds are inferred automatically via `infer_bonds!`.
 # Arguments
 - `xyz_filename::Union{String,Nothing}` the moiety input file name, an `.xyz` file; if set to `nothing` the moiety is the null set.
 - `bonding_rules::Union{Vector{BondingRule},Nothing}` (optional) a list of rules to use for inferring the bonding network of the atoms loaded from the XYZ file. If set to `nothing`, the default rules are used.
+- `presort::Bool` whether to sort the atoms by bonding order for structure search efficiency. Set `false` to skip pre-sorting and maintain indexing order with source file. Does not apply to !-tagged atoms, which will still be moved to the end of the list.
 """
 function moiety(
     name::Union{String, Nothing};
-    bonding_rules::Union{Vector{BondingRule}, Nothing}=nothing
+    bonding_rules::Union{Vector{BondingRule}, Nothing}=nothing,
+    presort::Bool=true
 )::Crystal
     # make box (arbitrary unit cube)
     box = unit_cube()
     # handle deletion option (replace-with-nothing)
     if !isnothing(name)
-        fx = Frac(read_xyz("$(rc[:paths][:moieties])/$name"), box)
+        xf = Frac(read_xyz("$(rc[:paths][:moieties])/$name"), box)
     else
         name = "nothing"
-        fx = Atoms{Frac}(0)
+        xf = Atoms{Frac}(0)
     end
     # generate Crystal from moiety XYZ coords
     charges = Charges{Frac}(0)
-    moiety = Crystal(name, box, fx, charges)
+    moiety = Crystal(name, box, xf, charges)
     # ID R group
     R_group_indices = r_group_indices(moiety)
     # handle custom vs. default bonding rules
@@ -104,7 +106,8 @@ function moiety(
         infer_bonds!(moiety, false; bonding_rules=bonding_rules)
     end
     # sort by node degree
-    order = sortperm(degree(moiety.bonds); rev=true)
+    sp = sortperm(degree(moiety.bonds); rev=true)
+    order = presort ? sp : eachindex(sp)
     # ordered atoms
     if length(R_group_indices) > 0
         order_wo_R = order[[i for i in eachindex(order) if !(order[i] ∈ R_group_indices)]]

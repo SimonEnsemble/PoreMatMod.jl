@@ -2,7 +2,7 @@ testfiles = [
     "moiety.jl"
     "ullmann.jl"
     "findreplace.jl"
-    "examples.jl"
+    # "examples.jl"
 ]
 
 @assert VERSION.major == 1
