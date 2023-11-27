@@ -1,12 +1,20 @@
 module PoreMatMod
 
-using DataFrames, Graphs, LinearAlgebra, MetaGraphs, Pluto, Reexport, StatsBase
+using DataFrames, Graphs, LinearAlgebra, MetaGraphs, Reexport, StatsBase
 @reexport using Xtals
-using PrecompileSignatures: @precompile_signatures
+# using PrecompileSignatures: @precompile_signatures
 
 import Base.(∈), Base.show, Base.replace
 
-__init__() = add_bonding_rules(tagged_bonding_rules())
+const BANNER = String(read(joinpath(dirname(pathof(PoreMatMod)), "banner.txt")))
+banner() = println(BANNER)
+
+function __init__()
+    rc[:r_tag] = '!'
+    rc[:paths][:moieties] = joinpath(rc[:paths][:data], "moieties")
+    add_bonding_rules(tagged_bonding_rules())
+    return
+end
 
 export
     # search.jl
@@ -23,16 +31,14 @@ export
     # moiety.jl
     moiety,
 
-    # misc.jl
-    PoreMatModGO
+    # MarkdownExt
+    input_file_message
 
 include("Ullmann.jl")
 include("moiety.jl")
 include("search.jl")
 include("replace.jl")
-include("ExampleHelpers.jl")
-include("misc.jl")
 
-@precompile_signatures(PoreMatMod)
+# @precompile_signatures(PoreMatMod)
 
 end

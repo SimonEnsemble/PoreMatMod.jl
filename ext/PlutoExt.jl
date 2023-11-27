@@ -1,3 +1,7 @@
+module PlutoExt
+
+using PoreMatMod
+
 """
     PoreMatModGO()
 
@@ -18,5 +22,6 @@ function PoreMatModGO()
     end
 end
 
-BANNER = String(read(joinpath(dirname(pathof(PoreMatMod)), "banner.txt")))
-banner() = println(BANNER)
+export PoreMatModGO
+
+end

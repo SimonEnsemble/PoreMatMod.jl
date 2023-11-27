@@ -8,13 +8,10 @@ using InteractiveUtils
 
 # ╔═╡ 37939a7a-0651-11ec-11c1-6b5ef0a19ec2
 # load required packages (Pluto.jl will automatically install them)
-using PoreMatMod, PlutoUI
+using Bio3DView, PoreMatMod, PlutoUI
 
 # ╔═╡ 2889e30d-442d-4620-b5f6-0216e21c623b
-begin
-    using PoreMatMod.ExampleHelpers
-    check_example_data()
-end
+
 
 # ╔═╡ 8d523993-6e85-443a-9949-12030552b457
 md"""

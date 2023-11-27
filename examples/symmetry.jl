@@ -11,13 +11,9 @@ begin
 end
 
 # ╔═╡ 3bb3966e-a7dd-46c1-b649-33169ce424d2
-using PoreMatMod, PlutoUI
+using Bio3DView, PoreMatMod, PlutoUI
 
 # ╔═╡ d3eef6f4-ff15-47f3-8686-2c0cb0fb882d
-begin
-    using PoreMatMod.ExampleHelpers
-    check_example_data()
-end
 
 # ╔═╡ 8e4fd703-f53e-4056-9466-66f07bacad8d
 md"## Example: substructure replacement in a high-symmetry parent"
