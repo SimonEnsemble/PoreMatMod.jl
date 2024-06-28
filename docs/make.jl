@@ -35,7 +35,6 @@ makedocs(; # to test docs, run this call to `makedocs` in the REPL
         "Contribute/Report Issues" => "collab.md"
     ],
     format=Documenter.HTML(; assets=["assets/flux.css"]),
-    push_preview=true,
     doctest=false # doctests are run in testing; running them here is redundant and slow
 )
 
