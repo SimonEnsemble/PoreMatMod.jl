@@ -1,7 +1,7 @@
 name = "PoreMatMod"
 uuid = "2de0d7f0-0963-4438-8bc8-7e7ffe3dc69a"
 authors = ["SimonEnsemble <cory.simon@oregonstate.edu>", "Adrian Henle <eahenle@gmail.com>"]
-version = "0.2.19"
+version = "0.2.20"
 
 [deps]
 Bio3DView = "99c8bb3a-9d13-5280-9740-b4880ed9c598"
@@ -19,16 +19,16 @@ Xtals = "ede5f01d-793e-4c47-9885-c447d1f18d6d"
 
 [compat]
 Aqua = "0.5"
-Bio3DView = "0.1"
+Bio3DView = "0"
 DataFrames = "1"
 Graphs = "1.7"
 MetaGraphs = "0.7"
-Pluto = "0.19"
-PrecompileSignatures = "3.0"
-Reexport = "1.2"
+Pluto = "0"
+PrecompileSignatures = "3"
+Reexport = "1"
 StatsBase = "0.33"
 Xtals = "0.4, 0.5"
-julia = "1.7, 1.8, 1.9"
+julia = "1.6"
 
 [extras]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
