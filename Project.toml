@@ -19,11 +19,11 @@ Xtals = "ede5f01d-793e-4c47-9885-c447d1f18d6d"
 
 [compat]
 Aqua = "0.5"
-Bio3DView = "0, 1"
+Bio3DView = "0.1, 1"
 DataFrames = "1"
 Graphs = "1.7"
 MetaGraphs = "0.7"
-Pluto = "0, 1"
+Pluto = "0.1, 1"
 PrecompileSignatures = "3"
 Reexport = "1"
 StatsBase = "0.33"
